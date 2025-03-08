@@ -2,6 +2,7 @@
 # 1. Create beautiful cover page? Have users import FM filters and upload the required html files.
 # 2. Make the site beautiful with Bootstrap
 
+import os
 import dash
 from dash import Dash, html, dcc, Output, Input, State, ctx
 import dash_bootstrap_components as dbc
@@ -194,7 +195,8 @@ def toggle_modal(open_clicks, close_clicks, is_open):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=10000)
+    port = int(os.environ.get('PORT', 8050))
+    app.run(debug=False, host='0.0.0.0', port=port)
 
 
 ## Website details
