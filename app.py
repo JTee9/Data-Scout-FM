@@ -195,7 +195,7 @@ def toggle_modal(open_clicks, close_clicks, is_open):
 
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 8050))
+    port = int(os.environ.get('PORT', 10000))
     app.run(debug=False, host='0.0.0.0', port=port)
 
 
