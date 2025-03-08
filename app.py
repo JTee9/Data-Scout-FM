@@ -132,13 +132,13 @@ class MainApplication:
 
 
 Application = MainApplication()
-app = Application.app.server
+Application.set_layout()
 
 # app = Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.SPACELAB], title='Data Scout FM')
 
 
 # Callback ----------------------------
-@app.callback(
+@Application.app.callback(
     Output('uploaded-files', 'children'),
     Output('stored-uploads', 'data'),
     Input('upload-data', 'contents'),
@@ -179,7 +179,7 @@ def update_output(list_of_contents, list_of_names):
 
 
 # Download Callback
-@app.callback(
+@Application.app.callback(
     Output('download-custom-views', 'data'),
     Input('download-button', "n_clicks"),
     prevent_initial_call=True,
@@ -191,7 +191,7 @@ def download_custom_views(n_clicks):
 
 
 # Instruction modal callback
-@app.callback(
+@Application.app.callback(
     Output("instructions-modal", "is_open"),
     [Input("open-instructions-modal-button", "n_clicks"),
      Input("close-instructions-modal-button", "n_clicks")],
@@ -209,9 +209,6 @@ def toggle_modal(open_clicks, close_clicks, is_open):
         return False
 
     return is_open
-
-if __name__ == '__main__':
-    Application.app.run(port=8080, dev_tools_ui=True, debug=True, host="127.0.0.1")
 
 
 ## Website details
