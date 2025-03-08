@@ -12,6 +12,7 @@ import base64
 import io
 from warnings import simplefilter
 
+
 simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
 
 
@@ -195,8 +196,7 @@ def toggle_modal(open_clicks, close_clicks, is_open):
 
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 10000))
-    app.run(debug=False, host='0.0.0.0', port=port)
+    app.run(debug=True, port=5001)
 
 
 ## Website details
