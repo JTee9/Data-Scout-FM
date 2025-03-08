@@ -17,11 +17,21 @@ simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
 
 
 # Create app
-app = Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.SPACELAB], title='Data Scout FM')
+class MainApplication:
+    def __init__(self):
+        self.__app = Dash(
+            __name__,
+            update_title="Loading...",
+            use_pages=True,
+            external_stylesheets=[dbc.themes.SPACELAB]
+        )
 
+    @property
+    def app(self):
+        return self.__app
 
-# Dashboard Layout. Creating a container which includes a navigation bar and plots
-app.layout = dbc.Container([
+    def set_layout(self):
+        self.app.layout = dbc.Container([
     # Left Side
     html.Div(
         id='main-content', children=
@@ -121,6 +131,12 @@ app.layout = dbc.Container([
     className='dashboard-container')
 
 
+Application = MainApplication()
+app = Application.app.server
+
+# app = Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.SPACELAB], title='Data Scout FM')
+
+
 # Callback ----------------------------
 @app.callback(
     Output('uploaded-files', 'children'),
@@ -194,9 +210,8 @@ def toggle_modal(open_clicks, close_clicks, is_open):
 
     return is_open
 
-
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+    Application.app.run(port=8080, dev_tools_ui=True, debug=True, host="127.0.0.1")
 
 
 ## Website details
