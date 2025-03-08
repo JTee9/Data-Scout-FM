@@ -6,7 +6,7 @@ import dash
 from dash import Dash, html, dcc, Output, Input, State, ctx
 import dash_bootstrap_components as dbc
 import pandas as pd
-from main import build_scouting_attributes_dataframe, build_squad_attributes_dataframe, build_stats_dataframe
+from transform import build_scouting_attributes_dataframe, build_squad_attributes_dataframe, build_stats_dataframe
 import base64
 import io
 from warnings import simplefilter
