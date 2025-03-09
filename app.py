@@ -16,6 +16,16 @@ from warnings import simplefilter
 simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
 
 
+# Genezio handler function
+def handler(event):
+    print("Function was called")
+    name = event.get("queryStringParameters", {}).get("name", "Jimmy")
+    return {
+        "statusCode": 200,
+        "body": f"Hello, {name}! Welcome to Genezio Functions!",
+    }
+
+
 # Create app
 class MainApplication:
     def __init__(self):
@@ -213,4 +223,4 @@ def toggle_modal(open_clicks, close_clicks, is_open):
 
 
 if __name__ == '__main__':
-    Application.app.run(port=8080, dev_tools_ui=True, debug=True, host="127.0.0.1")
+    Application.app.run(debug=True, port=8050)
