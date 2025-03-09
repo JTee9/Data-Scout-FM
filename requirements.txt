@@ -1,5 +1,6 @@
 dash==2.18.2
 dash_bootstrap_components==1.7.1
+gunicorn
 importlib_metadata==8.6.1
 matplotlib==3.10.1
 numpy==2.2.3
