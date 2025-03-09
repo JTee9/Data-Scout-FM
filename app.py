@@ -132,6 +132,7 @@ class MainApplication:
 
 
 Application = MainApplication()
+app = Application.app.server
 Application.set_layout()
 
 # app = Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.SPACELAB], title='Data Scout FM')
@@ -211,6 +212,5 @@ def toggle_modal(open_clicks, close_clicks, is_open):
     return is_open
 
 
-## Website details
-# Allow users to upload their fm files to analyze their data with tables and charts
-# Have users register so that they can continue to access their files
+if __name__ == '__main__':
+    Application.app.run(port=8080, dev_tools_ui=True, debug=True, host="127.0.0.1")
