@@ -2,7 +2,6 @@
 # 1. Create beautiful cover page? Have users import FM filters and upload the required html files.
 # 2. Make the site beautiful with Bootstrap
 
-import os
 import dash
 from dash import Dash, html, dcc, Output, Input, State, ctx
 import dash_bootstrap_components as dbc
@@ -16,32 +15,11 @@ from warnings import simplefilter
 simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
 
 
-# Genezio handler function
-def handler(event):
-    print("Function was called")
-    name = event.get("queryStringParameters", {}).get("name", "Jimmy")
-    return {
-        "statusCode": 200,
-        "body": f"Hello, {name}! Welcome to Genezio Functions!",
-    }
-
-
 # Create app
-class MainApplication:
-    def __init__(self):
-        self.__app = Dash(
-            __name__,
-            update_title="Loading...",
-            use_pages=True,
-            external_stylesheets=[dbc.themes.SPACELAB]
-        )
+app = Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.SPACELAB], title='Data Scout FM')
+server = app.server
 
-    @property
-    def app(self):
-        return self.__app
-
-    def set_layout(self):
-        self.app.layout = dbc.Container([
+app.layout = dbc.Container([
     # Left Side
     html.Div(
         id='main-content', children=
@@ -87,52 +65,50 @@ class MainApplication:
                           is_open=False,
                       ),]),
         ],
-        style={
-            'vertical-alignment': 'top',
-            'height': 260
-        }),
-        # Item 2
-        html.Div([
-            dbc.Button('Download FM Custom Views', id='download-button', n_clicks=0),
-            dcc.Download(id='download-custom-views')]),
-        # Item 3
-        html.Div([html.H2('Analyze Stats or Attributes?'),
-            # Create Two Buttons to toggle between Stats and Attributes pages
-            html.Div([
-                dcc.Link(dbc.Button('Stats', id='stats-button', n_clicks=0), href='/stats'),
-                dcc.Link(dbc.Button('Attributes', id='attributes-button', n_clicks=0), href='/attributes')
-            ],
             style={
-                'margin-left': 15,
-                'margin-right': 15,
-                'display': 'flex'
-            })]
-        ),
-        # Item 4
-        html.Div([
-            html.H2('Upload Files from FM'),
-            dcc.Upload(
-                id='upload-data',
-                children=html.Div(['Drag and Drop or ', html.A('Select Files')]),
-                style={
-                    'width': '100%',
-                    'height': '60px',
-                    'lineHeight': '60px',
-                    'borderWidth': '1px',
-                    'borderStyle': 'dashed',
-                    'borderRadius': '5px',
-                    'textAlign': 'center',
-                    'margin': '10px'
-                },
-                multiple=True
-            ),
-            html.Div(id='uploaded-files', children=html.H2('No files uploaded'),
-                     style={
-                         'width': '50%',
-                     }),
-            dcc.Store(id='stored-uploads', data={})
-        ])
-    ]),
+                'vertical-alignment': 'top',
+                'height': 260
+            }),
+            html.Div([
+                dbc.Button('Download FM Custom Views', id='download-button', n_clicks=0),
+                dcc.Download(id='download-custom-views')]),
+            html.Div([
+                html.H2('Analyze Stats or Attributes?'),
+                # Create Two Buttons to toggle between Stats and Attributes pages
+                html.Div([
+                    dcc.Link(dbc.Button('Stats', id='stats-button', n_clicks=0), href='/stats'),
+                    dcc.Link(dbc.Button('Attributes', id='attributes-button', n_clicks=0), href='/attributes')
+                ],
+                    style={
+                        'margin-left': 15,
+                        'margin-right': 15,
+                        'display': 'flex'
+                    })]
+                ),
+            html.Div([
+                html.H2('Upload Files from FM'),
+                dcc.Upload(
+                    id='upload-data',
+                    children=html.Div(['Drag and Drop or ', html.A('Select Files')]),
+                    style={
+                        'width': '100%',
+                        'height': '60px',
+                        'lineHeight': '60px',
+                        'borderWidth': '1px',
+                        'borderStyle': 'dashed',
+                        'borderRadius': '5px',
+                        'textAlign': 'center',
+                        'margin': '10px'
+                    },
+                    multiple=True
+                ),
+                html.Div(id='uploaded-files', children=html.H2('No files uploaded'),
+                         style={
+                             'width': '50%',
+                         }),
+                dcc.Store(id='stored-uploads', data={})
+            ])
+        ]),
     # Right Side
     dash.page_container
 ],
@@ -141,15 +117,8 @@ class MainApplication:
     className='dashboard-container')
 
 
-Application = MainApplication()
-app = Application.app.server
-Application.set_layout()
-
-# app = Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.SPACELAB], title='Data Scout FM')
-
-
 # Callback ----------------------------
-@Application.app.callback(
+@app.callback(
     Output('uploaded-files', 'children'),
     Output('stored-uploads', 'data'),
     Input('upload-data', 'contents'),
@@ -190,7 +159,7 @@ def update_output(list_of_contents, list_of_names):
 
 
 # Download Callback
-@Application.app.callback(
+@app.callback(
     Output('download-custom-views', 'data'),
     Input('download-button', "n_clicks"),
     prevent_initial_call=True,
@@ -202,7 +171,7 @@ def download_custom_views(n_clicks):
 
 
 # Instruction modal callback
-@Application.app.callback(
+@app.callback(
     Output("instructions-modal", "is_open"),
     [Input("open-instructions-modal-button", "n_clicks"),
      Input("close-instructions-modal-button", "n_clicks")],
@@ -223,4 +192,4 @@ def toggle_modal(open_clicks, close_clicks, is_open):
 
 
 if __name__ == '__main__':
-    Application.app.run(debug=True, port=8050)
+    app.run(debug=True, port=8050)
