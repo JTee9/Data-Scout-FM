@@ -24,7 +24,6 @@ docopt==0.6.2
 executing==2.2.0
 fastjsonschema==2.21.1
 Flask==3.0.0
-Flask-SQLAlchemy==3.1.1
 fonttools==4.55.8
 greenlet==3.1.1
 gunicorn==23.0.0
@@ -74,7 +73,6 @@ PySocks==1.7.1
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 pytz==2024.1
-pywin32==308
 pyzmq==26.2.1
 referencing==0.36.2
 requests==2.32.3
