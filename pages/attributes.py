@@ -3,7 +3,7 @@
 # 2. Do something with 'Personality'?
 
 import dash
-from dash import Dash, html, dcc, Input, Output, callback, ctx
+from dash import html, dcc, callback, ctx
 from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc

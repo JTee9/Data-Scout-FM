@@ -3,7 +3,7 @@ backend:
         - entry: app.py
           handler: handler
           name: serverless
-          path: .
+          path: https://github.com/JTee9/Data-Scout-FM/blob/3808c75c3cc5098b3c4e3d13e763bbfb34717fc9/app.py
           type: aws
     language:
         name: python

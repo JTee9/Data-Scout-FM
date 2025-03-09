@@ -4,7 +4,7 @@
 import base64
 from io import BytesIO
 import dash
-from dash import Dash, html, dcc, Input, Output, callback, Patch, ctx
+from dash import html, dcc, callback, ctx
 from dash.dependencies import Input, Output, State, ALL, MATCH
 import dash_bootstrap_components as dbc
 import pandas as pd
