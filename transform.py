@@ -444,7 +444,10 @@ def build_stats_dataframe(squad_stats_file, scouting_stats_file):
     stats_df = stats_df.drop(columns=['Inf', 'Rec'])
 
     # Clean stats_df values
-    for column in ['Transfer Value', 'Wage', 'Salary', 'Distance']:
+    if 'Salary' in stats_df.columns:
+        stats_df = stats_df.rename(columns={'Salary': 'Wage'})
+    
+    for column in ['Transfer Value', 'Wage', 'Distance']:
         stats_df[column] = stats_df[column].str.replace('€', '')
         stats_df[column] = stats_df[column].str.replace('p/a', '')
         stats_df[column] = stats_df[column].str.replace(',', '')
