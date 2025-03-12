@@ -1,5 +1,6 @@
 # Todo ------------------
-# 1. Radar chart for stats comparison? (Allow users to select metrics for the radar or have preset positional radar?)
+# 1. Long names overlap on the radar chart.
+# 2. Fix empty fig objects to make the default page look better.
 
 import base64
 from io import BytesIO
@@ -21,15 +22,15 @@ dash.register_page(__name__, path='/stats', title='Scout FM Stats')
 
 
 preset_radar_values = {
-    'Goalkeeper': ['total_apps', 'Av Rat', 'xSv %', 'xGP/90', 'Pens Saved Ratio', 'PoM', 'Saves/90', 'Clr/90', 'Pas %', 'Ps C/90', 'Sv %', 'Svh', 'Svp', 'Svt', 'Cln/90', 'Con/90'],
-    'Central Defender': ['total_apps', 'Av Rat', 'Tck/90', 'Tck R', 'Shts Blckd/90', 'Pr passes/90', 'Poss Won/90', 'Ps C/90', 'Pas %', 'Int/90', 'Hdrs W/90', 'Hdr %', 'Clr/90', 'Blk/90', 'Yel'],
-    'Full-back': ['total_apps', 'Av Rat', 'Tck/90', 'Tck R', 'Poss Won/90', 'Poss Lost/90', 'Ps C/90', 'Pas %', 'Int/90', 'Distance', 'Cr C/90', 'Cr C/A', 'Fls', 'Yel'],
-    'Wing-Back': ['total_apps', 'Av Rat', 'Tck/90', 'Tck R', 'Poss Won/90', 'Poss Lost/90', 'Pas %', 'Int/90', 'Distance', 'Cr C/90', 'Cr C/A', 'OP-Crs C/90', 'Ch C/90', 'Asts/90', 'Drb/90', 'Sprints/90'],
-    'Defensive Midfielder': ['total_apps', 'Av Rat', 'Tck/90', 'Tck R', 'Pr passes/90', 'Poss Won/90', 'Poss Lost/90', 'Ps C/90', 'Pas %', 'K Ps/90', 'Int/90', 'Pres C/90', 'Hdrs W/90', 'Hdr %',],
-    'Central Midfielder': ['total_apps', 'Av Rat', 'Tck/90', 'Int/90', 'Pr passes/90', 'Poss Won/90', 'Poss Lost/90', 'Pas %', 'K Ps/90', 'Distance', 'Ch C/90', 'Asts/90', 'Pres C/90', 'ShT/90'],
-    'Attacking Midfielder': ['total_apps', 'Av Rat', 'Pas %', 'Ch C/90', 'Asts/90', 'xA/90', 'Poss Lost/90', 'K Ps/90', 'OP-KP/90', 'Drb/90', 'xG/shot', 'Gls/90', 'xG/90'],
-    'Winger': ['total_apps', 'Av Rat', 'Poss Lost/90', 'Pres C/90', 'Drb/90', 'Sprints/90', 'FA', 'Ch C/90', 'OP-KP/90', 'Cr C/90', 'Cr C/A', 'OP-Crs C/90', 'xG/shot', 'Gls/90', 'xG/90'],
-    'Striker': ['total_apps', 'Av Rat', 'Pres C/90', 'Poss Won/90', 'Shot/90', 'Shot %', 'Sprints/90', 'Hdrs W/90', 'Hdr %', 'xG/shot', 'Conv %', 'Asts/90', 'NP-xG/90', 'Gls/90', 'xG/90'],
+    'Goalkeeper': ['Apps', 'Av Rat', 'xSv %', 'xGP/90', 'Pens Saved Ratio', 'PoM', 'Saves/90', 'Clr/90', 'Pas %', 'Ps C/90', 'Sv %', 'Svh', 'Svp', 'Svt', 'Cln/90', 'Con/90'],
+    'Central Defender': ['Apps', 'Av Rat', 'Tck/90', 'Tck R', 'Shts Blckd/90', 'Pr passes/90', 'Poss Won/90', 'Ps C/90', 'Pas %', 'Int/90', 'Hdrs W/90', 'Hdr %', 'Clr/90', 'Blk/90', 'Yel'],
+    'Full-back': ['Apps', 'Av Rat', 'Tck/90', 'Tck R', 'Poss Won/90', 'Poss Lost/90', 'Ps C/90', 'Pas %', 'Int/90', 'Distance', 'Cr C/90', 'Cr C/A', 'Fls', 'Yel'],
+    'Wing-Back': ['Apps', 'Av Rat', 'Tck/90', 'Tck R', 'Poss Won/90', 'Poss Lost/90', 'Pas %', 'Int/90', 'Distance', 'Cr C/90', 'Cr C/A', 'OP-Crs C/90', 'Ch C/90', 'Asts/90', 'Drb/90', 'Sprints/90'],
+    'Defensive Midfielder': ['Apps', 'Av Rat', 'Tck/90', 'Tck R', 'Pr passes/90', 'Poss Won/90', 'Poss Lost/90', 'Ps C/90', 'Pas %', 'K Ps/90', 'Int/90', 'Pres C/90', 'Hdrs W/90', 'Hdr %',],
+    'Central Midfielder': ['Apps', 'Av Rat', 'Tck/90', 'Int/90', 'Pr passes/90', 'Poss Won/90', 'Poss Lost/90', 'Pas %', 'K Ps/90', 'Distance', 'Ch C/90', 'Asts/90', 'Pres C/90', 'ShT/90'],
+    'Attacking Midfielder': ['Apps', 'Av Rat', 'Pas %', 'Ch C/90', 'Asts/90', 'xA/90', 'Poss Lost/90', 'K Ps/90', 'OP-KP/90', 'Drb/90', 'xG/shot', 'Gls/90', 'xG/90'],
+    'Winger': ['Apps', 'Av Rat', 'Poss Lost/90', 'Pres C/90', 'Drb/90', 'Sprints/90', 'FA', 'Ch C/90', 'OP-KP/90', 'Cr C/90', 'Cr C/A', 'OP-Crs C/90', 'xG/shot', 'Gls/90', 'xG/90'],
+    'Striker': ['Apps', 'Av Rat', 'Pres C/90', 'Poss Won/90', 'Shot/90', 'Shot %', 'Sprints/90', 'Hdrs W/90', 'Hdr %', 'xG/shot', 'Conv %', 'Asts/90', 'NP-xG/90', 'Gls/90', 'xG/90'],
     'Custom': []
 }
 
@@ -77,8 +78,8 @@ position_filters = {
 
 layout = html.Div([
     # Top Half
-    html.Div([
-            html.Div(html.H2('Click "Filter Data" to start filtering stats data')),
+    html.Div(style={'text-align': 'center', 'margin-bottom': '30px'}, children=[
+            html.Div(html.Label('Click "Filter Data" to start filtering stats data')),
             # Player Search Modal
             html.Div([dbc.Button('Filter Data', id='open-modal-button', n_clicks=0),
                       dbc.Modal(
@@ -126,9 +127,9 @@ layout = html.Div([
 
                       # Dropdown for Graph or Table selection
             html.Div([
-                dbc.Button("Graph", id="stats-graph-button", n_clicks=0),
-                dbc.Button("Table", id="stats-table-button", n_clicks=0),
-                dbc.Button("Radar", id="stats-radar-button", n_clicks=0),
+                dbc.Button("Graph", id="stats-graph-button", n_clicks=0, style={'margin': '5px'}),
+                dbc.Button("Table", id="stats-table-button", n_clicks=0, style={'margin': '5px'}),
+                dbc.Button("Radar", id="stats-radar-button", n_clicks=0, style={'margin': '5px'}),
             ]),
 ]),
     # Bottom Half
@@ -137,7 +138,7 @@ layout = html.Div([
         # Dataframe stored and updated based on filters
         dcc.Store(id='stored_df'),
         html.Div(id='graph-dropdown-container', children=[
-            dcc.Graph(id='scatterplot-graph', style={'width': '100%', 'height': '90%'}),
+            dbc.Collapse(id='scatter-object-collapse', is_open=False, children=dcc.Graph(id='scatterplot-graph', style={'width': '100%', 'height': '90%'})),
             html.Div(id='graph-dropdowns', children=[
                 html.Label('Select X Axis:'),
                 dcc.Dropdown(
@@ -156,7 +157,7 @@ layout = html.Div([
         ], style={'width': '100%', 'height': '100%', 'display': 'none'}), # Initially hidden
 
         html.Div(id='stats-table-container', style={'width': '100%', 'height': '100%', 'display': 'none'}, children=[
-                html.H2('Select Columns to Include in Table'),
+                html.Label('Select Columns to Include in Table'),
                 dcc.Dropdown(
                     id='stats-table-dropdown',
                     options=[],
@@ -168,39 +169,38 @@ layout = html.Div([
                         'width': '80%'
                     }
                 ),
-                dcc.Graph(id='stats-data-table', style={'width': '100%', 'height': '90%'})
+                dbc.Collapse(id='table-object-collapse', is_open=False, children=dcc.Graph(id='stats-data-table', style={'width': '100%', 'height': '90%'}))
             ]),
 
         html.Div(id='stats-radar-container', style={'width': '100%', 'height': '100%', 'display': 'none'}, children=[
                 html.Div(id='stats-radar-dropdowns', children=[
-                    html.H2('Select First Player for Radar Comparison Chart'),
-                    dcc.Dropdown(
-                        id='player-dropdown',
-                        options=[],
-                        value='',
-                        clearable=False,
-                        optionHeight=40,
-                        style={
-                            'width': '100%'
-                        }
-                    ),
-                    html.H2('Select Second Player for Radar Comparison Chart'),
-                    dcc.Dropdown(
-                        id='player-dropdown1',
-                        options=[],
-                        value='',
-                        clearable=False,
-                        optionHeight=40,
-                        style={
-                            'width': '100%'
-                        }
-                    )],
-                    style={
-                        'width': '100%',
-                        'display': 'flex'
-                    }),
-                html.Img(id='radar-chart-matplotlib', style={'width': '80%', 'height': '60%'}),
-                html.H2('Select Radar Chart Metrics'),
+                    html.Div(children=[
+                        html.Label('Select First Player for Radar Comparison Chart'),
+                        dcc.Dropdown(
+                            id='player-dropdown',
+                            options=[],
+                            value='',
+                            clearable=False,
+                            optionHeight=40,
+                            style={
+                                'width': '100%'
+                            }
+                        )]),
+                    html.Div(children=[
+                        html.Label('Select Second Player for Radar Comparison Chart'),
+                        dcc.Dropdown(
+                            id='player-dropdown1',
+                            options=[],
+                            value='',
+                            clearable=False,
+                            optionHeight=40,
+                            style={
+                                'width': '100%'
+                            }
+                        )])
+                ], style={'width': '100%', 'display': 'flex', 'justify-content': 'space-around'}),
+                dbc.Collapse(id='radar-object-collapse', is_open=False, children=html.Img(id='stats-radar-chart', style={'width': '80%', 'height': '60%'})),
+                html.Label('Select Radar Chart Metrics'),
                 dcc.Dropdown(
                     id='radar-preset-values-dropdown',
                     options=[{'label': key, 'value': key} for key in preset_radar_values.keys()],
@@ -211,19 +211,20 @@ layout = html.Div([
                         'width': '80%'
                     }
                 ),
-                html.H2('Select Metrics to Include in Custom Radar Chart'),
-                dcc.Dropdown(
-                    id='custom-radar-values-dropdown',
-                    options=[],
-                    value=[],
-                    multi=True,
-                    clearable=True,
-                    optionHeight=40,
-                    style={
-                        'width': '80%',
-                        'display': 'none'
-                    }
-                )
+                html.Div(id='custom-radar-div', children=[
+                    html.Label('Select Metrics to Include in Custom Radar Chart'),
+                    dcc.Dropdown(
+                        id='custom-radar-values-dropdown',
+                        options=[],
+                        value=[],
+                        multi=True,
+                        clearable=True,
+                        optionHeight=40,
+                        style={'width': '80%'}
+                    )],
+                         style={
+                            'display': 'none'
+                         })
             ])
         ])
 ])
@@ -262,7 +263,7 @@ def update_graph_dropdowns(uploaded_dataframes):
 def update_table_dropdowns(uploaded_dataframes):
     stats_df = pd.read_json(uploaded_dataframes['stats'], orient='split')
 
-    return (html.H2('Select Columns to Include in Table'),
+    return (html.Label('Select Columns to Include in Table'),
             dcc.Dropdown(
                 id='stats-table-dropdown',
                 options=[{'label': col, 'value': col} for col in stats_df.columns[:-14]],
@@ -284,19 +285,21 @@ def update_table_dropdowns(uploaded_dataframes):
 def update_radar_dropdowns(uploaded_dataframes):
     stats_df = pd.read_json(uploaded_dataframes['stats'], orient='split')
 
-    return (html.H2('Select First Player for Radar Comparison Chart'),
-            dcc.Dropdown(
-                id='player-dropdown',
-                options=[{'label': f'{name} - {position} - {club}', 'value': name}
-                         for name, position, club in zip(stats_df.Name, stats_df.Position, stats_df.Club)],
-                value='',
-                clearable=False,
-                optionHeight=40,
-                style={
-                    'width': '100%'
-                }
-            ),
-            html.H2('Select Second Player for Radar Comparison Chart'),
+    return (html.Div([
+        html.Label('Select First Player for Radar Comparison Chart'),
+        dcc.Dropdown(
+            id='player-dropdown',
+            options=[{'label': f'{name} - {position} - {club}', 'value': name}
+                     for name, position, club in zip(stats_df.Name, stats_df.Position, stats_df.Club)],
+            value='',
+            clearable=False,
+            optionHeight=40,
+            style={
+                'width': '100%'
+            }
+        )]),
+        html.Div([
+            html.Label('Select Second Player for Radar Comparison Chart'),
             dcc.Dropdown(
                 id='player-dropdown1',
                 options=[{'label': f'{name} - {position} - {club}', 'value': name}
@@ -307,9 +310,8 @@ def update_radar_dropdowns(uploaded_dataframes):
                 style={
                     'width': '100%'
                 }
+            )])
             )
-            )
-
 
 # Pulling datasets from stored_uploads for custom radar dropdown
 @callback(Output('custom-radar-values-dropdown', 'options'),
@@ -445,7 +447,7 @@ def update_filter_input_container(uploaded_dataframes, selected_column):
         ]
 
     # Numeric columns (can use >, <, =, !=)
-    elif selected_column in ['Age', 'total_apps', 'Wage', 'Transfer Value']:
+    elif selected_column in ['Age', 'Apps', 'Wage', 'Transfer Value']:
         return [
             html.Div([
                 html.Label('Condition'),
@@ -694,7 +696,7 @@ def toggle_containers(table_clicks, graph_clicks, radar_clicks):
     [
         Output('scatterplot-graph', 'figure'),
         Output('stats-data-table', 'figure'),
-        Output('radar-chart-matplotlib', 'src'),
+        Output('stats-radar-chart', 'src'),
         Output('player-dropdown', 'options'),
         Output('player-dropdown1', 'options')
     ],
@@ -716,8 +718,6 @@ def toggle_containers(table_clicks, graph_clicks, radar_clicks):
 )
 def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_clicks, selected_x, selected_y, selected_col,
                          selected_player, selected_player1, selected_radar_preset, selected_metrics, stored_data):
-    print("update_visualization callback triggered")
-    print("ctx.triggered:", ctx.triggered)
 
     # Get dataframes
     stats_df = pd.read_json(uploaded_dataframes['stats'], orient='split')
@@ -1175,15 +1175,86 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
     return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options
 
 
+# Handle the collapsed scatter plot
 @callback(
-    Output('custom-radar-values-dropdown', 'style'),
+    Output('scatter-object-collapse', 'is_open'),
+    Input('scatterplot-graph', 'figure'),
+    State('scatter-object-collapse', 'is_open'),
+)
+def toggle_collapsed_stats_scatter(scatter_fig, scatter_is_open):
+    # Default empty figure
+    empty_fig = px.scatter(x=[0], y=[0])
+    empty_fig.update_layout(
+        title='No data available',
+        xaxis_title='X Axis',
+        yaxis_title='Y Axis'
+    )
+
+    if scatter_fig == empty_fig:
+        if scatter_is_open == True:
+            return not scatter_is_open
+        else:
+            return scatter_is_open
+    else:
+        if scatter_is_open == True:
+            return scatter_is_open
+        else:
+            return not scatter_is_open
+
+
+# Handle the collapsed table
+@callback(
+    Output('table-object-collapse', 'is_open'),
+    Input('stats-data-table', 'figure'),
+    State('table-object-collapse', 'is_open')
+)
+def toggle_collapsed_stats_scatter(table_fig, table_is_open):
+    # Default empty figure
+    empty_table = {}
+
+    if table_fig == empty_table:
+        if table_is_open == True:
+            return not table_is_open
+        else:
+            return table_is_open
+    else:
+        if table_is_open == True:
+            return table_is_open
+        else:
+            return not table_is_open
+
+
+# Handle the collapsed scatter plot
+@callback(
+    Output('radar-object-collapse', 'is_open'),
+    Input('stats-radar-chart', 'src'),
+    State('radar-object-collapse', 'is_open')
+)
+def toggle_collapsed_stats_scatter(radar_fig, radar_is_open):
+    # Default empty figure
+    empty_radar = ''
+
+    if radar_fig == empty_radar:
+        if radar_is_open == True:
+            return not radar_is_open
+        else:
+            return radar_is_open
+    else:
+        if radar_is_open == True:
+            return radar_is_open
+        else:
+            return not radar_is_open
+
+
+@callback(
+    Output('custom-radar-div', 'style'),
     Input('radar-preset-values-dropdown', 'value')
 )
 def show_custom_radar_values_dropdown(radar_preset_dropdown):
     if radar_preset_dropdown == 'Custom':
-        return {'width': '80%', 'display': 'block'}
+        return {'display': 'block'}
     else:
-        return {'width': '80%', 'display': 'none'}
+        return {'display': 'none'}
 
 
 @callback(
