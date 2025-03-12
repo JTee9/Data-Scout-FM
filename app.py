@@ -23,11 +23,9 @@ app.layout = html.Div([
     # Left Side
     dbc.Container(
         id='main-content', children=[
-            html.Div(style={'text-align': 'center'}, children=[
+            html.Div(style={'text-align': 'center', 'margin-top': '30px'}, children=[
                 html.H1([
-                    html.Span('Welcome,'),
-                    html.Br(),
-                    html.Span('Noob')
+                    html.Span('Welcome, Noob'),
                 ]),
             ]),
             html.Div(style={'text-align': 'center', 'margin-top': '30px'}, children=[
@@ -36,13 +34,12 @@ app.layout = html.Div([
             html.Div(style={'text-align': 'center', 'margin-top': '50px'}, children=[
                 html.Label('Analyze Stats or Attributes?'),
                 # Create Two Buttons to toggle between Stats and Attributes pages
-                html.Div([
+                html.Div(children=[
                     dcc.Link(dbc.Button('Stats', id='stats-button', n_clicks=0), href='/stats'),
                     dcc.Link(dbc.Button('Attributes', id='attributes-button', n_clicks=0), href='/attributes')
                 ],
                     style={
-                        'margin-left': 15,
-                        'margin-right': 15,
+                        'margin-top': '10px',
                         'display': 'flex',
                         'justify-content': 'center'
                     })]

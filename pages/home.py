@@ -6,7 +6,7 @@ import dash_bootstrap_components as dbc
 dash.register_page(__name__, path='/', title='Data Scout FM')
 
 layout = html.Div([
-    dbc.Row([html.H1('View the Instructions to get started!', style={'text-align': 'center'})], justify='center'),
+    dbc.Row([html.H1('View the Instructions to get started!', style={'text-align': 'center', 'margin-top': '30px'})], justify='center'),
     dbc.Row([dbc.Button('View Instructions', id='open-instructions-modal-button', n_clicks=0, style={'width': 'auto'})], justify='center'),
               dbc.Modal(
                   [
