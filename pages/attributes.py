@@ -326,7 +326,6 @@ def update_radar_chart(uploaded_dataframes, selected_attribute_filter, selected_
 
     # Create Radar figure
     # Select a row based on dropdown player name selection
-    print(squad_attributes_df)
     shortlist_attributes_index = shortlist_attributes_df.index[shortlist_attributes_df['Name'] == selected_shortlist][0]
     squad_attributes_index = squad_attributes_df.index[squad_attributes_df['Name'] == selected_squad][0]
 

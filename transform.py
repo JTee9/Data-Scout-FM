@@ -236,6 +236,7 @@ def build_shortlist_attributes_dataframe(shortlist_attributes_file):
                    'Fin', 'Ecc', 'Dri', 'Det', 'Dec', 'Cro', 'Cor', 'Cnt', 'Cmp', 'Com', 'Cmd', 'Bra', 'Bal', 'Ant',
                    'Agi',
                    'Agg', 'Aer']:
+        shortlist_attributes_df[column] = shortlist_attributes_df[column].astype(str)
         shortlist_attributes_df.loc[shortlist_attributes_df[column].str.contains('-'), column] = ''
         shortlist_attributes_df[column] = pd.to_numeric(shortlist_attributes_df[column]).round()
 

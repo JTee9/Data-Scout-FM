@@ -22,7 +22,7 @@ server = app.server
 app.layout = html.Div([
     # Left Side
     dbc.Container(
-        id='main-content', children=[
+        id='main-content', className='left-container', children=[
             html.Div(style={'text-align': 'left', 'margin-top': '30px', 'margin-left': '10px'}, children=[
                 html.H2([
                     html.Span('Welcome, Noob'),
@@ -42,7 +42,7 @@ app.layout = html.Div([
                     style={
                         'margin-top': '10px',
                         'display': 'flex',
-                        'margin-left': '-5px'
+                        'margin-left': '-6px'
                     })]
                 ),
             html.Div(style={'text-align': 'left', 'font-size': '14px', 'margin-top': '50px', 'margin-left': '10px'}, children=[
@@ -78,7 +78,7 @@ app.layout = html.Div([
             # 'background-color': '#f9f9f9' #light background
         }),
     # Right Side
-    dbc.Container(dash.page_container, style={
+    dbc.Container(dash.page_container, className='right-container', style={
             'width': '80%',
             'flex': '0 0 80%',
             'border': '1px solid #ddd',  # Add a border
@@ -127,12 +127,13 @@ def update_output(list_of_contents, list_of_names):
                 player_search_stats_data = pd.read_html(io.StringIO(decoded.decode('utf-8')))
                 stats_dataframes.append(player_search_stats_data)
 
+
         data_list['stats'] = build_stats_dataframe(squad_stats_data, player_search_stats_data).to_json(date_format='iso', orient='split')
         children = f'{len(filename_list)}/4 files uploaded'
         return children, data_list
-    except Exception as e:
-        print(f"Error in callback: {e}")
-        return html.Div(['Error processing uploaded files.']), {}
+    except Exception as inner_e:
+        print(f"Error processing file '{filename}': {inner_e}")
+        return html.Div([f'Error processing file {filename}: {inner_e}']), {}
 
 
 # Download Callback
