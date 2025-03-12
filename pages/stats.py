@@ -78,10 +78,11 @@ position_filters = {
 
 layout = html.Div([
     # Top Half
-    html.Div(style={'text-align': 'center', 'margin-bottom': '30px'}, children=[
-            html.Div(html.Label('Click "Filter Data" to start filtering stats data')),
+    html.Div(style={'text-align': 'left', 'margin-bottom': '15px'}, children=[
+            html.Div(html.Label('Click "Filter Data" to start filtering your Stats data. Then toggle between Graph, Table, and Radar for your desired visualization.'),
+                     style={'text-align': 'center'}),
             # Player Search Modal
-            html.Div([dbc.Button('Filter Data', id='open-modal-button', n_clicks=0),
+            html.Div([dbc.Button('Filter Data', id='open-modal-button', n_clicks=0, style={'margin-left': '5px'}),
                       dbc.Modal(
                           [
                               dbc.ModalHeader('Player Search Filters'),
@@ -169,7 +170,7 @@ layout = html.Div([
                         'width': '80%'
                     }
                 ),
-                dbc.Collapse(id='table-object-collapse', is_open=False, children=dcc.Graph(id='stats-data-table', style={'width': '100%', 'height': '90%'}))
+                dbc.Collapse(id='table-object-collapse', is_open=False, children=dcc.Graph(id='stats-data-table', style={'width': '100%', 'height': '100%'}))
             ]),
 
         html.Div(id='stats-radar-container', style={'width': '100%', 'height': '100%', 'display': 'none'}, children=[
@@ -198,33 +199,36 @@ layout = html.Div([
                                 'width': '100%'
                             }
                         )])
-                ], style={'width': '100%', 'display': 'flex', 'justify-content': 'space-around'}),
-                dbc.Collapse(id='radar-object-collapse', is_open=False, children=html.Img(id='stats-radar-chart', style={'width': '80%', 'height': '60%'})),
-                html.Label('Select Radar Chart Metrics'),
-                dcc.Dropdown(
-                    id='radar-preset-values-dropdown',
-                    options=[{'label': key, 'value': key} for key in preset_radar_values.keys()],
-                    value=list(preset_radar_values)[0],
-                    clearable=False,
-                    optionHeight=40,
-                    style={
-                        'width': '80%'
-                    }
-                ),
-                html.Div(id='custom-radar-div', children=[
-                    html.Label('Select Metrics to Include in Custom Radar Chart'),
+                ], style={'width': '70%', 'display': 'flex', 'justify-content': 'space-between'}),
+
+                html.Div(children=[
+                    dbc.Collapse(id='radar-object-collapse', is_open=False, children=html.Img(id='stats-radar-chart', style={'width': '80%', 'height': '60%'})),
+                    html.Label('Select Radar Chart Metrics'),
                     dcc.Dropdown(
-                        id='custom-radar-values-dropdown',
-                        options=[],
-                        value=[],
-                        multi=True,
-                        clearable=True,
+                        id='radar-preset-values-dropdown',
+                        options=[{'label': key, 'value': key} for key in preset_radar_values.keys()],
+                        value=list(preset_radar_values)[0],
+                        clearable=False,
                         optionHeight=40,
-                        style={'width': '80%'}
-                    )],
-                         style={
-                            'display': 'none'
-                         })
+                        style={
+                            'width': '70%'
+                        }
+                    ),
+                    html.Div(id='custom-radar-div', children=[
+                        html.Label('Select Metrics to Include in Custom Radar Chart'),
+                        dcc.Dropdown(
+                            id='custom-radar-values-dropdown',
+                            options=[],
+                            value=[],
+                            multi=True,
+                            clearable=True,
+                            optionHeight=40,
+                            style={'width': '80%'}
+                        )],
+                             style={
+                                'display': 'none',
+                             })
+                    ], style={'display': 'block', 'justify-content': 'space-around'})
             ])
         ])
 ])

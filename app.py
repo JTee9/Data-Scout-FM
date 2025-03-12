@@ -23,34 +23,35 @@ app.layout = html.Div([
     # Left Side
     dbc.Container(
         id='main-content', children=[
-            html.Div(style={'text-align': 'center', 'margin-top': '30px'}, children=[
-                html.H1([
+            html.Div(style={'text-align': 'left', 'margin-top': '30px', 'margin-left': '10px'}, children=[
+                html.H2([
                     html.Span('Welcome, Noob'),
                 ]),
             ]),
-            html.Div(style={'text-align': 'center', 'margin-top': '30px'}, children=[
-                dbc.Button('Download FM Custom Views', id='download-button', n_clicks=0),
+            html.Div(style={'text-align': 'left', 'margin-top': '30px', 'margin-left': '10px'}, children=[
+                html.Label('Download FM Custom Views'),
+                dbc.Button('Download', id='download-button', n_clicks=0, style={'margin-top': '10px'}),
                 dcc.Download(id='download-custom-views')]),
-            html.Div(style={'text-align': 'center', 'margin-top': '50px'}, children=[
-                html.Label('Analyze Stats or Attributes?'),
+            html.Div(style={'text-align': 'left', 'margin-top': '50px', 'margin-left': '10px'}, children=[
+                html.Label('Select data to analyze'),
                 # Create Two Buttons to toggle between Stats and Attributes pages
                 html.Div(children=[
-                    dcc.Link(dbc.Button('Stats', id='stats-button', n_clicks=0), href='/stats'),
-                    dcc.Link(dbc.Button('Attributes', id='attributes-button', n_clicks=0), href='/attributes')
+                    dcc.Link(dbc.Button('Stats', id='stats-button', n_clicks=0, style={'margin': '5px'}), href='/stats'),
+                    dcc.Link(dbc.Button('Attributes', id='attributes-button', n_clicks=0, style={'margin': '5px'}), href='/attributes')
                 ],
                     style={
                         'margin-top': '10px',
                         'display': 'flex',
-                        'justify-content': 'center'
+                        'margin-left': '-5px'
                     })]
                 ),
-            html.Div(style={'text-align': 'center', 'vertical-align': 'bottom', 'font-size': '14px', 'margin-top': '50px'}, children=[
+            html.Div(style={'text-align': 'left', 'font-size': '14px', 'margin-top': '50px', 'margin-left': '10px'}, children=[
                 html.Label('Upload Files from FM'),
                 dcc.Upload(
                     id='upload-data',
-                    children=html.Div(['Drag and Drop or ', html.A('Select Files')]),
+                    children=html.Div([html.A('Drag or Select Files')]),
                     style={
-                        'width': '70%',
+                        'width': '90%',
                         'height': '60px',
                         'lineHeight': '60px',
                         'borderWidth': '1px',
@@ -58,16 +59,17 @@ app.layout = html.Div([
                         'borderRadius': '5px',
                         'textAlign': 'center',
                         'margin': '10px',
-                        'margin-left': '45px'
+                        'margin-left': '-3px'
                     },
                     multiple=True
                 ),
                 html.Div(id='uploaded-files', children='No files uploaded'),
-                dcc.Store(id='stored-uploads', data={})
+                dcc.Store(id='stored-uploads', data={}),
+                html.Img(src='/assets/Img/angela-profile.jpg', style={'height': '80%', 'width': '80%', 'margin-top': '50px', 'border': '1px solid #ddd', 'border-radius': '10px'})
             ])
         ], style={
             'width': '20%',
-            'flex': '0 0 20%',
+            'flex': '0 0 14%',
             'border': '1px solid #ddd',  # Add a border
             'padding': '10px',  # Add some padding
             'margin': '30px',  # Add some margin
@@ -77,8 +79,8 @@ app.layout = html.Div([
         }),
     # Right Side
     dbc.Container(dash.page_container, style={
-            'width': '70%',
-            'flex': '0 0 70%',
+            'width': '80%',
+            'flex': '0 0 80%',
             'border': '1px solid #ddd',  # Add a border
             'padding': '10px',  # Add some padding
             'margin': '30px',  # Add some margin
