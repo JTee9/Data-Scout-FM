@@ -542,6 +542,9 @@ def build_stats_dataframe(squad_stats_file, scouting_stats_file):
     # Create position tag columns -------------------------------
     # Function to check and tag positions correctly
     def check_position_tags(position, position_filter):
+        if not isinstance(position, str):
+            return False  # Return False for non-string values
+        
         # Split the position string by commas and strip any leading/trailing whitespace
         position_parts = [p.strip() for p in position.split(',')]
 
