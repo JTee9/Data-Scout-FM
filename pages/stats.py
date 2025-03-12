@@ -261,6 +261,7 @@ def update_graph_dropdowns(uploaded_dataframes):
     Input('stored-uploads', 'data')
 )
 def update_table_dropdowns(uploaded_dataframes):
+    print(uploaded_dataframes.keys())
     stats_df = pd.read_json(uploaded_dataframes['stats'], orient='split')
 
     return (html.Label('Select Columns to Include in Table'),
