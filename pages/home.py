@@ -7,7 +7,8 @@ dash.register_page(__name__, path='/', title='Data Scout FM')
 
 layout = html.Div([
     dbc.Row([html.H1('View the Instructions to get started!', style={'text-align': 'center', 'margin-top': '30px'})], justify='center'),
-    dbc.Row([dbc.Button('View Instructions', id='open-instructions-modal-button', n_clicks=0, style={'width': 'auto'})], justify='center'),
+    dbc.Row([
+        dbc.Button('View Instructions', id='open-instructions-modal-button', n_clicks=0, className='container-button', style={'width': 'auto'})], justify='center'),
               dbc.Modal(
                   [
                       dbc.ModalHeader('Instructions'),
@@ -35,7 +36,7 @@ layout = html.Div([
                           ]
                       ),
                       dbc.ModalFooter(
-                          dbc.Button('Close', id='close-instructions-modal-button', className='ml-auto', n_clicks=0)
+                          dbc.Button('Close', id='close-instructions-modal-button', className='close-instructions-button', n_clicks=0)
                       ),
                   ],
                   id='instructions-modal',

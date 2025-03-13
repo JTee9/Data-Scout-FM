@@ -10,6 +10,7 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
+import io
 
 
 # Register Page
@@ -80,7 +81,7 @@ layout = html.Div([
             # Top Half
             # Dropdown Menu to select between Squad Attributes and Shortlist Attributes
             html.Div(id='dataset-selection-div', children=[
-                html.H2('Analyze Squad or Shortlisted Players?'),
+                html.P('Analyze Squad or Shortlisted Players?'),
                       dcc.Dropdown(
                           id='dataset-dropdown',
                           options=[],
@@ -91,11 +92,11 @@ layout = html.Div([
                       ]),
             # Buttons to select Graph or Table
             html.Div([
-                    dbc.Button('Table', id='table-button', n_clicks=0),
-                    dbc.Button('Radar', id='radar-button', n_clicks=0)
+                    dbc.Button('Table', id='table-button', n_clicks=0, className='container-button', style={'margin': '5px'}),
+                    dbc.Button('Radar', id='radar-button', n_clicks=0, className='container-button', style={'margin': '5px'})
                 ]),
             # Dropdown Menu to filter visible attributes in the Table
-            html.Div([html.H2('Attributes'),
+            html.Div([html.P('Attributes'),
                       dcc.Dropdown(
                           id='attribute-dropdown',
                           options=[{'label': key, 'value': key} for key in attribute_filters.keys()],
@@ -111,7 +112,7 @@ layout = html.Div([
         html.Div(id='output-container', style={'width': '100%', 'height': '600px'}, children=[
             # Table
             dbc.Collapse(id='table-container', is_open=False, style={'width': '100%', 'height': '100%'}, children=[
-                html.H2('Filter by Position'),
+                html.P('Filter by Position'),
                 dcc.Dropdown(
                     id='position-dropdown',
                     options=[{'label': key, 'value': key} for key in position_filters.keys()],
@@ -127,7 +128,7 @@ layout = html.Div([
             # Radar
             dbc.Collapse(id='radar-container', is_open=False, style={'width': '100%', 'height': '100%'}, children=[
                 html.Div(id='radar-dropdowns', children=[
-                    html.H2('Select Player from Shortlist'),
+                    html.P('Select Player from Shortlist'),
                     dcc.Dropdown(
                         id='shortlist-dropdown',
                         options=[],
@@ -138,7 +139,7 @@ layout = html.Div([
                             'width': '80%'
                         }
                     ),
-                    html.H2('Select Position Average or Player from Squad'),
+                    html.P('Select Position Average or Player from Squad'),
                     dcc.Dropdown(
                         id='squad-dropdown',
                         options=[],
@@ -174,7 +175,7 @@ def pull_uploaded_attributes_dataframes(uploaded_dataframes):
         'Squad Attributes': squad_attributes_df,
         'Shortlist Attributes': shortlist_attributes_df,
     }
-    return (html.H2('Analyze Squad or Shortlisted Players?'),
+    return (html.P('Analyze Squad or Shortlisted Players?'),
             dcc.Dropdown(
                 id='dataset-dropdown',
                 options=[{'label': key, 'value': key} for key in att_datasets.keys()],
@@ -193,7 +194,7 @@ def update_radar_dropdowns(uploaded_dataframes):
     squad_attributes_df = pd.read_json(uploaded_dataframes['squad_attributes'], orient='split')
     shortlist_attributes_df = pd.read_json(uploaded_dataframes['shortlist_attributes'], orient='split')
 
-    return (html.H2('Select Player from Shortlist'),
+    return (html.P('Select Player from Shortlist'),
             dcc.Dropdown(
                 id='shortlist-dropdown',
                 options=[{'label': f'{name} - {position}', 'value': name}
@@ -205,10 +206,11 @@ def update_radar_dropdowns(uploaded_dataframes):
                     'width': '80%'
                 }
             ),
-            html.H2('Select Position Average or Player from Squad'),
+            html.P('Select Position Average or Player from Squad'),
             dcc.Dropdown(
                 id='squad-dropdown',
-                options=[{'label': name, 'value': name} for name in squad_attributes_df.Name],
+                options=[{'label': f'{name} - {position}', 'value': name}
+                         for name, position in zip(squad_attributes_df.Name, squad_attributes_df.Position)],
                 value=squad_attributes_df.iloc[0]['Name'],
                 clearable=False,
                 optionHeight=40,

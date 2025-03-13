@@ -1,5 +1,4 @@
 # Todo ----------------
-# 1. Clean up dataframes: drop unnecessary stats columns (from fm filter view), consider intuitive order of stats columns,
 # 2. MAKE APP COMPATIBLE WITH ANY LANGUAGE (fix order of columns, address them by column # rather than column name, display in the user's language on the app)
 # 3. Fix position scores, *Add Role Scores for attributes & stats (should be a more accurate representation than star ratings in game)
 

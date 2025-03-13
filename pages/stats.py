@@ -79,10 +79,10 @@ position_filters = {
 layout = html.Div([
     # Top Half
     html.Div(style={'text-align': 'left', 'margin-bottom': '15px'}, children=[
-            html.Div(html.Label('Click "Filter Data" to start filtering your Stats data. Then toggle between Graph, Table, and Radar for your desired visualization.'),
+            html.Div(html.P('Click "Filter Data" to start filtering your Stats data. Then toggle between Graph, Table, and Radar for your desired visualization.'),
                      style={'text-align': 'center'}),
             # Player Search Modal
-            html.Div([dbc.Button('Filter Data', id='open-modal-button', n_clicks=0, style={'margin-left': '5px'}),
+            html.Div([dbc.Button('Filter Data', id='open-modal-button', n_clicks=0, className='container-button', style={'margin-left': '5px', 'margin-bottom': '5px'}),
                       dbc.Modal(
                           [
                               dbc.ModalHeader('Player Search Filters'),
@@ -102,17 +102,17 @@ layout = html.Div([
 
                                   # Button to add more filter conditions
                                   html.Br(),
-                                  html.Button("Add Condition", id="add-condition", n_clicks=0),
+                                  dbc.Button("Add Condition", id="add-condition", className='modal_conditions_button', n_clicks=0),
                                   html.Br(),
                                   html.Br(),
 
                                   # Button to apply filters
-                                  dbc.Button('Apply Filter', id='apply-filter-button', n_clicks=0),
+                                  dbc.Button('Apply Filter', id='apply-filter-button', className='modal_conditions_button', n_clicks=0),
                                   html.Br(),
                                   html.Br(),
 
                                   # Button to clear filters
-                                  dbc.Button('Clear Filter', id='clear-filter-button', n_clicks=0),
+                                  dbc.Button('Clear Filter', id='clear-filter-button', className='modal_conditions_button', n_clicks=0),
                                   html.Br(),
 
                                   # Confirmation message after applying filters
@@ -123,14 +123,15 @@ layout = html.Div([
                               ),
                           ],
                           id='filter-modal',
+                          className='filter_modal',
                           is_open=False,
                       ),]),
 
                       # Dropdown for Graph or Table selection
             html.Div([
-                dbc.Button("Graph", id="stats-graph-button", n_clicks=0, style={'margin': '5px'}),
-                dbc.Button("Table", id="stats-table-button", n_clicks=0, style={'margin': '5px'}),
-                dbc.Button("Radar", id="stats-radar-button", n_clicks=0, style={'margin': '5px'}),
+                dbc.Button("Graph", id="stats-graph-button", n_clicks=0, className='container-button', style={'margin': '5px'}),
+                dbc.Button("Table", id="stats-table-button", n_clicks=0, className='container-button', style={'margin': '5px'}),
+                dbc.Button("Radar", id="stats-radar-button", n_clicks=0, className='container-button', style={'margin': '5px'}),
             ]),
 ]),
     # Bottom Half
@@ -141,14 +142,14 @@ layout = html.Div([
         html.Div(id='graph-dropdown-container', children=[
             dbc.Collapse(id='scatter-object-collapse', is_open=False, children=dcc.Graph(id='scatterplot-graph', style={'width': '100%', 'height': '90%'})),
             html.Div(id='graph-dropdowns', children=[
-                html.Label('Select X Axis:'),
+                html.P('Select X Axis:'),
                 dcc.Dropdown(
                     id='x-axis-dropdown',
                     options=[],
                     value='',
                     clearable=False
                 ),
-                html.Label('Select Y Axis:'),
+                html.P('Select Y Axis:'),
                 dcc.Dropdown(
                     id='y-axis-dropdown',
                     options=[],
@@ -158,7 +159,7 @@ layout = html.Div([
         ], style={'width': '100%', 'height': '100%', 'display': 'none'}), # Initially hidden
 
         html.Div(id='stats-table-container', style={'width': '100%', 'height': '100%', 'display': 'none'}, children=[
-                html.Label('Select Columns to Include in Table'),
+                html.P('Select Columns to Include in Table'),
                 dcc.Dropdown(
                     id='stats-table-dropdown',
                     options=[],
@@ -176,7 +177,7 @@ layout = html.Div([
         html.Div(id='stats-radar-container', style={'width': '100%', 'height': '100%', 'display': 'none'}, children=[
                 html.Div(id='stats-radar-dropdowns', children=[
                     html.Div(children=[
-                        html.Label('Select First Player for Radar Comparison Chart'),
+                        html.P('Select First Player for Radar Comparison Chart'),
                         dcc.Dropdown(
                             id='player-dropdown',
                             options=[],
@@ -188,7 +189,7 @@ layout = html.Div([
                             }
                         )]),
                     html.Div(children=[
-                        html.Label('Select Second Player for Radar Comparison Chart'),
+                        html.P('Select Second Player for Radar Comparison Chart'),
                         dcc.Dropdown(
                             id='player-dropdown1',
                             options=[],
@@ -203,7 +204,7 @@ layout = html.Div([
 
                 html.Div(children=[
                     dbc.Collapse(id='radar-object-collapse', is_open=False, children=html.Img(id='stats-radar-chart', style={'width': '80%', 'height': '60%'})),
-                    html.Label('Select Radar Chart Metrics'),
+                    html.P('Select Radar Chart Metrics'),
                     dcc.Dropdown(
                         id='radar-preset-values-dropdown',
                         options=[{'label': key, 'value': key} for key in preset_radar_values.keys()],
@@ -215,7 +216,7 @@ layout = html.Div([
                         }
                     ),
                     html.Div(id='custom-radar-div', children=[
-                        html.Label('Select Metrics to Include in Custom Radar Chart'),
+                        html.P('Select Metrics to Include in Custom Radar Chart'),
                         dcc.Dropdown(
                             id='custom-radar-values-dropdown',
                             options=[],
@@ -243,14 +244,14 @@ layout = html.Div([
 def update_graph_dropdowns(uploaded_dataframes):
     stats_df = pd.read_json(uploaded_dataframes['stats'], orient='split')
 
-    return (html.Label('Select X Axis:'),
+    return (html.P('Select X Axis:'),
             dcc.Dropdown(
                 id='x-axis-dropdown',
                 options=[{'label': col, 'value': col} for col in stats_df.columns[:-14]],
                 value='Av Rat',
                 clearable=False
             ),
-            html.Label('Select Y Axis:'),
+            html.P('Select Y Axis:'),
             dcc.Dropdown(
                 id='y-axis-dropdown',
                 options=[{'label': col, 'value': col} for col in stats_df.columns[:-14]],
@@ -267,7 +268,7 @@ def update_graph_dropdowns(uploaded_dataframes):
 def update_table_dropdowns(uploaded_dataframes):
     stats_df = pd.read_json(uploaded_dataframes['stats'], orient='split')
 
-    return (html.Label('Select Columns to Include in Table'),
+    return (html.P('Select Columns to Include in Table'),
             dcc.Dropdown(
                 id='stats-table-dropdown',
                 options=[{'label': col, 'value': col} for col in stats_df.columns[:-14]],
@@ -290,7 +291,7 @@ def update_radar_dropdowns(uploaded_dataframes):
     stats_df = pd.read_json(uploaded_dataframes['stats'], orient='split')
 
     return (html.Div([
-        html.Label('Select First Player for Radar Comparison Chart'),
+        html.P('Select First Player for Radar Comparison Chart'),
         dcc.Dropdown(
             id='player-dropdown',
             options=[{'label': f'{name} - {position} - {club}', 'value': name}
@@ -303,7 +304,7 @@ def update_radar_dropdowns(uploaded_dataframes):
             }
         )]),
         html.Div([
-            html.Label('Select Second Player for Radar Comparison Chart'),
+            html.P('Select Second Player for Radar Comparison Chart'),
             dcc.Dropdown(
                 id='player-dropdown1',
                 options=[{'label': f'{name} - {position} - {club}', 'value': name}
@@ -328,10 +329,10 @@ def update_custom_radar_dropdown(uploaded_dataframes):
 
 # Combined callback for filter UI
 @callback(
-    Output("dropdown-container-div", "children"),
+    Output('dropdown-container-div', "children"),
     Input('stored-uploads', 'data'),
     Input('add-condition', 'n_clicks'),
-    State("dropdown-container-div", "children"),
+    State('dropdown-container-div', "children"),
     prevent_initial_call=False
 )
 def update_filter_ui(uploaded_dataframes, n_clicks, existing_children):

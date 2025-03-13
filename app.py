@@ -16,28 +16,35 @@ simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
 
 
 # Create app
-app = Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.VAPOR], title='Data Scout FM')
+app = Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.SUPERHERO], title='Data Scout FM')
 server = app.server
 
-app.layout = html.Div([
+app.layout = dbc.Container([
     # Left Side
-    dbc.Container(
+    html.Div(
         id='main-content', className='left-container', children=[
             html.Div(style={'text-align': 'left', 'margin-top': '30px', 'margin-left': '10px'}, children=[
                 html.H2([
-                    html.Span('Welcome, Noob'),
+                    html.Span('Welcome,'),
+                    html.Br(),
+                    html.Span('Noob')
                 ]),
             ]),
+
             html.Div(style={'text-align': 'left', 'margin-top': '30px', 'margin-left': '10px'}, children=[
-                html.Label('Download FM Custom Views'),
-                dbc.Button('Download', id='download-button', n_clicks=0, style={'margin-top': '10px'}),
-                dcc.Download(id='download-custom-views')]),
+                html.Label('FM Custom Views'),
+                html.Div([
+                    dbc.Button('Download', id='download-button', n_clicks=0, className='container-button', style={'margin-top': '10px', 'borderRadius': '10px'}),
+                    dcc.Download(id='download-custom-views')
+                ])
+            ]),
+
             html.Div(style={'text-align': 'left', 'margin-top': '50px', 'margin-left': '10px'}, children=[
                 html.Label('Select data to analyze'),
                 # Create Two Buttons to toggle between Stats and Attributes pages
                 html.Div(children=[
-                    dcc.Link(dbc.Button('Stats', id='stats-button', n_clicks=0, style={'margin': '5px'}), href='/stats'),
-                    dcc.Link(dbc.Button('Attributes', id='attributes-button', n_clicks=0, style={'margin': '5px'}), href='/attributes')
+                    dcc.Link(dbc.Button('Stats', id='stats-button', n_clicks=0, className='container-button', style={'margin': '5px'}), href='/stats'),
+                    dcc.Link(dbc.Button('Attributes', id='attributes-button', n_clicks=0, className='container-button', style={'margin': '5px'}), href='/attributes')
                 ],
                     style={
                         'margin-top': '10px',
@@ -45,14 +52,15 @@ app.layout = html.Div([
                         'margin-left': '-6px'
                     })]
                 ),
+
             html.Div(style={'text-align': 'left', 'font-size': '14px', 'margin-top': '50px', 'margin-left': '10px'}, children=[
                 html.Label('Upload Files from FM'),
                 dcc.Upload(
                     id='upload-data',
                     children=html.Div([html.A('Drag or Select Files')]),
                     style={
-                        'width': '90%',
-                        'height': '60px',
+                        # 'height': '60px',
+                        'width': '150px',
                         'lineHeight': '60px',
                         'borderWidth': '1px',
                         'borderStyle': 'dashed',
@@ -65,32 +73,33 @@ app.layout = html.Div([
                 ),
                 html.Div(id='uploaded-files', children='No files uploaded'),
                 dcc.Store(id='stored-uploads', data={}),
-                html.Img(src='/assets/Img/angela-profile.jpg', style={'height': '80%', 'width': '80%', 'margin-top': '50px', 'border': '1px solid #ddd', 'border-radius': '10px'})
+                html.Img(src='assets/Img/data-scout-fm-logo.png',
+                         style={
+                             'border-radius': '50%',
+                             'width': '80%',
+                             'margin-top': '50px'
+                         })
             ])
         ], style={
-            'width': '20%',
-            'flex': '0 0 14%',
-            'border': '1px solid #ddd',  # Add a border
+            'flex': '0 0 10%',
             'padding': '10px',  # Add some padding
             'margin': '30px',  # Add some margin
-            'border-radius': '10px', # rounded corners
+            # 'border-radius': '10px', # rounded corners
             'height': 'calc(100vh - 60px)'
-            # 'background-color': '#f9f9f9' #light background
         }),
     # Right Side
-    dbc.Container(dash.page_container, className='right-container', style={
-            'width': '80%',
+    html.Div(dash.page_container, className='right-container', style={
             'flex': '0 0 80%',
             'border': '1px solid #ddd',  # Add a border
             'padding': '10px',  # Add some padding
-            'margin': '30px',  # Add some margin
-            'border-radius': '10px', # rounded corners
-            'height': 'calc(100vh - 60px)'
-            # 'background-color': '#f9f9f9' #light background
+            'margin': '15px',  # Add some margin
+            'border-radius': '20px', # rounded corners
+            'height': 'calc(100vh - 30px)'
         })
 ],
     # Container split horizontally (flex)
     style={'display': 'flex'},
+    fluid=True,
     className='dashboard-container')
 
 

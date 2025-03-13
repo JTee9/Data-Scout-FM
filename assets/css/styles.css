@@ -1,26 +1,74 @@
-/*.dashboard-container {
-width:1400px;
-height:800px;
-margin-left: auto;
-margin-right: auto;
-margin-top: 50px;
-margin-bottom: 50px;
-background-color: #483d8b;
-border: 1px solid #cccccc;
-border-radius: 10px;
-}*/
-
-/*body {
-background-color: #ff7f0e;
-}*/
-
-/*h1 {
-font-family: 'Poppins';
-color: #ffffff;
-font-size: 35px;
-margin: 15px;
+.dashboard-container {
+background-color: #0f2537
+border-radius: 15px;
 }
 
+/*.left-container {
+background-color: #483d8b;
+}*/
+
+.right-container {
+background-color: white;
+}
+
+/*body {
+background-color: white;
+}*/
+
+/* input box */
+.Select-control {
+    background-color: #4e5d6c;
+}
+
+/* changes the text color of input box */
+.Select-value-label {
+    color: white !important;
+}
+
+.Select--single > .Select-control .Select-value, .Select-placeholder {
+    border: 1px white;
+    border-radius: 4px;
+}
+
+
+/* dropdown menu options */
+.VirtualizedSelectOption {
+    background-color: #4e5d6c;
+    color: white;
+ }
+
+
+/* dropdown menu hover effect */
+.VirtualizedSelectFocusedOption {
+    background-color: #4e5d6c;
+    opacity: .7;
+}
+
+
+/* border on focus - default is blue
+ * shadow box around input box.  default is blue
+ */
+.is-focused:not(.is-open) > .Select-control {
+  border-color: var(--primary);
+  box-shadow: none;
+}
+
+
+/* this colors the input box text and x  of multi dropdown*/
+.Select--multi .Select-value {
+  color: #4e5d6c;
+}
+
+
+
+
+
+
+h1 {
+color: #0f2537;
+}
+
+/*
 h2 {
 margin-bottom: 0px;
 margin-top: 10px;
@@ -35,17 +83,27 @@ h3 {
     padding-left: 7px;
     font-family: "Poppins";
     color: var(--bs-info);
-}
-
-p {
-font-family: 'Poppins';
-color: #ffffff;
-font-size: 16px;
-margin: 15px;
-text-align: justify;
 }*/
 
+p {
+color: #0f2537;
+}
+
 /* Radio-buttons */
+
+.modal_conditions_button {
+background-color: #df6919;
+border-radius: 5px;
+}
+
+.close-instructions-button {
+background-color: #df6919;
+border-radius: 5px;
+}
+
+.container-button {
+border-radius: 5px;
+}
 
 /*.form-check {
     width: 100%;
@@ -154,21 +212,6 @@ text-align: justify;
 }*/
 
 
-.modebar { display: none !important; }
-
-
-.Output {
-    width: 150px;
-    height: 38px;
-    background-color: rgba(204,204,204,0.1);
-    border: 1px solid rgba(204,204,204,0.1);
-    border-radius: 3px;
-}
-
-.Output:empty::before {
-  content:"";
-  display:inline-block;
-}
 
 .poppins-thin {
   font-family: "Poppins", serif;
