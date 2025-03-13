@@ -206,10 +206,10 @@ def update_radar_dropdowns(uploaded_dataframes):
                     'width': '80%'
                 }
             ),
-            html.P('Select Position Average or Player from Squad'),
+            html.P('Select Player or Position Average from Squad'),
             dcc.Dropdown(
                 id='squad-dropdown',
-                options=[{'label': f'{name} - {position}', 'value': name}
+                options=[{'label': name if pd.isna(position) else f'{name} - {position}', 'value': name}
                          for name, position in zip(squad_attributes_df.Name, squad_attributes_df.Position)],
                 value=squad_attributes_df.iloc[0]['Name'],
                 clearable=False,
