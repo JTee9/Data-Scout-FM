@@ -8,7 +8,7 @@ background-color: #483d8b;
 }*/
 
 .right-container {
-background-color: white;
+background-color: #e8e4d6;
 }
 
 /*body {
@@ -22,11 +22,11 @@ background-color: white;
 
 /* changes the text color of input box */
 .Select-value-label {
-    color: white !important;
+    color: #e8e4d6 !important;
 }
 
 .Select--single > .Select-control .Select-value, .Select-placeholder {
-    border: 1px white;
+    border: 1px #e8e4d6;
     border-radius: 4px;
 }
 
@@ -34,7 +34,7 @@ background-color: white;
 /* dropdown menu options */
 .VirtualizedSelectOption {
     background-color: #4e5d6c;
-    color: white;
+    color: #e8e4d6;
  }
 
 
@@ -56,7 +56,7 @@ background-color: white;
 
 /* this colors the input box text and x  of multi dropdown*/
 .Select--multi .Select-value {
-  color: #4e5d6c;
+  color: #e8e4d6;
 }
 
 
@@ -91,18 +91,44 @@ color: #0f2537;
 
 /* Radio-buttons */
 
+.home-button {
+background-color: transparent;
+border: 1px solid transparent;
+}
+
+.home-button:hover {
+background-color: transparent;
+border: 1px solid transparent;
+}
+
 .modal_conditions_button {
-background-color: #df6919;
+background-color: #e2777d;
 border-radius: 5px;
+color: #F9F5EC;
+}
+
+.modal_conditions_button:hover {
+background-color: #CD5B45;
 }
 
 .close-instructions-button {
-background-color: #df6919;
+background-color: #e2777d;
 border-radius: 5px;
+color: #F9F5EC;
+}
+
+.close-instructions-button:hover {
+background-color: #e25e86;
 }
 
 .container-button {
 border-radius: 5px;
+color: #F9F5EC;
+background-color: #e2777d;
+}
+
+.container-button:hover {
+background-color: #CD5B45;
 }
 
 /*.form-check {

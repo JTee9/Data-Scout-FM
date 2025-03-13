@@ -73,12 +73,15 @@ app.layout = dbc.Container([
                 ),
                 html.Div(id='uploaded-files', children='No files uploaded'),
                 dcc.Store(id='stored-uploads', data={}),
-                html.Img(src='assets/Img/data-scout-fm-logo.png',
-                         style={
-                             'border-radius': '50%',
-                             'width': '80%',
-                             'margin-top': '50px'
-                         })
+                dbc.Button(id='home-button', className='home-button', href='/', children=[
+                    html.Img(
+                        src='assets/Img/data-scout-fm-logo.png',
+                        style={
+                            'border-radius': '50%',
+                            'width': '90%',
+                            'margin-left': '-10px'
+                        })
+                ], style={'margin-top': '50px', 'text-align': 'left'})
             ])
         ], style={
             'flex': '0 0 10%',

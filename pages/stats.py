@@ -15,6 +15,7 @@ from plotly.graph_objs import *
 from soccerplots.radar_chart import Radar
 import matplotlib
 matplotlib.use('agg')
+import io
 
 
 # Register Page
@@ -119,7 +120,7 @@ layout = html.Div([
                                   html.Div(id="apply-feedback", children="")
                               ]),
                               dbc.ModalFooter(
-                                  dbc.Button('Close', id='close-modal-button', className='ml-auto', n_clicks=0)
+                                  dbc.Button('Close', id='close-modal-button', className='modal_conditions_button', n_clicks=0)
                               ),
                           ],
                           id='filter-modal',
@@ -242,7 +243,7 @@ layout = html.Div([
     Input('stored-uploads', 'data')
 )
 def update_graph_dropdowns(uploaded_dataframes):
-    stats_df = pd.read_json(uploaded_dataframes['stats'], orient='split')
+    stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
 
     return (html.P('Select X Axis:'),
             dcc.Dropdown(
@@ -266,7 +267,7 @@ def update_graph_dropdowns(uploaded_dataframes):
     Input('stored-uploads', 'data')
 )
 def update_table_dropdowns(uploaded_dataframes):
-    stats_df = pd.read_json(uploaded_dataframes['stats'], orient='split')
+    stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
 
     return (html.P('Select Columns to Include in Table'),
             dcc.Dropdown(
@@ -288,7 +289,7 @@ def update_table_dropdowns(uploaded_dataframes):
 @callback(Output('stats-radar-dropdowns', 'children'),
           Input('stored-uploads', 'data'))
 def update_radar_dropdowns(uploaded_dataframes):
-    stats_df = pd.read_json(uploaded_dataframes['stats'], orient='split')
+    stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
 
     return (html.Div([
         html.P('Select First Player for Radar Comparison Chart'),
@@ -322,7 +323,7 @@ def update_radar_dropdowns(uploaded_dataframes):
 @callback(Output('custom-radar-values-dropdown', 'options'),
           Input('stored-uploads', 'data'))
 def update_custom_radar_dropdown(uploaded_dataframes):
-    stats_df = pd.read_json(uploaded_dataframes['stats'], orient='split')
+    stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
 
     return [{'label': col, 'value': col} for col in stats_df.columns[:-14]]
 
@@ -336,7 +337,7 @@ def update_custom_radar_dropdown(uploaded_dataframes):
     prevent_initial_call=False
 )
 def update_filter_ui(uploaded_dataframes, n_clicks, existing_children):
-    stats_df = pd.read_json(uploaded_dataframes['stats'], orient='split')
+    stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
 
     df = stats_df
     triggered_id = ctx.triggered[0]['prop_id'].split('.')[0] if ctx.triggered else None
@@ -394,7 +395,7 @@ def update_filter_input_container(uploaded_dataframes, selected_column):
         return []
 
     # Get the dataframe
-    stats_df = pd.read_json(uploaded_dataframes['stats'], orient='split')
+    stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
     df = stats_df
 
     # Categorical columns (simple equals/not equals)
@@ -406,8 +407,8 @@ def update_filter_input_container(uploaded_dataframes, selected_column):
                 dcc.Dropdown(
                     id={'type': 'filter-condition', 'index': 0},
                     options=[
-                        {'label': '=', 'value': '='},
-                        {'label': '!=', 'value': '!='}
+                        {'label': 'is', 'value': '='},
+                        {'label': 'is not', 'value': '!='}
                     ],
                     value='=',
                     clearable=False
@@ -433,8 +434,8 @@ def update_filter_input_container(uploaded_dataframes, selected_column):
                 dcc.Dropdown(
                     id={'type': 'filter-condition', 'index': 0},
                     options=[
-                        {'label': '=', 'value': '='},
-                        {'label': '!=', 'value': '!='}
+                        {'label': 'is', 'value': '='},
+                        {'label': 'is not', 'value': '!='}
                     ],
                     value='=',
                     clearable=False
@@ -452,17 +453,17 @@ def update_filter_input_container(uploaded_dataframes, selected_column):
         ]
 
     # Numeric columns (can use >, <, =, !=)
-    elif selected_column in ['Age', 'Apps', 'Wage', 'Transfer Value']:
+    elif selected_column in ['Age', 'Apps', 'Gls', 'Ast', 'Wage', 'Transfer Value']:
         return [
             html.Div([
                 html.Label('Condition'),
                 dcc.Dropdown(
                     id={'type': 'filter-condition', 'index': 0},
                     options=[
-                        {'label': '=', 'value': '='},
-                        {'label': '>', 'value': '>'},
-                        {'label': '<', 'value': '<'},
-                        {'label': '!=', 'value': '!='}
+                        {'label': 'is', 'value': '='},
+                        {'label': 'is greater than', 'value': '>'},
+                        {'label': 'is less than', 'value': '<'},
+                        {'label': 'is not', 'value': '!='}
                     ],
                     value='=',
                     clearable=False
@@ -487,8 +488,8 @@ def update_filter_input_container(uploaded_dataframes, selected_column):
                 dcc.Dropdown(
                     id={'type': 'filter-condition', 'index': 0},
                     options=[
-                        {'label': '=', 'value': '='},
-                        {'label': '!=', 'value': '!='}
+                        {'label': 'is', 'value': '='},
+                        {'label': 'is not', 'value': '!='}
                     ],
                     value='=',
                     clearable=False
@@ -541,9 +542,9 @@ def update_filtered_data(uploaded_dataframes, n_clicks_apply, n_clicks_clear, st
 
     # Initialize the dataframe
     if stored_data:
-        df = pd.read_json(stored_data, orient='split')
+        df = pd.read_json(io.StringIO(stored_data), orient='split')
     else:
-        stats_df = pd.read_json(uploaded_dataframes['stats'], orient='split')
+        stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
         df = stats_df
 
     # Default feedback message
@@ -725,8 +726,8 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
                          selected_player, selected_player1, selected_radar_preset, selected_metrics, stored_data):
 
     # Get dataframes
-    stats_df = pd.read_json(uploaded_dataframes['stats'], orient='split')
-    squad_attributes_df = pd.read_json(uploaded_dataframes['squad_attributes'], orient='split')
+    stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
+    squad_attributes_df = pd.read_json(io.StringIO(uploaded_dataframes['squad_attributes']), orient='split')
 
     # Default empty figure
     empty_fig = px.scatter(x=[0], y=[0])
@@ -747,7 +748,7 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
 
     try:
         # Convert stored data to df
-        stored_df = pd.read_json(stored_data, orient='split')
+        stored_df = pd.read_json(io.StringIO(stored_data), orient='split')
         print(f"Successfully loaded DataFrame with shape: {stored_df.shape}")
 
     except Exception as e:

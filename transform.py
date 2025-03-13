@@ -553,8 +553,8 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file):
                    'Drb/90', 'Drb', 'Cr C/90', 'Cr C', 'Cr A',
                    'Clr/90', 'Clear', 'CCC', 'Ch C/90', 'Blk/90', 'Blk', 'Asts/90',
                    'Aer A/90', 'Yel', 'xG', 'Saves/90', 'Tgls/90', 'Tcon/90', 'Tcon',
-                   'Tgls', 'Tgls', 'Red', 'Pts/Gm', 'PoM', 'Pen/R', 'Pens S', 'Pens Saved',
-                   'Pens Faced', 'Pens', 'NP-xG/90', 'NP-xG','Mins',
+                   'Tgls', 'Red', 'Pts/Gm', 'PoM', 'Pen/R', 'Pens S', 'Pens Saved',
+                   'Pens Faced', 'Pens', 'NP-xG/90', 'NP-xG', 'Mins', 'Starts',
                    'Gls/90', 'Conc', 'Gls', 'Won', 'G. Mis', 'Lost',
                    'D', 'Gwin', 'Fls', 'FA', 'xG/90', 'xG-OP', 'xA/90', 'xA', 'Con/90',
                    'Cln/90', 'Clean Sheets', 'Av Rat', 'Ast', 'Hdrs A']:

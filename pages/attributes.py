@@ -96,7 +96,7 @@ layout = html.Div([
                     dbc.Button('Radar', id='radar-button', n_clicks=0, className='container-button', style={'margin': '5px'})
                 ]),
             # Dropdown Menu to filter visible attributes in the Table
-            html.Div([html.P('Attributes'),
+            html.Div([html.P('Set Attributes to View on Table and Radar Chart'),
                       dcc.Dropdown(
                           id='attribute-dropdown',
                           options=[{'label': key, 'value': key} for key in attribute_filters.keys()],
@@ -168,8 +168,8 @@ layout = html.Div([
     Input('stored-uploads', 'data')
 )
 def pull_uploaded_attributes_dataframes(uploaded_dataframes):
-    squad_attributes_df = pd.read_json(uploaded_dataframes['squad_attributes'], orient='split')
-    shortlist_attributes_df = pd.read_json(uploaded_dataframes['shortlist_attributes'], orient='split')
+    squad_attributes_df = pd.read_json(io.StringIO(uploaded_dataframes['squad_attributes']), orient='split')
+    shortlist_attributes_df = pd.read_json(io.StringIO(uploaded_dataframes['shortlist_attributes']), orient='split')
 
     att_datasets = {
         'Squad Attributes': squad_attributes_df,
@@ -191,8 +191,8 @@ def pull_uploaded_attributes_dataframes(uploaded_dataframes):
     Input('stored-uploads', 'data')
 )
 def update_radar_dropdowns(uploaded_dataframes):
-    squad_attributes_df = pd.read_json(uploaded_dataframes['squad_attributes'], orient='split')
-    shortlist_attributes_df = pd.read_json(uploaded_dataframes['shortlist_attributes'], orient='split')
+    squad_attributes_df = pd.read_json(io.StringIO(uploaded_dataframes['squad_attributes']), orient='split')
+    shortlist_attributes_df = pd.read_json(io.StringIO(uploaded_dataframes['shortlist_attributes']), orient='split')
 
     return (html.P('Select Player from Shortlist'),
             dcc.Dropdown(
@@ -254,8 +254,8 @@ def toggle_collapsed_charts(table_clicks, radar_clicks, table_is_open, radar_is_
           )
 def update_table(uploaded_dataframes, selected_dataset, selected_attribute_filter, selected_position_filter):
     # Get the selected dataset
-    squad_attributes_df = pd.read_json(uploaded_dataframes['squad_attributes'], orient='split')
-    shortlist_attributes_df = pd.read_json(uploaded_dataframes['shortlist_attributes'], orient='split')
+    squad_attributes_df = pd.read_json(io.StringIO(uploaded_dataframes['squad_attributes']), orient='split')
+    shortlist_attributes_df = pd.read_json(io.StringIO(uploaded_dataframes['shortlist_attributes']), orient='split')
 
     att_datasets = {
         'Squad Attributes': squad_attributes_df,
@@ -323,8 +323,8 @@ def update_radar_chart(uploaded_dataframes, selected_attribute_filter, selected_
     if selected_shortlist == '':
         raise PreventUpdate
     # Uploaded dataframes
-    squad_attributes_df = pd.read_json(uploaded_dataframes['squad_attributes'], orient='split')
-    shortlist_attributes_df = pd.read_json(uploaded_dataframes['shortlist_attributes'], orient='split')
+    squad_attributes_df = pd.read_json(io.StringIO(uploaded_dataframes['squad_attributes']), orient='split')
+    shortlist_attributes_df = pd.read_json(io.StringIO(uploaded_dataframes['shortlist_attributes']), orient='split')
 
     # Create Radar figure
     # Select a row based on dropdown player name selection
