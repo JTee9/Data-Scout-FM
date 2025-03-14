@@ -1,8 +1,7 @@
 # Todo ------------------
 # 1. Long names overlap on the radar chart.
 # 2. Fix empty fig objects to make the default page look better.
-# 3. Stat categories are too confusing, need to simplify. Create easy-to-understand metrics like
-# 'ground duels', 'aerial duels', 'chance creation', 'carelessness with the ball', 'shot volume', 'shot quality',
+# 3. Stat categories are too confusing, need to simplify. Create ready to use sample charts
 
 import base64
 from io import BytesIO
@@ -39,7 +38,7 @@ preset_radar_values = {
 
 # Create sample charts for quick access to interesting data in their FM files
 sample_charts = {
-    'Passing Quality': ['Ch C/90', 'Poss Lost/90'], # 0,1,2 vs 3
+    'Hardworking Chance Creators': ['OP-KP/90', 'Distance'],
     'Shot Quality': ['Shot/90', 'ShT/90'],
     'Dribble Quality': ['Drb/90', 'Poss Lost/90'],
 

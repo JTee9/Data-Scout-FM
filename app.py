@@ -1,7 +1,3 @@
-# Todo --------------------------
-# 1. Create beautiful cover page? Have users import FM filters and upload the required html files.
-# 2. Make the site beautiful with Bootstrap
-
 import dash
 from dash import Dash, html, dcc, Output, Input, State
 import dash_bootstrap_components as dbc
