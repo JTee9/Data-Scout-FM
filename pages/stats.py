@@ -2,9 +2,8 @@
 # 1. Long names overlap on the radar chart.
 # 2. Fix empty fig objects to make the default page look better.
 # 3. Stat categories are too confusing, need to simplify. Create ready to use sample charts
-# 4. Bug: Can't filter with Gls
-# 5. Create preset filters to find similar players to stars (find key metric patterns in star players' stats)
-# 6. Change dropdown label for stats to full stats name rather than FM category codenames
+# 4. Create preset filters to find similar players to stars (find key metric patterns in star players' stats)
+# 5. Change dropdown label for stats to full stats name rather than FM category codenames
 
 import base64
 from io import BytesIO
@@ -620,7 +619,7 @@ def update_filtered_data(uploaded_dataframes, n_clicks_apply, n_clicks_clear, st
                     filter_conditions_list.append(df[value] == False)
 
             # Handle numeric columns
-            elif col in ['Age', 'Wage', 'Transfer Value']:
+            elif col in ['Age', 'Wage', 'Apps', 'Starts', 'Gls', 'Ast', 'Transfer Value']:
                 try:
                     value = float(value)
                     if condition == '=':
