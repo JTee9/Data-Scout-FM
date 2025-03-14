@@ -3,7 +3,7 @@
 # 2. Fix empty fig objects to make the default page look better.
 # 3. Stat categories are too confusing, need to simplify. Create ready to use sample charts
 # 4. Create preset filters to find similar players to stars (find key metric patterns in star players' stats)
-# 5. Change dropdown label for stats to full stats name rather than FM category codenames
+# 5. Only keep per 90 min stats and drop totals?
 
 import base64
 from io import BytesIO
@@ -86,6 +86,70 @@ position_filters = {
                    'AM (L)', 'AM (RL)', 'AM (LC)', 'AM (RLC)'],
         'ST': ['ST (C)']
     }
+
+stats_label_dict = {'Name': 'Name', 'Age': 'Age', 'Position': 'Position', 'Club': 'Club', 'Division': 'Division',
+                        'Transfer Value': 'Transfer Value', 'Wage': 'Wage', 'Transfer Status': 'Transfer Status',
+                        'Av Rat': 'Average Rating', 'Gls': 'Goals', 'Gls/90': 'Goals per 90 minutes',
+                        'Goals Outside Box': 'Goals from Outside the Box', 'Ast': 'Assists',
+                        'Asts/90': 'Assists per 90 minutes', 'CCC': 'Overall number of chances created',
+                        'Ch C/90': 'Chances Created per 90 minutes', 'Shots': 'Shots', 'Shot/90': 'Shots on Target',
+                        'ShT': 'Shots per 90 minutes', 'ShT/90': 'Shots on Target per 90 minutes',
+                        'Shot %': 'Shots On Target Ratio',
+                        'Shots Outside Box/90': 'Shots from Outside the Box per 90 minutes',
+                        'FK Shots': 'Free Kick Shots', 'xG': 'xG - Expected Goals',
+                        'xG/90': 'xG/90 - Expected Goals per 90 minutes',
+                        'xG/shot': 'xG/Shot - Expected Goals per Shot',
+                        'xG-OP': 'xG OP - Expected Goals Overperformance',
+                        'NP-xG': 'NP xG - Non Penalty Expected Goals',
+                        'NP-xG/90': 'NP xG/90 - Non Penalty Expected Goals per 90 minutes',
+                        'Conv %': 'Goal Conversion Rate', 'Pens': 'Penalties Taken', 'Pens S': 'Penalties Scored',
+                        'Pen/R': 'Penalties Scored Ratio', 'Ps C': 'Passes Completed',
+                        'Ps C/90': 'Passes Completed per 90 minutes', 'Pas A': 'Passes Attempted',
+                        'Ps A/90': 'Passes Attempted per 90 minutes', 'Pas %': 'Pass Completion Ratio',
+                        'Pr Passes': 'Progressive Passes', 'Pr passes/90': 'Progressive Passes per 90 minutes',
+                        'K Pas': 'Key Passes', 'K Ps/90': 'Key Passes per 90 minutes', 'xA': 'xA - Expected Assists',
+                        'xA/90': 'xA/90 - Expected Assists per 90 minutes', 'Sprints/90': 'Sprints per 90 minutes',
+                        'Drb': 'Dribbles Made', 'Drb/90': 'Dribbles Made per 90 minutes',
+                        'Distance': 'Distance Covered', 'Cr C': 'Crosses Completed',
+                        'Cr C/90': 'Crosses Completed per 90 minutes', 'Cr A': 'Crosses Attempted',
+                        'Crs A/90': 'Crosses Attempted per 90 minutes', 'Cr C/A': 'Cross Completion Ratio',
+                        'OP-KP': 'Open Play Key Passes', 'OP-KP/90': 'Open Play Key Passes per 90 minutes',
+                        'OP-Crs C': 'Open Play Crosses Completed',
+                        'OP-Crs C/90': 'Open Play Crosses Completed per 90 minutes',
+                        'OP-Crs A': 'Open Play Crosses Attempted',
+                        'OP-Crs A/90': 'Open Play Crosses Attempted per 90 minutes',
+                        'OP-Cr %': 'Open Play Cross Completion Ratio', 'Pres C': 'Pressures Completed',
+                        'Pres C/90': 'Pressures Completed per 90 minutes', 'Pres A': 'Pressures Attempted',
+                        'Pres A/90': 'Pressures Attempted per 90 minutes',
+                        'Poss Won/90': 'Possessions Won per 90 minutes',
+                        'Poss Lost/90': 'Possessions Lost per 90 minutes', 'Tck C': 'Tackles Completed',
+                        'Tck/90': 'Tackles Completed per 90 minutes', 'Tck A': 'Tackles Attempted',
+                        'Tck R': 'Tackle Completion Ratio', 'K Tck': 'Key Tackles',
+                        'K Tck/90': 'Key Tackles per 90 minutes', 'Hdrs': 'Headers Won',
+                        'Hdrs W/90': 'Headers Won per 90 minutes', 'Hdrs A': 'Headers Attempted',
+                        'Aer A/90': 'Headers Attempted per 90 minutes', 'Hdr %': 'Headers Won Ratio',
+                        'Hdrs L/90': 'Headers Lost per 90 minutes', 'K Hdrs/90': 'Key Headers per 90 minutes',
+                        'Blk': 'Blocks', 'Blk/90': 'Blocks per 90 minutes', 'Shts Blckd': 'Shots Blocked',
+                        'Shts Blckd/90': 'Shots Blocked per 90 minutes', 'Clear': 'Clearances',
+                        'Clr/90': 'Clearances per 90 minutes', 'Itc': 'Interceptions',
+                        'Int/90': 'Interceptions per 90 minutes', 'Gl Mst': 'Mistakes Leading to Goal',
+                        'Clean Sheets': 'Clean Sheets', 'Cln/90': 'Clean Sheets per 90 minutes',
+                        'Saves/90': 'Saves per 90 minutes', 'Svt': 'Saves Tipped', 'Svp': 'Saves Parried',
+                        'Svh': 'Saves Held', 'Sv %': 'Save Ratio', 'xSv %': 'xSv Ratio - Expected Save Ratio',
+                        'xGP': 'xGP - Expected Goals Prevented',
+                        'xGP/90': 'xGP/90 - Expected Goals Prevented per 90 minutes', 'Pens Saved': 'Penalties Saved',
+                        'Pens Faced': 'Penalties Faced', 'Pens Saved Ratio': 'Penalties Saved Ratio',
+                        'Conc': 'Goals Conceded', 'Con/90': 'Goals Conceded per 90 minutes', 'Off': 'Offsides',
+                        'Fls': 'Fouls Committed', 'FA': 'Fouls Against', 'Yel': 'Yellow Cards', 'Red': 'Red Cards',
+                        'Pts/Gm': 'Points Won per Game', 'Tgls': 'Team Goals', 'Tgls/90': 'Team Goals per 90 minutes',
+                        'Tcon': 'Team Goals Conceded', 'Tcon/90': 'Team Goals Conceded per 90 minutes',
+                        'Won': 'Games Won', 'D': 'Games Drawn', 'Lost': 'Games Lost', 'Gwin': 'Game Win Ratio',
+                        'Apps': 'Appearances', 'Starts': 'Starting Appearances', 'Mins': 'Minutes',
+                        'G. Mis': 'Games Missed in a Row', 'PoM': 'Player of the Match',
+                        'Int Apps': 'International Appearances (current season)',
+                        'Int Ast': 'International Assists (current season)',
+                        'Int Conc': 'International Goals Conceded (current season)',
+                        'Int Av Rat': 'International Average Rating (current season)'}
 
 
 layout = html.Div([
@@ -267,14 +331,14 @@ def update_graph_dropdowns(uploaded_dataframes):
     return (html.P('Select X Axis:'),
             dcc.Dropdown(
                 id='x-axis-dropdown',
-                options=[{'label': col, 'value': col} for col in stats_df.columns[:-14]],
+                options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
                 value='Av Rat',
                 clearable=False
             ),
             html.P('Select Y Axis:'),
             dcc.Dropdown(
                 id='y-axis-dropdown',
-                options=[{'label': col, 'value': col} for col in stats_df.columns[:-14]],
+                options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
                 value='Transfer Value',
                 clearable=False
             ),
@@ -299,7 +363,7 @@ def update_table_dropdowns(uploaded_dataframes):
     return (html.P('Select Columns to Include in Table'),
             dcc.Dropdown(
                 id='stats-table-dropdown',
-                options=[{'label': col, 'value': col} for col in stats_df.columns[:-14]],
+                options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
                 value=['Name', 'Age', 'Position', 'Club'],
                 multi=True,
                 clearable=True,
@@ -374,12 +438,12 @@ def update_filter_ui(uploaded_dataframes, n_clicks, existing_children):
         # Create initial filter UI with first dropdown
         return [
             html.Div([
-                html.Label('Column'),
+                html.Label('Category'),
                 dcc.Dropdown(
                     id={'type': 'filter-column', 'index': 0},
-                    options=[{'label': col, 'value': col} for col in df.columns[:-14]],
+                    options=[{'label': stats_label_dict[col], 'value': col} for col in df.columns[:-14]],
                     value='',
-                    placeholder='Select Column',
+                    placeholder='Select Category',
                     clearable=True
                 ),
                 html.Div(id={'type': 'filter-input-container', 'index': 0}, children=[])
@@ -390,12 +454,12 @@ def update_filter_ui(uploaded_dataframes, n_clicks, existing_children):
     elif triggered_id == 'add-condition' and n_clicks > 0:
         # Create a new filter condition UI
         new_condition = html.Div([
-            html.Label('Column'),
+            html.Label('Category'),
             dcc.Dropdown(
                 id={'type': 'filter-column', 'index': n_clicks},
                 options=[{'label': col, 'value': col} for col in df.columns[:-14]],
                 value='',
-                placeholder='Select Column',
+                placeholder='Select Category',
                 clearable=True
             ),
             html.Div(id={'type': 'filter-input-container', 'index': n_clicks}, children=[])
@@ -497,11 +561,11 @@ def update_filter_input_container(uploaded_dataframes, selected_column):
                 ),
             ], style={'marginTop': '10px'}),
             html.Div([
-                html.Label(f'Enter {selected_column}'),
+                html.Label(f'Enter {stats_label_dict[selected_column]}'),
                 dcc.Input(
                     id={'type': 'filter-value', 'index': 0},
                     type='number',
-                    placeholder=f'Enter {selected_column}',
+                    placeholder=f'Enter {stats_label_dict[selected_column]}',
                     debounce=True
                 )
             ], style={'marginTop': '10px'})
@@ -523,7 +587,7 @@ def update_filter_input_container(uploaded_dataframes, selected_column):
                 ),
             ], style={'marginTop': '10px'}),
             html.Div([
-                html.Label(f'Choose Percentile for {selected_column}'),
+                html.Label(f'Choose Percentile for {stats_label_dict[selected_column]}'),
                 dcc.Dropdown(
                     id={'type': 'filter-value', 'index': 0},
                     options=[
@@ -807,7 +871,7 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
                             color_list.append('blue')
                     return color_list
                 fig = px.scatter(stored_df, x=selected_x, y=selected_y,
-                                 title=f"{selected_x} vs {selected_y}",
+                                 title=f"{stats_label_dict[selected_x]} vs {stats_label_dict[selected_y]}",
                                  hover_data=['Name', 'Club', 'Age'])
                 fig.update_traces(marker=dict(color=set_color(stored_df)))
                 return fig, empty_table, empty_radar, stored_player_options, stored_player_options
@@ -881,7 +945,7 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
                         color_list.append('blue')
                 return color_list
             fig = px.scatter(stored_df, x=selected_x, y=selected_y,
-                             title=f"{selected_x} vs {selected_y}",
+                             title=f"{stats_label_dict[selected_x]} vs {stats_label_dict[selected_y]}",
                              hover_data=['Name', 'Club', 'Age'] if all(
                                  col in stored_df.columns for col in ['Name', 'Club', 'Age']) else None)
             fig.update_traces(marker=dict(color=set_color(stored_df)))
