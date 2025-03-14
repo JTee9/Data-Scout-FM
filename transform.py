@@ -496,17 +496,7 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file):
         stats_df[column] = stats_df[column].str.replace('km', '')
         stats_df[column] = stats_df[column].str.replace('Unknown', '')
         stats_df[column] = stats_df[column].str.replace('Not for Sale', '')
-        # Handle transfer value ranges
-        range_mask = stats_df[column].str.contains('-', na=False, regex=False)
-        if range_mask.any():  # only do this if there are actually ranges.
-            def average_range(range_str):
-                try:
-                    start, end = map(int, range_str.split('-'))
-                    return (start + end) / 2
-                except ValueError:
-                    return np.nan  # return nan if there is a problem.
 
-            stats_df.loc[range_mask, column] = stats_df.loc[range_mask, column].apply(average_range)
         # Handle values with both '.' and 'K'
         mask_k = stats_df[column].str.contains(r'\.(?=.*K)', na=False, regex=True)
         stats_df.loc[mask_k, column] = stats_df.loc[mask_k, column].str.replace(r'\.', '', regex=True)
@@ -530,6 +520,32 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file):
         stats_df.loc[mask_only_b, column] = stats_df.loc[mask_only_b, column].str.replace('B', '000000000', regex=False)
         # Remove any remaining '.'
         stats_df[column] = stats_df[column].str.replace('.', '')
+
+        # Handle transfer value ranges
+
+        def process_range_column(stats_df, column):
+            """Processes a column containing range strings."""
+            stats_df[column] = stats_df[column].astype(str).str.strip()
+            range_mask = stats_df[column].str.contains('-', na=False, regex=False)
+
+            if range_mask.any():
+                def average_range(range_str):
+
+                    try:
+                        print(f'trying {range_str}')
+                        start, end = map(float, range_str.split('-'))
+                        result = (start + end) / 2
+                        print(f'average: {result}')
+                        return result
+                    except ValueError as e:
+                        return np.nan
+                    except AttributeError as e:
+                        return np.nan
+
+                stats_df.loc[range_mask, column] = stats_df.loc[range_mask, column].apply(average_range)
+            return stats_df
+
+        stats_df = process_range_column(stats_df, 'Transfer Value')
 
         stats_df[column] = pd.to_numeric(stats_df[column], errors='coerce')
 

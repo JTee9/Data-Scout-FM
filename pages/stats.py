@@ -1,6 +1,8 @@
 # Todo ------------------
 # 1. Long names overlap on the radar chart.
 # 2. Fix empty fig objects to make the default page look better.
+# 3. Stat categories are too confusing, need to simplify. Create easy-to-understand metrics like
+# 'ground duels', 'aerial duels', 'chance creation', 'carelessness with the ball', 'shot volume', 'shot quality',
 
 import base64
 from io import BytesIO
@@ -33,6 +35,14 @@ preset_radar_values = {
     'Winger': ['Apps', 'Av Rat', 'Poss Lost/90', 'Pres C/90', 'Drb/90', 'Sprints/90', 'FA', 'Ch C/90', 'OP-KP/90', 'Cr C/90', 'Cr C/A', 'OP-Crs C/90', 'xG/shot', 'Gls/90', 'xG/90'],
     'Striker': ['Apps', 'Av Rat', 'Pres C/90', 'Poss Won/90', 'Shot/90', 'Shot %', 'Sprints/90', 'Hdrs W/90', 'Hdr %', 'xG/shot', 'Conv %', 'Asts/90', 'NP-xG/90', 'Gls/90', 'xG/90'],
     'Custom': []
+}
+
+# Create sample charts for quick access to interesting data in their FM files
+sample_charts = {
+    'Passing Quality': ['Ch C/90', 'Poss Lost/90'], # 0,1,2 vs 3
+    'Shot Quality': ['Shot/90', 'ShT/90'],
+    'Dribble Quality': ['Drb/90', 'Poss Lost/90'],
+
 }
 
 position_filters = {
@@ -156,7 +166,15 @@ layout = html.Div([
                     options=[],
                     value='',
                     clearable=False
-                )])
+                ),
+                html.P('Sample Charts'),
+                dcc.Dropdown(
+                    id='sample-chart-dropdown',
+                    options=[],
+                    value='',
+                    clearable=False
+                )
+            ])
         ], style={'width': '100%', 'height': '100%', 'display': 'none'}), # Initially hidden
 
         html.Div(id='stats-table-container', style={'width': '100%', 'height': '100%', 'display': 'none'}, children=[
@@ -258,7 +276,15 @@ def update_graph_dropdowns(uploaded_dataframes):
                 options=[{'label': col, 'value': col} for col in stats_df.columns[:-14]],
                 value='Transfer Value',
                 clearable=False
-            ))
+            ),
+            html.P('Sample Charts'),
+            dcc.Dropdown(
+                id='sample-chart-dropdown',
+                options=[],
+                value='',
+                clearable=False
+            )
+            )
 
 
 # Pulling datasets from stored_uploads for table dropdown
