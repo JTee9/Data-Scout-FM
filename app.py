@@ -23,7 +23,7 @@ app.layout = dbc.Container([
                 html.H2([
                     html.Span('Welcome,'),
                     html.Br(),
-                    html.Span('Noob')
+                    html.Span('Hermano')
                 ]),
             ]),
 

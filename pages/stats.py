@@ -2,6 +2,9 @@
 # 1. Long names overlap on the radar chart.
 # 2. Fix empty fig objects to make the default page look better.
 # 3. Stat categories are too confusing, need to simplify. Create ready to use sample charts
+# 4. Bug: Can't filter with Gls
+# 5. Create preset filters to find similar players to stars (find key metric patterns in star players' stats)
+# 6. Change dropdown label for stats to full stats name rather than FM category codenames
 
 import base64
 from io import BytesIO
@@ -40,7 +43,7 @@ preset_radar_values = {
 sample_charts = {
     'Hardworking Chance Creators': ['OP-KP/90', 'Distance'],
     'Shot Quality': ['Shot/90', 'ShT/90'],
-    'Dribble Quality': ['Drb/90', 'Poss Lost/90'],
+    'Dribble Quality': ['Drb/90', 'Sprints/90'], # Recommended filters (Division, Age, Transfer Value, Position)
 
 }
 
