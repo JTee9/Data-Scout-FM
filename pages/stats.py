@@ -4,6 +4,8 @@
 # 3. Stat categories are too confusing, need to simplify. Create ready to use sample charts
 # 4. Create preset filters to find similar players to stars (find key metric patterns in star players' stats)
 # 5. Only keep per 90 min stats and drop totals?
+# 6. Button to generate recommended players to scout based on user preference filters (age, transfer value, etc.)
+# and preset algorithm to find top prospects for each position.
 
 import base64
 from io import BytesIO
@@ -151,7 +153,7 @@ stats_label_dict = {'Name': 'Name', 'Age': 'Age', 'Position': 'Position', 'Club'
                         'Int Conc': 'International Goals Conceded (current season)',
                         'Int Av Rat': 'International Average Rating (current season)'}
 
-
+# Page Layout ----------------------------------------------
 layout = html.Div([
     # Top Half
     html.Div(style={'text-align': 'left', 'margin-bottom': '15px'}, children=[
@@ -163,7 +165,7 @@ layout = html.Div([
                           [
                               dbc.ModalHeader('Player Search Filters'),
                               dbc.ModalBody([
-                                  html.Div(id='dropdown-container-div', children=[]),
+                                  html.Div(id='modal-dropdown-div', children=[]),
 
                                   html.Label('Choose logical operator for multiple conditions:'),
                                   dcc.Dropdown(
@@ -176,23 +178,33 @@ layout = html.Div([
                                       clearable=False
                                   ),
 
-                                  # Button to add more filter conditions
                                   html.Br(),
-                                  dbc.Button("Add Condition", id="add-condition", className='modal_conditions_button', n_clicks=0),
-                                  html.Br(),
-                                  html.Br(),
+                                  html.Div([
+                                      html.Div([
+                                          # Button to add more filter conditions
+                                          dbc.Button("Add Condition", id="add-condition", className='modal_conditions_button', n_clicks=0),
+                                          html.Br(),
+                                          html.Br(),
 
-                                  # Button to apply filters
-                                  dbc.Button('Apply Filter', id='apply-filter-button', className='modal_conditions_button', n_clicks=0),
-                                  html.Br(),
-                                  html.Br(),
+                                          # Button to reset dropdowns
+                                          dbc.Button('Reset Dropdowns', id='reset-dropdowns-button', className='modal_conditions_button', n_clicks=0),
+                                          html.Br(),
+                                          html.Br(),
+                                      ], style={'display': 'block'}),
 
-                                  # Button to clear filters
-                                  dbc.Button('Clear Filter', id='clear-filter-button', className='modal_conditions_button', n_clicks=0),
-                                  html.Br(),
+                                      html.Div([
+                                          # Button to apply filters
+                                          dbc.Button('Apply Filter', id='apply-filter-button', className='modal_conditions_button', n_clicks=0),
+                                          html.Br(),
+                                          html.Br(),
+                                          # Button to clear filters
+                                          dbc.Button('Clear Filter', id='clear-filter-button', className='modal_conditions_button', n_clicks=0),
+                                          html.Br(),
+                                      ], style={'display': 'block'}),
+                                  ], style={'display': 'flex', 'justify-content': 'space-between'}),
 
                                   # Confirmation message after applying filters
-                                  html.Div(id="apply-feedback", children="")
+                                  html.Div(id='apply-feedback', children="")
                               ]),
                               dbc.ModalFooter(
                                   dbc.Button('Close', id='close-modal-button', className='modal_conditions_button', n_clicks=0)
@@ -416,23 +428,26 @@ def update_radar_dropdowns(uploaded_dataframes):
 def update_custom_radar_dropdown(uploaded_dataframes):
     stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
 
-    return [{'label': col, 'value': col} for col in stats_df.columns[:-14]]
+    return [{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]]
 
 
-# Combined callback for filter UI
+# Combined callback for modal filter UI
 @callback(
-    Output('dropdown-container-div', "children"),
+    Output('modal-dropdown-div', "children"),
     Input('stored-uploads', 'data'),
     Input('add-condition', 'n_clicks'),
-    State('dropdown-container-div', "children"),
+    Input('clear-filter-button', 'n_clicks'),
+    Input('reset-dropdowns-button', 'n_clicks'),
+
+    State('modal-dropdown-div', "children"),
     prevent_initial_call=False
 )
-def update_filter_ui(uploaded_dataframes, n_clicks, existing_children):
+def update_filter_ui(uploaded_dataframes, add_clicks, clear_clicks, reset_clicks, existing_children):
     stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
 
     df = stats_df
     triggered_id = ctx.triggered[0]['prop_id'].split('.')[0] if ctx.triggered else None
-
+    
     # Initial load
     if triggered_id is None or not existing_children:
         # Create initial filter UI with first dropdown
@@ -451,23 +466,57 @@ def update_filter_ui(uploaded_dataframes, n_clicks, existing_children):
         ]
 
     # Add condition button clicked
-    elif triggered_id == 'add-condition' and n_clicks > 0:
+    elif triggered_id == 'add-condition' and add_clicks > 0:
         # Create a new filter condition UI
         new_condition = html.Div([
             html.Label('Category'),
             dcc.Dropdown(
-                id={'type': 'filter-column', 'index': n_clicks},
-                options=[{'label': col, 'value': col} for col in df.columns[:-14]],
+                id={'type': 'filter-column', 'index': add_clicks},
+                options=[{'label': stats_label_dict[col], 'value': col} for col in df.columns[:-14]],
                 value='',
                 placeholder='Select Category',
                 clearable=True
             ),
-            html.Div(id={'type': 'filter-input-container', 'index': n_clicks}, children=[])
+            html.Div(id={'type': 'filter-input-container', 'index': add_clicks}, children=[])
         ], style={'marginBottom': '15px', 'padding': '10px', 'border': '1px solid #ddd', 'borderRadius': '5px'})
 
         # Add to existing children
         updated_children = existing_children + [new_condition]
         return updated_children
+
+    # Clear Filter button clicked
+    elif triggered_id == 'clear-filter-button' and clear_clicks > 0:
+        # Reset condition filter dropdowns
+        return [
+            html.Div([
+                html.Label('Category'),
+                dcc.Dropdown(
+                    id={'type': 'filter-column', 'index': 0},
+                    options=[{'label': stats_label_dict[col], 'value': col} for col in df.columns[:-14]],
+                    value='',
+                    placeholder='Select Category',
+                    clearable=True
+                ),
+                html.Div(id={'type': 'filter-input-container', 'index': 0}, children=[])
+            ], style={'marginBottom': '15px', 'padding': '10px', 'border': '1px solid #ddd', 'borderRadius': '5px'})
+        ]
+
+    # Close modal button clicked
+    elif triggered_id == 'reset-dropdowns-button' and reset_clicks > 0:
+        # Reset condition filter dropdowns
+        return [
+            html.Div([
+                html.Label('Category'),
+                dcc.Dropdown(
+                    id={'type': 'filter-column', 'index': 0},
+                    options=[{'label': stats_label_dict[col], 'value': col} for col in df.columns[:-14]],
+                    value='',
+                    placeholder='Select Category',
+                    clearable=True
+                ),
+                html.Div(id={'type': 'filter-input-container', 'index': 0}, children=[])
+            ], style={'marginBottom': '15px', 'padding': '10px', 'border': '1px solid #ddd', 'borderRadius': '5px'})
+        ]
 
     # Default case
     return existing_children

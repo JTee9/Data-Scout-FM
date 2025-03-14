@@ -566,7 +566,7 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file):
                    'Gl Mst', 'K Tck/90', 'K Tck', 'K Ps/90', 'K Pas', 'K Hdrs/90',
                    'Int/90', 'Itc', 'Sprints/90', 'Hdrs W/90', 'Hdrs', 'Hdrs L/90',
                    'Goals Outside Box', 'FK Shots', 'xGP/90', 'xGP', 'xG/shot',
-                   'Drb/90', 'Drb', 'Cr C/90', 'Cr C', 'Cr A',
+                   'Drb/90', 'Drb', 'Cr C/90', 'Cr C', 'Cr A', 'Crs A/90',
                    'Clr/90', 'Clear', 'CCC', 'Ch C/90', 'Blk/90', 'Blk', 'Asts/90',
                    'Aer A/90', 'Yel', 'xG', 'Saves/90', 'Tgls/90', 'Tcon/90', 'Tcon',
                    'Tgls', 'Red', 'Pts/Gm', 'PoM', 'Pen/R', 'Pens S', 'Pens Saved',
