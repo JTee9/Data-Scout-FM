@@ -36,16 +36,21 @@ preset_radar_values = {
     'Central Midfielder': ['Apps', 'Av Rat', 'Tck/90', 'Int/90', 'Pr passes/90', 'Poss Won/90', 'Poss Lost/90', 'Pas %', 'K Ps/90', 'Distance', 'Ch C/90', 'Asts/90', 'Pres C/90', 'ShT/90'],
     'Attacking Midfielder': ['Apps', 'Av Rat', 'Pas %', 'Ch C/90', 'Asts/90', 'xA/90', 'Poss Lost/90', 'K Ps/90', 'OP-KP/90', 'Drb/90', 'xG/shot', 'Gls/90', 'xG/90'],
     'Winger': ['Apps', 'Av Rat', 'Poss Lost/90', 'Pres C/90', 'Drb/90', 'Sprints/90', 'FA', 'Ch C/90', 'OP-KP/90', 'Cr C/90', 'Cr C/A', 'OP-Crs C/90', 'xG/shot', 'Gls/90', 'xG/90'],
-    'Striker': ['Apps', 'Av Rat', 'Pres C/90', 'Poss Won/90', 'Shot/90', 'Shot %', 'Sprints/90', 'Hdrs W/90', 'Hdr %', 'xG/shot', 'Conv %', 'Asts/90', 'NP-xG/90', 'Gls/90', 'xG/90'],
+    'Striker': ['Apps', 'Av Rat', 'Pres C/90', 'Poss Won/90', 'ShT/90', 'Shot %', 'Sprints/90', 'Hdrs W/90', 'Hdr %', 'xG/shot', 'Conv %', 'Asts/90', 'NP-xG/90', 'Gls/90', 'xG/90'],
     'Custom': []
 }
 
 # Create sample charts for quick access to interesting data in their FM files
+# Recommended filters (Division, Age, Transfer Value, Position), filter for top percentiles of the categories to get the top prospects
 sample_charts = {
     'Hardworking Chance Creators': ['OP-KP/90', 'Distance'],
     'Shot Quality': ['Shot/90', 'ShT/90'],
-    'Dribble Quality': ['Drb/90', 'Sprints/90'], # Recommended filters (Division, Age, Transfer Value, Position)
-
+    'Active Dribblers': ['Drb/90', 'Sprints/90'],
+    'Active Defenders': ['Distance', 'K Tck/90'],
+    'Clinical Defenders': ['K Tck/90', 'K Hdrs/90'],
+    'Mobile Strikers': ['Distance', 'ShT/90'],
+    'Ball Winners': ['Poss Won/90', 'Int/90'],
+    'Quality Passers': ['K Ps/90', 'Poss Lost/90']
 }
 
 position_filters = {
@@ -94,8 +99,8 @@ stats_label_dict = {'Name': 'Name', 'Age': 'Age', 'Position': 'Position', 'Club'
                         'Av Rat': 'Average Rating', 'Gls': 'Goals', 'Gls/90': 'Goals per 90 minutes',
                         'Goals Outside Box': 'Goals from Outside the Box', 'Ast': 'Assists',
                         'Asts/90': 'Assists per 90 minutes', 'CCC': 'Overall number of chances created',
-                        'Ch C/90': 'Chances Created per 90 minutes', 'Shots': 'Shots', 'Shot/90': 'Shots on Target',
-                        'ShT': 'Shots per 90 minutes', 'ShT/90': 'Shots on Target per 90 minutes',
+                        'Ch C/90': 'Chances Created per 90 minutes', 'Shots': 'Shots', 'Shot/90': 'Shots per 90 minutes',
+                        'ShT': 'Shots on Target', 'ShT/90': 'Shots on Target per 90 minutes',
                         'Shot %': 'Shots On Target Ratio',
                         'Shots Outside Box/90': 'Shots from Outside the Box per 90 minutes',
                         'FK Shots': 'Free Kick Shots', 'xG': 'xG - Expected Goals',
@@ -152,6 +157,9 @@ stats_label_dict = {'Name': 'Name', 'Age': 'Age', 'Position': 'Position', 'Club'
                         'Int Ast': 'International Assists (current season)',
                         'Int Conc': 'International Goals Conceded (current season)',
                         'Int Av Rat': 'International Average Rating (current season)'}
+
+negative_stat_categories = ['Poss Lost/90', 'Hdrs L/90', 'Gl Mst', 'Conc', 'Con/90', 'Off', 'Fls', 'Yel', 'Red', 'Tcon', 'Tcon/90',
+                            'Lost', 'G. Mis', 'Int Conc']
 
 # Page Layout ----------------------------------------------
 layout = html.Div([
@@ -247,9 +255,10 @@ layout = html.Div([
                 html.P('Sample Charts'),
                 dcc.Dropdown(
                     id='sample-chart-dropdown',
-                    options=[],
+                    options=[{'label': key, 'value': key} for key in sample_charts.keys()],
                     value='',
-                    clearable=False
+                    clearable=False,
+                    placeholder='Select a Sample Chart'
                 )
             ])
         ], style={'width': '100%', 'height': '100%', 'display': 'none'}), # Initially hidden
@@ -335,31 +344,60 @@ layout = html.Div([
 # Pulling datasets from stored_uploads for graph dropdown
 @callback(
     Output('graph-dropdowns', 'children'),
-    Input('stored-uploads', 'data')
+    Input('stored-uploads', 'data'),
+    Input('sample-chart-dropdown', 'value'),
+    State('x-axis-dropdown', 'value'),
+    State('y-axis-dropdown', 'value')
 )
-def update_graph_dropdowns(uploaded_dataframes):
+def update_graph_dropdowns(uploaded_dataframes, selected_sample, current_x, current_y):
     stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
 
-    return (html.P('Select X Axis:'),
+    if selected_sample != '':
+        return (html.P('Select X Axis:'),
             dcc.Dropdown(
                 id='x-axis-dropdown',
                 options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
-                value='Av Rat',
+                value=sample_charts[selected_sample][0],
                 clearable=False
             ),
             html.P('Select Y Axis:'),
             dcc.Dropdown(
                 id='y-axis-dropdown',
                 options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
-                value='Transfer Value',
+                value=sample_charts[selected_sample][1],
                 clearable=False
             ),
             html.P('Sample Charts'),
             dcc.Dropdown(
                 id='sample-chart-dropdown',
-                options=[],
-                value='',
+                options=[{'label': key, 'value': key} for key in sample_charts.keys()],
+                value=selected_sample,
+                clearable=False,
+                placeholder='Select a Sample Chart'
+            )
+            )
+
+    return (html.P('Select X Axis:'),
+            dcc.Dropdown(
+                id='x-axis-dropdown',
+                options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
+                value=current_x,
                 clearable=False
+            ),
+            html.P('Select Y Axis:'),
+            dcc.Dropdown(
+                id='y-axis-dropdown',
+                options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
+                value=current_y,
+                clearable=False
+            ),
+            html.P('Sample Charts'),
+            dcc.Dropdown(
+                id='sample-chart-dropdown',
+                options=[{'label': key, 'value': key} for key in sample_charts.keys()],
+                value='',
+                clearable=False,
+                placeholder='Select a Sample Chart'
             )
             )
 
@@ -844,7 +882,8 @@ def toggle_containers(table_clicks, graph_clicks, radar_clicks):
         Output('stats-data-table', 'figure'),
         Output('stats-radar-chart', 'src'),
         Output('player-dropdown', 'options'),
-        Output('player-dropdown1', 'options')
+        Output('player-dropdown1', 'options'),
+        Output('sample-chart-dropdown', 'value')
     ],
     [
         Input('stored-uploads', 'data'),
@@ -858,12 +897,13 @@ def toggle_containers(table_clicks, graph_clicks, radar_clicks):
         Input('player-dropdown1', 'value'),
         Input('radar-preset-values-dropdown', 'value'),
         Input('custom-radar-values-dropdown', 'value'),
+        Input('sample-chart-dropdown', 'value'),
         Input('stored_df', 'data')
     ],
     prevent_initial_call=True
 )
 def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_clicks, selected_x, selected_y, selected_col,
-                         selected_player, selected_player1, selected_radar_preset, selected_metrics, stored_data):
+                         selected_player, selected_player1, selected_radar_preset, selected_metrics, selected_sample, stored_data):
 
     # Get dataframes
     stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
@@ -880,11 +920,12 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
     empty_radar = ''
     default_player_options = [{'label': f'{name} - {position}', 'value': name}
                               for name, position in zip(stats_df.Name, stats_df.Position)]
+    empty_sample_dropdown = ''
 
     # Check for valid data
     if not stored_data:
         print("No stored data found")
-        return empty_fig, empty_table, empty_radar, default_player_options, default_player_options
+        return empty_fig, empty_table, empty_radar, default_player_options, default_player_options, empty_sample_dropdown
 
     try:
         # Convert stored data to df
@@ -893,11 +934,11 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
 
     except Exception as e:
         print(f"Error converting stored data to DataFrame: {str(e)}")
-        return empty_fig, empty_table, empty_radar, default_player_options, default_player_options
+        return empty_fig, empty_table, empty_radar, default_player_options, default_player_options, empty_sample_dropdown
 
     if not ctx.triggered:
         print("No context triggered")
-        return empty_fig, empty_table, empty_radar, default_player_options, default_player_options
+        return empty_fig, empty_table, empty_radar, default_player_options, default_player_options, empty_sample_dropdown
 
     trigger_id = ctx.triggered[0]['prop_id'].split('.')[0]
     print(f"Triggered by: {trigger_id}")
@@ -923,14 +964,24 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
                                  title=f"{stats_label_dict[selected_x]} vs {stats_label_dict[selected_y]}",
                                  hover_data=['Name', 'Club', 'Age'])
                 fig.update_traces(marker=dict(color=set_color(stored_df)))
-                return fig, empty_table, empty_radar, stored_player_options, stored_player_options
+                # Check and reverse x-axis
+                if selected_x in negative_stat_categories:
+                    fig.update_layout(xaxis=dict(autorange="reversed"))
+                else:
+                    fig.update_layout(xaxis=dict(autorange=True))
+                # Check and reverse y-axis
+                if selected_y in negative_stat_categories:
+                    fig.update_layout(yaxis=dict(autorange="reversed"))
+                else:
+                    fig.update_layout(yaxis=dict(autorange=True))
+                return fig, empty_table, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
             except Exception as e:
                 print(f"Error creating scatter plot: {str(e)}")
-                return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options
+                return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
         else:
             print("Invalid axis selection")
             empty_fig.update_layout(title='Invalid axis selection')
-            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options
+            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
 
     # Handle table button
     elif 'table-button' in trigger_id and table_clicks > 0:
@@ -975,10 +1026,10 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
                                   }
                               ]
                               )
-            return empty_fig, fig, empty_radar, stored_player_options, stored_player_options
+            return empty_fig, fig, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
         except Exception as e:
             print(f"Error creating table: {str(e)}")
-            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options
+            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
 
     # Handle axis dropdown changes
     elif trigger_id in ['x-axis-dropdown', 'y-axis-dropdown'] and selected_x and selected_y:
@@ -998,10 +1049,54 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
                              hover_data=['Name', 'Club', 'Age'] if all(
                                  col in stored_df.columns for col in ['Name', 'Club', 'Age']) else None)
             fig.update_traces(marker=dict(color=set_color(stored_df)))
-            return fig, empty_table, empty_radar, stored_player_options, stored_player_options
+            # Check and reverse x-axis
+            if selected_x in negative_stat_categories:
+                fig.update_layout(xaxis=dict(autorange="reversed"))
+            else:
+                fig.update_layout(xaxis=dict(autorange=True))
+            # Check and reverse y-axis
+            if selected_y in negative_stat_categories:
+                fig.update_layout(yaxis=dict(autorange="reversed"))
+            else:
+                fig.update_layout(yaxis=dict(autorange=True))
+            return fig, empty_table, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
         except Exception as e:
             print(f"Error updating plot for axis change: {str(e)}")
-            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options
+            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
+
+    # Handle Sample Chart dropdown changes
+    elif trigger_id in 'sample-chart-dropdown' and selected_sample:
+        try:
+            def set_color(df):
+                values = df['Club'].to_list()
+                color_list = []
+                for i in values:
+                    if i == squad_attributes_df.loc[0]['Club']:
+                        color_list.append('red')
+                    else:
+                        color_list.append('blue')
+                return color_list
+
+            fig = px.scatter(stored_df, x=sample_charts[selected_sample][0], y=sample_charts[selected_sample][1],
+                             title=f'{selected_sample}',
+                             hover_data=['Name', 'Club', 'Age'] if all(
+                                 col in stored_df.columns for col in ['Name', 'Club', 'Age']) else None)
+            fig.update_traces(marker=dict(color=set_color(stored_df)))
+            # Check and reverse x-axis
+            if sample_charts[selected_sample][0] in negative_stat_categories:
+                fig.update_layout(xaxis=dict(autorange='reversed'))
+            else:
+                fig.update_layout(xaxis=dict(autorange=True))
+            # Check and reverse y-axis
+            if sample_charts[selected_sample][1] in negative_stat_categories:
+                fig.update_layout(yaxis=dict(autorange='reversed'))
+            else:
+                fig.update_layout(yaxis=dict(autorange=True))
+            fig.update_layout(title=f'{selected_sample}')
+            return fig, empty_table, empty_radar, stored_player_options, stored_player_options, selected_sample
+        except Exception as e:
+            print(f"Error updating plot for axis change: {str(e)}")
+            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, selected_sample
 
     # Handle Table dropdown changes
     elif trigger_id in 'stats-table-dropdown' and selected_col:
@@ -1044,10 +1139,10 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
                                   }
                               ]
                               )
-            return empty_fig, fig, empty_radar, stored_player_options, stored_player_options
+            return empty_fig, fig, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
         except Exception as e:
             print(f"Error updating table for dropdown change: {str(e)}")
-            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options
+            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
 
     # Handle Radar Button
     elif 'radar-button' in trigger_id and radar_clicks > 0:
@@ -1109,15 +1204,15 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
                 fig_data = base64.b64encode(buf.getbuffer()).decode("ascii")
                 fig_bar_matplotlib = f'data:image/png;base64,{fig_data}'
 
-                return empty_fig, empty_table, fig_bar_matplotlib, stored_player_options, stored_player_options
+                return empty_fig, empty_table, fig_bar_matplotlib, stored_player_options, stored_player_options, empty_sample_dropdown
 
 
             except Exception as e:
                 print(f"Error creating radar plot: {str(e)}")
-                return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options
+                return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
         else:
             print("Invalid player selection")
-            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options
+            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
 
     # Handle radar player dropdown changes
     elif trigger_id in ['player-dropdown', 'player-dropdown1'] and selected_player and selected_player1:
@@ -1178,12 +1273,12 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
             fig_data = base64.b64encode(buf.getbuffer()).decode("ascii")
             fig_bar_matplotlib = f'data:image/png;base64,{fig_data}'
 
-            return empty_fig, empty_table, fig_bar_matplotlib, stored_player_options, stored_player_options
+            return empty_fig, empty_table, fig_bar_matplotlib, stored_player_options, stored_player_options, empty_sample_dropdown
 
 
         except Exception as e:
             print(f"Error updating plot for axis change: {str(e)}")
-            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options
+            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
 
     # Handle Radar Chart Preset Metrics Dropdown Changes
     elif trigger_id in 'radar-preset-values-dropdown' and selected_radar_preset:
@@ -1244,12 +1339,12 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
             fig_data = base64.b64encode(buf.getbuffer()).decode("ascii")
             fig_bar_matplotlib = f'data:image/png;base64,{fig_data}'
 
-            return empty_fig, empty_table, fig_bar_matplotlib, stored_player_options, stored_player_options
+            return empty_fig, empty_table, fig_bar_matplotlib, stored_player_options, stored_player_options, empty_sample_dropdown
 
 
         except Exception as e:
             print(f"Error updating plot for radar preset change: {str(e)}")
-            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options
+            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
 
     # Handle Custom Radar Metrics Dropdown Change
     elif trigger_id in 'custom-radar-values-dropdown' and selected_metrics:
@@ -1310,15 +1405,15 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
             fig_data = base64.b64encode(buf.getbuffer()).decode("ascii")
             fig_bar_matplotlib = f'data:image/png;base64,{fig_data}'
 
-            return empty_fig, empty_table, fig_bar_matplotlib, stored_player_options, stored_player_options
+            return empty_fig, empty_table, fig_bar_matplotlib, stored_player_options, stored_player_options, empty_sample_dropdown
 
 
         except Exception as e:
             print(f"Error updating plot for custom radar change: {str(e)}")
-            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options
+            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
 
     # Default return
-    return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options
+    return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
 
 
 # Handle the collapsed scatter plot
