@@ -102,8 +102,8 @@ border: 1px solid transparent;
 }
 
 .home-button:active {
-background-color: transparent;
-border: 1px solid transparent;
+background-color: transparent !important;
+border: 1px solid transparent !important;
 }
 
 .modal_conditions_button {
