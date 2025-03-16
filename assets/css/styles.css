@@ -101,6 +101,11 @@ background-color: transparent;
 border: 1px solid transparent;
 }
 
+.home-button:active {
+background-color: transparent;
+border: 1px solid transparent;
+}
+
 .modal_conditions_button {
 background-color: #e2777d;
 border-radius: 5px;
