@@ -643,16 +643,26 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file):
             lambda pos: check_position_tags(pos, position_filter)
         )
 
-    # Create new column to fix 'Apps' parenthesis issue. Substitute appearances will be counted as 1 full appearance.
-    # This number will be used to set a minimum 'total_apps' to exclude players with inflated stats in low # of Apps.
+    # Fix 'Apps' parenthesis issue. *Substitute appearances will be counted as 1 full appearance.
+    # This number will be used to set a minimum Apps # to exclude players with no stats or inflated stats in low # of Apps.
 
-    stats_df["Apps"] = (
-        stats_df["Apps"]
-        .str.extractall(r"(\d+)")
-        .astype(int)
-        .groupby(level=0)
-        .sum()
-    )
+    def process_apps_column(value):
+        if isinstance(value, str):
+            if '(' in value:
+                # Case with parentheses
+                extracted = pd.Series(value).str.extract(r"(\d+)\s*\(?(\d*)\)?")
+                return extracted.fillna(0).astype(int).sum(axis=1).iloc[0]
+            else:
+                # Case without parentheses
+                extracted = pd.Series(value).str.extract(r"(\d+)")
+                if not extracted.empty:
+                    return extracted.fillna(0).astype(int).sum(axis=1).iloc[0]
+                else:
+                    return 0  # return 0 if no value is found
+        else:
+            return value  # return value if it is already an integer rather than a string
+
+    stats_df["Apps"] = stats_df["Apps"].apply(process_apps_column)
 
     # Set minimum apps threshold (Unnecessary?)
     minimum_apps = 10
