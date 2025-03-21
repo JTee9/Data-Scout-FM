@@ -734,22 +734,16 @@ def update_filtered_data(uploaded_dataframes, n_clicks_apply, n_clicks_clear, st
                             return df[mask]
 
                         filtered_df = filter_dataframe_true_values(df, criteria)
-                        print(f'multiple position names: {filtered_df}')
                     else:
                         filtered_df = df[df[criteria] == True]
-                        print(f'filtered_df after position filter: {filtered_df}')
                 # Handle top10 quantile filters
                 if 'top10' in category:
                     filtered_df.reset_index(drop=True, inplace=True)
                     top10_filter = pd.Series([False] * len(filtered_df))  # Initialize with False
                     for col in criteria:
-                        print(col)
                         percentile_90 = filtered_df[col].quantile(0.90)
-                        print(percentile_90)
                         top10_filter = top10_filter | (filtered_df[col] >= percentile_90)  # OR operation
-                        print(f'top10 filter: {top10_filter}')
                     sample_df = filtered_df[top10_filter]
-                    print(sample_df.Position)
             filtered_count = len(sample_df)
             print(f'filtered count: {filtered_count}')
             feedback_message = f"{filtered_count} record(s) match the criteria."
