@@ -11,70 +11,11 @@ import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
 import io
+from config import position_filters, attribute_filters
 
 
 # Register Page
 dash.register_page(__name__, path='/attributes', title='Scout FM Attributes')
-
-# Position filters
-position_filters = {
-        'GK': ['GK'],
-        'D (C)': ['D (C)', 'D (RC)', 'D (LC)', 'D (RLC)'],
-        'D (R)': ['D (R)', 'D (RL)', 'D (RC)', 'D (RLC)', 'D/WB (R)', 'D/WB (RL)',
-                  'D/WB/M (R)', 'D/WB/M (RL)', 'D/WB/M/AM (R)', 'D/WB/M/AM (RL)',
-                  'D/WB/M/AM (RC)', 'D/WB/M/AM (RLC)', 'D/M (R)', 'D/M (RL)'],
-        'D (L)': ['D (L)', 'D (RL)', 'D (LC)', 'D (RLC)', 'D/WB (L)', 'D/WB (RL)',
-                  'D/WB/M (L)', 'D/WB/M (RL)', 'D/WB/M/AM (L)', 'D/WB/M/AM (RL)', 'D/M (L)', 'D/M (RL)'],
-        'WB (R)': ['D/WB (R)', 'D/WB (RL)', 'D/WB/M (R)', 'D/WB/M (RL)', 'D/WB/M (RC)',
-                   'D/WB/M (RLC)', 'D/WB/M/AM (R)', 'D/WB/M/AM (RL)', 'D/WB/M/AM (RC)',
-                   'D/WB/M/AM (RLC)', 'WB (R)', 'WB (RL)', 'WB/M (R)', 'WB/M (RL)',
-                   'WB/M (RC)', 'WB/M (RLC)', 'WB/M/AM (R)', 'WB/M/AM (RL)'],
-        'WB (L)': ['D/WB (L)', 'D/WB (RL)', 'D/WB/M (L)', 'D/WB/M (RL)', 'D/WB/M (LC)',
-                   'D/WB/M (RLC)', 'D/WB/M/AM (L)', 'D/WB/M/AM (RL)', 'D/WB/M/AM (LC)',
-                   'D/WB/M/AM (RLC)', 'WB (L)', 'WB (RL)', 'WB/M (L)', 'WB/M (RL)',
-                   'WB/M (LC)', 'WB/M (RLC)', 'WB/M/AM (L)', 'WB/M/AM (RL)'],
-        'M (R)': ['D/WB/M (R)', 'D/WB/M (RL)', 'D/WB/M (RC)', 'D/WB/M (RLC)', 'D/WB/M/AM (R)',
-                  'D/WB/M/AM (RL)', 'D/WB/M/AM (RC)', 'D/WB/M/AM (RLC)', 'WB/M (R)', 'WB/M (RL)',
-                  'WB/M (RC)', 'WB/M (RLC)', 'WB/M/AM (R)', 'WB/M/AM (RL)', 'WB/M/AM (RC)',
-                  'WB/M/AM (RLC)', 'M (R)', 'M (RL)', 'M (RC)', 'M (RLC)', 'M/AM (R)', 'M/AM (RL)',
-                  'M/AM (RC)', 'M/AM (RLC)'],
-        'M (L)': ['D/WB/M (L)', 'D/WB/M (RL)', 'D/WB/M (LC)', 'D/WB/M (RLC)', 'D/WB/M/AM (L)',
-                  'D/WB/M/AM (RL)', 'D/WB/M/AM (LC)', 'D/WB/M/AM (RLC)', 'WB/M (L)', 'WB/M (RL)',
-                  'WB/M (LC)', 'WB/M (RLC)', 'WB/M/AM (L)', 'WB/M/AM (RL)', 'WB/M/AM (LC)',
-                  'WB/M/AM (RLC)', 'M (L)', 'M (RL)', 'M (LC)', 'M (RLC)', 'M/AM (L)', 'M/AM (RL)',
-                  'M/AM (LC)', 'M/AM (RLC)'],
-        'DM': ['DM'],
-        'M (C)': ['M (C)', 'M (RC)', 'M (LC)', 'M (RLC)', 'M/AM (C)', 'M/AM (RC)', 'M/AM (LC)', 'M/AM (RLC)'],
-        'AM (C)': ['M (RLC)', 'M/AM (C)', 'M/AM (RC)', 'M/AM (LC)', 'M/AM (RLC)',
-                   'AM (C)', 'AM (RC)', 'AM (LC)', 'AM (RLC)'],
-        'AM (R)': ['D/WB/M/AM (R)', 'D/WB/M/AM (RL)', 'D/WB/M/AM (RC)', 'D/WB/M/AM (RLC)',
-                   'WB/M/AM (R)', 'WB/M/AM (RL)', 'WB/M/AM (RC)', 'WB/M/AM (RLC)',
-                   'M/AM (R)', 'M/AM (RL)', 'M/AM (RC)', 'M/AM (RLC)',
-                   'AM (R)', 'AM (RL)', 'AM (RC)', 'AM (RLC)'],
-        'AM (L)': ['D/WB/M/AM (L)', 'D/WB/M/AM (RL)', 'D/WB/M/AM (LC)', 'D/WB/M/AM (RLC)',
-                   'WB/M/AM (L)', 'WB/M/AM (RL)', 'WB/M/AM (LC)', 'WB/M/AM (RLC)',
-                   'M/AM (L)', 'M/AM (RL)', 'M/AM (LC)', 'M/AM (RLC)',
-                   'AM (L)', 'AM (RL)', 'AM (LC)', 'AM (RLC)'],
-        'ST': ['ST (C)']
-    }
-
-# Create attribute filters
-attribute_filters = {
-    'Overall': ['Name', 'Age', 'Position', 'Club', 'Division', 'Speed', 'Physical', 'Defending', 'Mental', 'Aerial', 'Technical', 'Attacking', 'Vision'],
-    'GK Overall': ['Name', 'Age', 'Position', 'Club', 'Division', 'Speed', 'Physical', 'Shot Stopping', 'Distribution', 'Aerial (GK)', 'Ecc', 'Communication', 'Mental'],
-    'Technical': ['Name', 'Age', 'Position', 'Club', 'Division', 'Cor', 'Cro', 'Dri', 'Fin', 'Fir', 'Fre', 'Hea', 'Lon', 'L Th', 'Mar', 'Pas', 'Pen', 'Tck', 'Tec'],
-    'Mental': ['Name', 'Age', 'Position', 'Club', 'Division', 'Agg', 'Ant', 'Bra', 'Cmp', 'Cnt', 'Dec', 'Det', 'Fla', 'Ldr', 'OtB', 'Pos', 'Tea', 'Vis', 'Wor'],
-    'Physical': ['Name', 'Age', 'Position', 'Club', 'Division', 'Acc', 'Agi', 'Bal', 'Jum', 'Nat', 'Pac', 'Sta', 'Str'],
-    'Goalkeeper': ['Name', 'Age', 'Position', 'Club', 'Division', 'Aer', 'Cmd', 'Com', 'Ecc', 'Fir', 'Han', 'Kic', 'TRO', '1v1', 'Pun', 'Ref', 'Thr'],
-    'Central Defender': ['Name', 'Age', 'Position', 'Club', 'Division', 'Hea', 'Mar', 'Tck', 'Pos', 'Jum', 'Str'],
-    'Full-back': ['Name', 'Age', 'Position', 'Club', 'Division', 'Cro', 'Dri', 'Tck', 'Tec', 'OtB', 'Tea', 'Wor', 'Acc', 'Pac', 'Sta'],
-    'Wing-Back': ['Name', 'Age', 'Position', 'Club', 'Division', 'Cro', 'Dri', 'Tck', 'Tec', 'OtB', 'Tea', 'Wor', 'Acc', 'Pac', 'Sta'],
-    'Defensive Midfielder': ['Name', 'Age', 'Position', 'Club', 'Division', 'Tck', 'Fir', 'Pas', 'Ant', 'Cnt', 'Pos', 'Tea', 'Wor', 'Sta'],
-    'Central Midfielder': ['Name', 'Age', 'Position', 'Club', 'Division', 'Fir', 'Pas', 'Tck', 'Dec', 'Tea', 'OtB', 'Vis', 'Agi', 'Bal'],
-    'Attacking Midfielder': ['Name', 'Age', 'Position', 'Club', 'Division', 'Fir', 'Pas', 'Tck', 'Dec', 'Tea', 'OtB', 'Vis', 'Agi', 'Bal'],
-    'Winger': ['Name', 'Age', 'Position', 'Club', 'Division', 'Cro', 'Dri', 'Tec', 'Ant', 'Fla', 'Wor', 'Acc', 'Agi', 'Pac'],
-    'Striker': ['Name', 'Age', 'Position', 'Club', 'Division', 'Dri', 'Fin', 'Fir', 'Tec', 'Cmp', 'OtB', 'Acc', 'Jum', 'Pac']
-}
 
 layout = html.Div([
     html.Div([

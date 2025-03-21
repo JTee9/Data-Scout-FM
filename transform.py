@@ -532,10 +532,8 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file):
                 def average_range(range_str):
 
                     try:
-                        print(f'trying {range_str}')
                         start, end = map(float, range_str.split('-'))
                         result = (start + end) / 2
-                        print(f'average: {result}')
                         return result
                     except ValueError as e:
                         return np.nan

@@ -6,6 +6,9 @@
 # 5. Only keep per 90 min stats and drop totals?
 # 6. Button to generate recommended players to scout based on user preference filters (age, transfer value, etc.)
 # and preset algorithm to find top prospects for each position.
+#7 Fix radar reverse axis for negative stats
+#8 Fix stats filter modal bug, modal message is 'no filter applied' after clicking back in to add more filters
+# Sample chart adds categories to filter view? e.g. show top WB (L) on x & Y axes
 
 import base64
 from io import BytesIO
@@ -21,145 +24,11 @@ from soccerplots.radar_chart import Radar
 import matplotlib
 matplotlib.use('agg')
 import io
+from config import position_filters, negative_stat_categories, stats_label_dict, preset_radar_values, sample_charts
 
 
 # Register Page
 dash.register_page(__name__, path='/stats', title='Scout FM Stats')
-
-
-preset_radar_values = {
-    'Goalkeeper': ['Apps', 'Av Rat', 'xSv %', 'xGP/90', 'Pens Saved Ratio', 'PoM', 'Saves/90', 'Clr/90', 'Pas %', 'Ps C/90', 'Sv %', 'Svh', 'Svp', 'Svt', 'Cln/90', 'Con/90'],
-    'Central Defender': ['Apps', 'Av Rat', 'Tck/90', 'Tck R', 'Shts Blckd/90', 'Pr passes/90', 'Poss Won/90', 'Ps C/90', 'Pas %', 'Int/90', 'Hdrs W/90', 'Hdr %', 'Clr/90', 'Blk/90', 'Yel'],
-    'Full-back': ['Apps', 'Av Rat', 'Tck/90', 'Tck R', 'Poss Won/90', 'Poss Lost/90', 'Ps C/90', 'Pas %', 'Int/90', 'Distance', 'Cr C/90', 'Cr C/A', 'Fls', 'Yel'],
-    'Wing-Back': ['Apps', 'Av Rat', 'Tck/90', 'Tck R', 'Poss Won/90', 'Poss Lost/90', 'Pas %', 'Int/90', 'Distance', 'Cr C/90', 'Cr C/A', 'OP-Crs C/90', 'Ch C/90', 'Asts/90', 'Drb/90', 'Sprints/90'],
-    'Defensive Midfielder': ['Apps', 'Av Rat', 'Tck/90', 'Tck R', 'Pr passes/90', 'Poss Won/90', 'Poss Lost/90', 'Ps C/90', 'Pas %', 'K Ps/90', 'Int/90', 'Pres C/90', 'Hdrs W/90', 'Hdr %',],
-    'Central Midfielder': ['Apps', 'Av Rat', 'Tck/90', 'Int/90', 'Pr passes/90', 'Poss Won/90', 'Poss Lost/90', 'Pas %', 'K Ps/90', 'Distance', 'Ch C/90', 'Asts/90', 'Pres C/90', 'ShT/90'],
-    'Attacking Midfielder': ['Apps', 'Av Rat', 'Pas %', 'Ch C/90', 'Asts/90', 'xA/90', 'Poss Lost/90', 'K Ps/90', 'OP-KP/90', 'Drb/90', 'xG/shot', 'Gls/90', 'xG/90'],
-    'Winger': ['Apps', 'Av Rat', 'Poss Lost/90', 'Pres C/90', 'Drb/90', 'Sprints/90', 'FA', 'Ch C/90', 'OP-KP/90', 'Cr C/90', 'Cr C/A', 'OP-Crs C/90', 'xG/shot', 'Gls/90', 'xG/90'],
-    'Striker': ['Apps', 'Av Rat', 'Pres C/90', 'Poss Won/90', 'ShT/90', 'Shot %', 'Sprints/90', 'Hdrs W/90', 'Hdr %', 'xG/shot', 'Conv %', 'Asts/90', 'NP-xG/90', 'Gls/90', 'xG/90'],
-    'Custom': []
-}
-
-# Create sample charts for quick access to interesting data in their FM files
-# Recommended filters (Division, Age, Transfer Value, Position), filter for top percentiles of the categories to get the top prospects
-sample_charts = {
-    'Hardworking Chance Creators': ['OP-KP/90', 'Distance'],
-    'Shot Quality': ['Shot/90', 'ShT/90'],
-    'Active Dribblers': ['Drb/90', 'Sprints/90'],
-    'Active Defenders': ['Distance', 'K Tck/90'],
-    'Clinical Defenders': ['K Tck/90', 'K Hdrs/90'],
-    'Mobile Strikers': ['Distance', 'ShT/90'],
-    'Ball Winners': ['Poss Won/90', 'Int/90'],
-    'Quality Passers': ['K Ps/90', 'Poss Lost/90']
-}
-
-position_filters = {
-        'GK': ['GK'],
-        'D (C)': ['D (C)', 'D (RC)', 'D (LC)', 'D (RLC)'],
-        'D (R)': ['D (R)', 'D (RL)', 'D (RC)', 'D (RLC)', 'D/WB (R)', 'D/WB (RL)',
-                  'D/WB/M (R)', 'D/WB/M (RL)', 'D/WB/M/AM (R)', 'D/WB/M/AM (RL)',
-                  'D/WB/M/AM (RC)', 'D/WB/M/AM (RLC)', 'D/M (R)', 'D/M (RL)'],
-        'D (L)': ['D (L)', 'D (RL)', 'D (LC)', 'D (RLC)', 'D/WB (L)', 'D/WB (RL)',
-                  'D/WB/M (L)', 'D/WB/M (RL)', 'D/WB/M/AM (L)', 'D/WB/M/AM (RL)', 'D/M (L)', 'D/M (RL)'],
-        'WB (R)': ['D/WB (R)', 'D/WB (RL)', 'D/WB/M (R)', 'D/WB/M (RL)', 'D/WB/M (RC)',
-                   'D/WB/M (RLC)', 'D/WB/M/AM (R)', 'D/WB/M/AM (RL)', 'D/WB/M/AM (RC)',
-                   'D/WB/M/AM (RLC)', 'WB (R)', 'WB (RL)', 'WB/M (R)', 'WB/M (RL)',
-                   'WB/M (RC)', 'WB/M (RLC)', 'WB/M/AM (R)', 'WB/M/AM (RL)'],
-        'WB (L)': ['D/WB (L)', 'D/WB (RL)', 'D/WB/M (L)', 'D/WB/M (RL)', 'D/WB/M (LC)',
-                   'D/WB/M (RLC)', 'D/WB/M/AM (L)', 'D/WB/M/AM (RL)', 'D/WB/M/AM (LC)',
-                   'D/WB/M/AM (RLC)', 'WB (L)', 'WB (RL)', 'WB/M (L)', 'WB/M (RL)',
-                   'WB/M (LC)', 'WB/M (RLC)', 'WB/M/AM (L)', 'WB/M/AM (RL)'],
-        'M (R)': ['D/WB/M (R)', 'D/WB/M (RL)', 'D/WB/M (RC)', 'D/WB/M (RLC)', 'D/WB/M/AM (R)',
-                  'D/WB/M/AM (RL)', 'D/WB/M/AM (RC)', 'D/WB/M/AM (RLC)', 'WB/M (R)', 'WB/M (RL)',
-                  'WB/M (RC)', 'WB/M (RLC)', 'WB/M/AM (R)', 'WB/M/AM (RL)', 'WB/M/AM (RC)',
-                  'WB/M/AM (RLC)', 'M (R)', 'M (RL)', 'M (RC)', 'M (RLC)', 'M/AM (R)', 'M/AM (RL)',
-                  'M/AM (RC)', 'M/AM (RLC)'],
-        'M (L)': ['D/WB/M (L)', 'D/WB/M (RL)', 'D/WB/M (LC)', 'D/WB/M (RLC)', 'D/WB/M/AM (L)',
-                  'D/WB/M/AM (RL)', 'D/WB/M/AM (LC)', 'D/WB/M/AM (RLC)', 'WB/M (L)', 'WB/M (RL)',
-                  'WB/M (LC)', 'WB/M (RLC)', 'WB/M/AM (L)', 'WB/M/AM (RL)', 'WB/M/AM (LC)',
-                  'WB/M/AM (RLC)', 'M (L)', 'M (RL)', 'M (LC)', 'M (RLC)', 'M/AM (L)', 'M/AM (RL)',
-                  'M/AM (LC)', 'M/AM (RLC)'],
-        'DM': ['DM'],
-        'M (C)': ['M (C)', 'M (RC)', 'M (LC)', 'M (RLC)', 'M/AM (C)', 'M/AM (RC)', 'M/AM (LC)', 'M/AM (RLC)'],
-        'AM (C)': ['M (RLC)', 'M/AM (C)', 'M/AM (RC)', 'M/AM (LC)', 'M/AM (RLC)',
-                   'AM (C)', 'AM (RC)', 'AM (LC)', 'AM (RLC)'],
-        'AM (R)': ['D/WB/M/AM (R)', 'D/WB/M/AM (RL)', 'D/WB/M/AM (RC)', 'D/WB/M/AM (RLC)',
-                   'WB/M/AM (R)', 'WB/M/AM (RL)', 'WB/M/AM (RC)', 'WB/M/AM (RLC)',
-                   'M/AM (R)', 'M/AM (RL)', 'M/AM (RC)', 'M/AM (RLC)',
-                   'AM (R)', 'AM (RL)', 'AM (RC)', 'AM (RLC)'],
-        'AM (L)': ['D/WB/M/AM (L)', 'D/WB/M/AM (RL)', 'D/WB/M/AM (LC)', 'D/WB/M/AM (RLC)',
-                   'WB/M/AM (L)', 'WB/M/AM (RL)', 'WB/M/AM (LC)', 'WB/M/AM (RLC)',
-                   'M/AM (L)', 'M/AM (RL)', 'M/AM (LC)', 'M/AM (RLC)',
-                   'AM (L)', 'AM (RL)', 'AM (LC)', 'AM (RLC)'],
-        'ST': ['ST (C)']
-    }
-
-stats_label_dict = {'Name': 'Name', 'Age': 'Age', 'Position': 'Position', 'Club': 'Club', 'Division': 'Division',
-                        'Transfer Value': 'Transfer Value', 'Wage': 'Wage', 'Transfer Status': 'Transfer Status',
-                        'Av Rat': 'Average Rating', 'Gls': 'Goals', 'Gls/90': 'Goals per 90 minutes',
-                        'Goals Outside Box': 'Goals from Outside the Box', 'Ast': 'Assists',
-                        'Asts/90': 'Assists per 90 minutes', 'CCC': 'Overall number of chances created',
-                        'Ch C/90': 'Chances Created per 90 minutes', 'Shots': 'Shots', 'Shot/90': 'Shots per 90 minutes',
-                        'ShT': 'Shots on Target', 'ShT/90': 'Shots on Target per 90 minutes',
-                        'Shot %': 'Shots On Target Ratio',
-                        'Shots Outside Box/90': 'Shots from Outside the Box per 90 minutes',
-                        'FK Shots': 'Free Kick Shots', 'xG': 'xG - Expected Goals',
-                        'xG/90': 'xG/90 - Expected Goals per 90 minutes',
-                        'xG/shot': 'xG/Shot - Expected Goals per Shot',
-                        'xG-OP': 'xG OP - Expected Goals Overperformance',
-                        'NP-xG': 'NP xG - Non Penalty Expected Goals',
-                        'NP-xG/90': 'NP xG/90 - Non Penalty Expected Goals per 90 minutes',
-                        'Conv %': 'Goal Conversion Rate', 'Pens': 'Penalties Taken', 'Pens S': 'Penalties Scored',
-                        'Pen/R': 'Penalties Scored Ratio', 'Ps C': 'Passes Completed',
-                        'Ps C/90': 'Passes Completed per 90 minutes', 'Pas A': 'Passes Attempted',
-                        'Ps A/90': 'Passes Attempted per 90 minutes', 'Pas %': 'Pass Completion Ratio',
-                        'Pr Passes': 'Progressive Passes', 'Pr passes/90': 'Progressive Passes per 90 minutes',
-                        'K Pas': 'Key Passes', 'K Ps/90': 'Key Passes per 90 minutes', 'xA': 'xA - Expected Assists',
-                        'xA/90': 'xA/90 - Expected Assists per 90 minutes', 'Sprints/90': 'Sprints per 90 minutes',
-                        'Drb': 'Dribbles Made', 'Drb/90': 'Dribbles Made per 90 minutes',
-                        'Distance': 'Distance Covered', 'Cr C': 'Crosses Completed',
-                        'Cr C/90': 'Crosses Completed per 90 minutes', 'Cr A': 'Crosses Attempted',
-                        'Crs A/90': 'Crosses Attempted per 90 minutes', 'Cr C/A': 'Cross Completion Ratio',
-                        'OP-KP': 'Open Play Key Passes', 'OP-KP/90': 'Open Play Key Passes per 90 minutes',
-                        'OP-Crs C': 'Open Play Crosses Completed',
-                        'OP-Crs C/90': 'Open Play Crosses Completed per 90 minutes',
-                        'OP-Crs A': 'Open Play Crosses Attempted',
-                        'OP-Crs A/90': 'Open Play Crosses Attempted per 90 minutes',
-                        'OP-Cr %': 'Open Play Cross Completion Ratio', 'Pres C': 'Pressures Completed',
-                        'Pres C/90': 'Pressures Completed per 90 minutes', 'Pres A': 'Pressures Attempted',
-                        'Pres A/90': 'Pressures Attempted per 90 minutes',
-                        'Poss Won/90': 'Possessions Won per 90 minutes',
-                        'Poss Lost/90': 'Possessions Lost per 90 minutes', 'Tck C': 'Tackles Completed',
-                        'Tck/90': 'Tackles Completed per 90 minutes', 'Tck A': 'Tackles Attempted',
-                        'Tck R': 'Tackle Completion Ratio', 'K Tck': 'Key Tackles',
-                        'K Tck/90': 'Key Tackles per 90 minutes', 'Hdrs': 'Headers Won',
-                        'Hdrs W/90': 'Headers Won per 90 minutes', 'Hdrs A': 'Headers Attempted',
-                        'Aer A/90': 'Headers Attempted per 90 minutes', 'Hdr %': 'Headers Won Ratio',
-                        'Hdrs L/90': 'Headers Lost per 90 minutes', 'K Hdrs/90': 'Key Headers per 90 minutes',
-                        'Blk': 'Blocks', 'Blk/90': 'Blocks per 90 minutes', 'Shts Blckd': 'Shots Blocked',
-                        'Shts Blckd/90': 'Shots Blocked per 90 minutes', 'Clear': 'Clearances',
-                        'Clr/90': 'Clearances per 90 minutes', 'Itc': 'Interceptions',
-                        'Int/90': 'Interceptions per 90 minutes', 'Gl Mst': 'Mistakes Leading to Goal',
-                        'Clean Sheets': 'Clean Sheets', 'Cln/90': 'Clean Sheets per 90 minutes',
-                        'Saves/90': 'Saves per 90 minutes', 'Svt': 'Saves Tipped', 'Svp': 'Saves Parried',
-                        'Svh': 'Saves Held', 'Sv %': 'Save Ratio', 'xSv %': 'xSv Ratio - Expected Save Ratio',
-                        'xGP': 'xGP - Expected Goals Prevented',
-                        'xGP/90': 'xGP/90 - Expected Goals Prevented per 90 minutes', 'Pens Saved': 'Penalties Saved',
-                        'Pens Faced': 'Penalties Faced', 'Pens Saved Ratio': 'Penalties Saved Ratio',
-                        'Conc': 'Goals Conceded', 'Con/90': 'Goals Conceded per 90 minutes', 'Off': 'Offsides',
-                        'Fls': 'Fouls Committed', 'FA': 'Fouls Against', 'Yel': 'Yellow Cards', 'Red': 'Red Cards',
-                        'Pts/Gm': 'Points Won per Game', 'Tgls': 'Team Goals', 'Tgls/90': 'Team Goals per 90 minutes',
-                        'Tcon': 'Team Goals Conceded', 'Tcon/90': 'Team Goals Conceded per 90 minutes',
-                        'Won': 'Games Won', 'D': 'Games Drawn', 'Lost': 'Games Lost', 'Gwin': 'Game Win Ratio',
-                        'Apps': 'Appearances', 'Starts': 'Starting Appearances', 'Mins': 'Minutes',
-                        'G. Mis': 'Games Missed in a Row', 'PoM': 'Player of the Match',
-                        'Int Apps': 'International Appearances (current season)',
-                        'Int Ast': 'International Assists (current season)',
-                        'Int Conc': 'International Goals Conceded (current season)',
-                        'Int Av Rat': 'International Average Rating (current season)'}
-
-negative_stat_categories = ['Poss Lost/90', 'Hdrs L/90', 'Gl Mst', 'Conc', 'Con/90', 'Off', 'Fls', 'Yel', 'Red', 'Tcon', 'Tcon/90',
-                            'Lost', 'G. Mis', 'Int Conc']
 
 # Page Layout ----------------------------------------------
 layout = html.Div([
@@ -238,6 +107,14 @@ layout = html.Div([
         html.Div(id='graph-dropdown-container', children=[
             dbc.Collapse(id='scatter-object-collapse', is_open=False, children=dcc.Graph(id='scatterplot-graph', style={'width': '100%', 'height': '90%'})),
             html.Div(id='graph-dropdowns', children=[
+                html.P('Sample Charts (Add other filters (e.g. Age, Transfer Value) with the "Filter Data" Button)'),
+                dcc.Dropdown(
+                    id='sample-chart-dropdown',
+                    options=[{'label': key, 'value': key} for key in sample_charts.keys()],
+                    value='',
+                    clearable=False,
+                    placeholder='Select a Sample Chart'
+                ),
                 html.P('Select X Axis:'),
                 dcc.Dropdown(
                     id='x-axis-dropdown',
@@ -251,14 +128,6 @@ layout = html.Div([
                     options=[],
                     value='',
                     clearable=False
-                ),
-                html.P('Sample Charts'),
-                dcc.Dropdown(
-                    id='sample-chart-dropdown',
-                    options=[{'label': key, 'value': key} for key in sample_charts.keys()],
-                    value='',
-                    clearable=False,
-                    placeholder='Select a Sample Chart'
                 )
             ])
         ], style={'width': '100%', 'height': '100%', 'display': 'none'}), # Initially hidden
@@ -353,31 +222,39 @@ def update_graph_dropdowns(uploaded_dataframes, selected_sample, current_x, curr
     stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
 
     if selected_sample != '':
-        return (html.P('Select X Axis:'),
-            dcc.Dropdown(
-                id='x-axis-dropdown',
-                options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
-                value=sample_charts[selected_sample][0],
-                clearable=False
-            ),
-            html.P('Select Y Axis:'),
-            dcc.Dropdown(
-                id='y-axis-dropdown',
-                options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
-                value=sample_charts[selected_sample][1],
-                clearable=False
-            ),
-            html.P('Sample Charts'),
+        return (html.P('Sample Charts (Add other filters (e.g. Age, Transfer Value) with the "Filter Data" Button)'),
+                dcc.Dropdown(
+                    id='sample-chart-dropdown',
+                    options=[{'label': key, 'value': key} for key in sample_charts.keys()],
+                    value=selected_sample,
+                    clearable=False,
+                    placeholder='Select a Sample Chart'
+                ),
+                html.P('Select X Axis:'),
+                dcc.Dropdown(
+                    id='x-axis-dropdown',
+                    options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
+                    value=sample_charts[selected_sample]['X'],
+                    clearable=False
+                ),
+                html.P('Select Y Axis:'),
+                dcc.Dropdown(
+                    id='y-axis-dropdown',
+                    options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
+                    value=sample_charts[selected_sample]['Y'],
+                    clearable=False
+                ),
+                )
+
+    return (html.P('Sample Charts (Add other filters (e.g. Age, Transfer Value) with the "Filter Data" Button)'),
             dcc.Dropdown(
                 id='sample-chart-dropdown',
                 options=[{'label': key, 'value': key} for key in sample_charts.keys()],
-                value=selected_sample,
+                value='',
                 clearable=False,
                 placeholder='Select a Sample Chart'
-            )
-            )
-
-    return (html.P('Select X Axis:'),
+            ),
+            html.P('Select X Axis:'),
             dcc.Dropdown(
                 id='x-axis-dropdown',
                 options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
@@ -391,14 +268,6 @@ def update_graph_dropdowns(uploaded_dataframes, selected_sample, current_x, curr
                 value=current_y,
                 clearable=False
             ),
-            html.P('Sample Charts'),
-            dcc.Dropdown(
-                id='sample-chart-dropdown',
-                options=[{'label': key, 'value': key} for key in sample_charts.keys()],
-                value='',
-                clearable=False,
-                placeholder='Select a Sample Chart'
-            )
             )
 
 
@@ -631,7 +500,7 @@ def update_filter_input_container(uploaded_dataframes, selected_column):
         ]
 
     # Numeric columns (can use >, <, =, !=)
-    elif selected_column in ['Age', 'Apps', 'Gls', 'Ast', 'Wage', 'Transfer Value']:
+    elif selected_column in ['Age', 'Apps', 'Wage', 'Transfer Value']:
         return [
             html.Div([
                 html.Label('Condition'),
@@ -699,7 +568,8 @@ def update_filter_input_container(uploaded_dataframes, selected_column):
         Input('stored-uploads', 'data'),
         Input('apply-filter-button', 'n_clicks'),
         Input('clear-filter-button', 'n_clicks'),
-        Input('stored_df', 'data')
+        Input('stored_df', 'data'),
+        Input('sample-chart-dropdown', 'value')
     ],
     [
         State({'type': 'filter-column', 'index': ALL}, 'value'),
@@ -709,8 +579,8 @@ def update_filter_input_container(uploaded_dataframes, selected_column):
     ],
     prevent_initial_call=True
 )
-def update_filtered_data(uploaded_dataframes, n_clicks_apply, n_clicks_clear, stored_data, filter_columns,
-                         filter_conditions, filter_values, logical_operator):
+def update_filtered_data(uploaded_dataframes, n_clicks_apply, n_clicks_clear, stored_data, sample_data,
+                         filter_columns, filter_conditions, filter_values, logical_operator):
     # Function to convert input value to numeric or leave as string
     def convert_input_value(value):
         try:
@@ -726,20 +596,25 @@ def update_filtered_data(uploaded_dataframes, n_clicks_apply, n_clicks_clear, st
         df = stats_df
 
     # Default feedback message
-    feedback_message = "No filters applied."
+    player_count = len(df)
+    feedback_message = f"{player_count} record(s) match the criteria."
 
     if not ctx.triggered:
         return feedback_message, df.to_json(date_format='iso', orient='split')
 
-    button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    if ctx.triggered[0]['value'] is None:
+        trigger_id = 'Nothing triggered yet'
+    else:
+        trigger_id = ctx.triggered[0]['prop_id'].split('.')[0]
+        print(f"Triggered by: {trigger_id}")
 
     # Clear Filters Button
-    if button_id == 'clear-filter-button' and n_clicks_clear > 0:
+    if trigger_id == 'clear-filter-button' and n_clicks_clear > 0:
         feedback_message = "Filters cleared."
         return feedback_message, []
 
     # Apply Filters Button
-    if button_id == 'apply-filter-button' and n_clicks_apply > 0:
+    elif trigger_id == 'apply-filter-button' and n_clicks_apply > 0:
         # Initialize filter conditions list
         filter_conditions_list = []
         active_filters = []
@@ -770,7 +645,7 @@ def update_filtered_data(uploaded_dataframes, n_clicks_apply, n_clicks_clear, st
                     filter_conditions_list.append(df[value] == False)
 
             # Handle numeric columns
-            elif col in ['Age', 'Wage', 'Apps', 'Starts', 'Gls', 'Ast', 'Transfer Value']:
+            elif col in ['Age', 'Wage', 'Apps', 'Starts', 'Transfer Value']:
                 try:
                     value = float(value)
                     if condition == '=':
@@ -840,6 +715,48 @@ def update_filtered_data(uploaded_dataframes, n_clicks_apply, n_clicks_clear, st
             feedback_message = f"Error applying filters: {str(e)}"
             return feedback_message, df.to_json(date_format='iso', orient='split')
 
+    # Handle Sample Chart Dropdown Changes
+    elif trigger_id in 'sample-chart-dropdown' and sample_data:
+        print('Filtering data based on Sample Chart Selection')
+        stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
+        df = stats_df
+        print(f'Initialized dataframe with shape: {df.shape}')
+        try:
+            print(f'sample chart items: {sample_charts[sample_data].items()}')
+            for category, criteria in sample_charts[sample_data].items():
+                print(f'criteria: {criteria}')
+                # Handle position filters
+                if 'Position' in category:
+                    if isinstance(criteria, list):
+                        def filter_dataframe_true_values(df, columns):
+                            mask = df[columns].any(axis=1)
+                            return df[mask]
+
+                        filtered_df = filter_dataframe_true_values(df, criteria)
+                        print(f'multiple position names: {filtered_df}')
+                    else:
+                        filtered_df = df[df[criteria] == True]
+                        print(f'filtered_df after position filter: {filtered_df}')
+                # Handle top10 quantile filters
+                if 'top10' in category:
+                    filtered_df.reset_index(drop=True, inplace=True)
+                    top10_filter = pd.Series([False] * len(filtered_df))  # Initialize with False
+                    for col in criteria:
+                        print(col)
+                        percentile_90 = filtered_df[col].quantile(0.90)
+                        print(percentile_90)
+                        top10_filter = top10_filter | (filtered_df[col] >= percentile_90)  # OR operation
+                        print(f'top10 filter: {top10_filter}')
+                    sample_df = filtered_df[top10_filter]
+                    print(sample_df.Position)
+            filtered_count = len(sample_df)
+            print(f'filtered count: {filtered_count}')
+            feedback_message = f"{filtered_count} record(s) match the criteria."
+            return feedback_message, sample_df.to_json(date_format='iso', orient='split')
+        except Exception as e:
+            feedback_message = f"Error applying sample chart filters: {str(e)}"
+            return feedback_message, df.to_json(date_format='iso', orient='split')
+
     # Default return
     return feedback_message, df.to_json(date_format='iso', orient='split')
 
@@ -883,7 +800,7 @@ def toggle_containers(table_clicks, graph_clicks, radar_clicks):
         Output('stats-radar-chart', 'src'),
         Output('player-dropdown', 'options'),
         Output('player-dropdown1', 'options'),
-        Output('sample-chart-dropdown', 'value')
+        # Output('sample-chart-dropdown', 'value')
     ],
     [
         Input('stored-uploads', 'data'),
@@ -925,7 +842,7 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
     # Check for valid data
     if not stored_data:
         print("No stored data found")
-        return empty_fig, empty_table, empty_radar, default_player_options, default_player_options, empty_sample_dropdown
+        return empty_fig, empty_table, empty_radar, default_player_options, default_player_options, #empty_sample_dropdown
 
     try:
         # Convert stored data to df
@@ -934,14 +851,17 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
 
     except Exception as e:
         print(f"Error converting stored data to DataFrame: {str(e)}")
-        return empty_fig, empty_table, empty_radar, default_player_options, default_player_options, empty_sample_dropdown
+        return empty_fig, empty_table, empty_radar, default_player_options, default_player_options, #empty_sample_dropdown
 
     if not ctx.triggered:
         print("No context triggered")
-        return empty_fig, empty_table, empty_radar, default_player_options, default_player_options, empty_sample_dropdown
+        return empty_fig, empty_table, empty_radar, default_player_options, default_player_options, #empty_sample_dropdown
 
-    trigger_id = ctx.triggered[0]['prop_id'].split('.')[0]
-    print(f"Triggered by: {trigger_id}")
+    if ctx.triggered[0]['value'] is None:
+        trigger_id = 'No clicks yet'
+    else:
+        trigger_id = ctx.triggered[0]['prop_id'].split('.')[0]
+        print(f"Triggered by: {trigger_id}")
 
     stored_player_options = [{'label': f'{name} - {position}', 'value': name}
                              for name, position in zip(stored_df.Name, stored_df.Position)]
@@ -974,14 +894,14 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
                     fig.update_layout(yaxis=dict(autorange="reversed"))
                 else:
                     fig.update_layout(yaxis=dict(autorange=True))
-                return fig, empty_table, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
+                return fig, empty_table, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
             except Exception as e:
                 print(f"Error creating scatter plot: {str(e)}")
-                return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
+                return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
         else:
             print("Invalid axis selection")
             empty_fig.update_layout(title='Invalid axis selection')
-            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
+            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
 
     # Handle table button
     elif 'table-button' in trigger_id and table_clicks > 0:
@@ -1026,10 +946,10 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
                                   }
                               ]
                               )
-            return empty_fig, fig, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
+            return empty_fig, fig, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
         except Exception as e:
             print(f"Error creating table: {str(e)}")
-            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
+            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
 
     # Handle axis dropdown changes
     elif trigger_id in ['x-axis-dropdown', 'y-axis-dropdown'] and selected_x and selected_y:
@@ -1059,10 +979,10 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
                 fig.update_layout(yaxis=dict(autorange="reversed"))
             else:
                 fig.update_layout(yaxis=dict(autorange=True))
-            return fig, empty_table, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
+            return fig, empty_table, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
         except Exception as e:
             print(f"Error updating plot for axis change: {str(e)}")
-            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
+            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
 
     # Handle Sample Chart dropdown changes
     elif trigger_id in 'sample-chart-dropdown' and selected_sample:
@@ -1077,26 +997,26 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
                         color_list.append('blue')
                 return color_list
 
-            fig = px.scatter(stored_df, x=sample_charts[selected_sample][0], y=sample_charts[selected_sample][1],
+            fig = px.scatter(stored_df, x=sample_charts[selected_sample]['X'], y=sample_charts[selected_sample]['Y'],
                              title=f'{selected_sample}',
                              hover_data=['Name', 'Club', 'Age'] if all(
                                  col in stored_df.columns for col in ['Name', 'Club', 'Age']) else None)
             fig.update_traces(marker=dict(color=set_color(stored_df)))
             # Check and reverse x-axis
-            if sample_charts[selected_sample][0] in negative_stat_categories:
+            if sample_charts[selected_sample]['X'] in negative_stat_categories:
                 fig.update_layout(xaxis=dict(autorange='reversed'))
             else:
                 fig.update_layout(xaxis=dict(autorange=True))
             # Check and reverse y-axis
-            if sample_charts[selected_sample][1] in negative_stat_categories:
+            if sample_charts[selected_sample]['Y'] in negative_stat_categories:
                 fig.update_layout(yaxis=dict(autorange='reversed'))
             else:
                 fig.update_layout(yaxis=dict(autorange=True))
             fig.update_layout(title=f'{selected_sample}')
-            return fig, empty_table, empty_radar, stored_player_options, stored_player_options, selected_sample
+            return fig, empty_table, empty_radar, stored_player_options, stored_player_options, #selected_sample
         except Exception as e:
             print(f"Error updating plot for axis change: {str(e)}")
-            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, selected_sample
+            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, #selected_sample
 
     # Handle Table dropdown changes
     elif trigger_id in 'stats-table-dropdown' and selected_col:
@@ -1139,10 +1059,10 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
                                   }
                               ]
                               )
-            return empty_fig, fig, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
+            return empty_fig, fig, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
         except Exception as e:
             print(f"Error updating table for dropdown change: {str(e)}")
-            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
+            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
 
     # Handle Radar Button
     elif 'radar-button' in trigger_id and radar_clicks > 0:
@@ -1204,15 +1124,15 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
                 fig_data = base64.b64encode(buf.getbuffer()).decode("ascii")
                 fig_bar_matplotlib = f'data:image/png;base64,{fig_data}'
 
-                return empty_fig, empty_table, fig_bar_matplotlib, stored_player_options, stored_player_options, empty_sample_dropdown
+                return empty_fig, empty_table, fig_bar_matplotlib, stored_player_options, stored_player_options, #empty_sample_dropdown
 
 
             except Exception as e:
                 print(f"Error creating radar plot: {str(e)}")
-                return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
+                return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
         else:
             print("Invalid player selection")
-            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
+            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
 
     # Handle radar player dropdown changes
     elif trigger_id in ['player-dropdown', 'player-dropdown1'] and selected_player and selected_player1:
@@ -1273,12 +1193,12 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
             fig_data = base64.b64encode(buf.getbuffer()).decode("ascii")
             fig_bar_matplotlib = f'data:image/png;base64,{fig_data}'
 
-            return empty_fig, empty_table, fig_bar_matplotlib, stored_player_options, stored_player_options, empty_sample_dropdown
+            return empty_fig, empty_table, fig_bar_matplotlib, stored_player_options, stored_player_options, #empty_sample_dropdown
 
 
         except Exception as e:
             print(f"Error updating plot for axis change: {str(e)}")
-            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
+            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
 
     # Handle Radar Chart Preset Metrics Dropdown Changes
     elif trigger_id in 'radar-preset-values-dropdown' and selected_radar_preset:
@@ -1339,12 +1259,12 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
             fig_data = base64.b64encode(buf.getbuffer()).decode("ascii")
             fig_bar_matplotlib = f'data:image/png;base64,{fig_data}'
 
-            return empty_fig, empty_table, fig_bar_matplotlib, stored_player_options, stored_player_options, empty_sample_dropdown
+            return empty_fig, empty_table, fig_bar_matplotlib, stored_player_options, stored_player_options, #empty_sample_dropdown
 
 
         except Exception as e:
             print(f"Error updating plot for radar preset change: {str(e)}")
-            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
+            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
 
     # Handle Custom Radar Metrics Dropdown Change
     elif trigger_id in 'custom-radar-values-dropdown' and selected_metrics:
@@ -1405,15 +1325,15 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
             fig_data = base64.b64encode(buf.getbuffer()).decode("ascii")
             fig_bar_matplotlib = f'data:image/png;base64,{fig_data}'
 
-            return empty_fig, empty_table, fig_bar_matplotlib, stored_player_options, stored_player_options, empty_sample_dropdown
+            return empty_fig, empty_table, fig_bar_matplotlib, stored_player_options, stored_player_options, #empty_sample_dropdown
 
 
         except Exception as e:
             print(f"Error updating plot for custom radar change: {str(e)}")
-            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
+            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
 
     # Default return
-    return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, empty_sample_dropdown
+    return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
 
 
 # Handle the collapsed scatter plot
