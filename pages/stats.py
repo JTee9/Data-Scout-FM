@@ -1,14 +1,7 @@
 # Todo ------------------
 # 1. Long names overlap on the radar chart.
 # 2. Fix empty fig objects to make the default page look better.
-# 3. Stat categories are too confusing, need to simplify. Create ready to use sample charts
-# 4. Create preset filters to find similar players to stars (find key metric patterns in star players' stats)
-# 5. Only keep per 90 min stats and drop totals?
-# 6. Button to generate recommended players to scout based on user preference filters (age, transfer value, etc.)
-# and preset algorithm to find top prospects for each position.
-#7 Fix radar reverse axis for negative stats
-#8 Fix stats filter modal bug, modal message is 'no filter applied' after clicking back in to add more filters
-# Sample chart adds categories to filter view? e.g. show top WB (L) on x & Y axes
+# 3. Fix radar reverse axis for negative stats
 
 import base64
 from io import BytesIO
@@ -837,7 +830,7 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
     # Check for valid data
     if not stored_data:
         print("No stored data found")
-        return empty_fig, empty_table, empty_radar, default_player_options, default_player_options, #empty_sample_dropdown
+        return empty_fig, empty_table, empty_radar, default_player_options, default_player_options,
 
     try:
         # Convert stored data to df
@@ -846,11 +839,11 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
 
     except Exception as e:
         print(f"Error converting stored data to DataFrame: {str(e)}")
-        return empty_fig, empty_table, empty_radar, default_player_options, default_player_options, #empty_sample_dropdown
+        return empty_fig, empty_table, empty_radar, default_player_options, default_player_options,
 
     if not ctx.triggered:
         print("No context triggered")
-        return empty_fig, empty_table, empty_radar, default_player_options, default_player_options, #empty_sample_dropdown
+        return empty_fig, empty_table, empty_radar, default_player_options, default_player_options,
 
     if ctx.triggered[0]['value'] is None:
         trigger_id = 'No clicks yet'
@@ -889,14 +882,14 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
                     fig.update_layout(yaxis=dict(autorange="reversed"))
                 else:
                     fig.update_layout(yaxis=dict(autorange=True))
-                return fig, empty_table, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
+                return fig, empty_table, empty_radar, stored_player_options, stored_player_options,
             except Exception as e:
                 print(f"Error creating scatter plot: {str(e)}")
-                return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
+                return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options,
         else:
             print("Invalid axis selection")
             empty_fig.update_layout(title='Invalid axis selection')
-            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
+            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options,
 
     # Handle table button
     elif 'table-button' in trigger_id and table_clicks > 0:
@@ -941,10 +934,10 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
                                   }
                               ]
                               )
-            return empty_fig, fig, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
+            return empty_fig, fig, empty_radar, stored_player_options, stored_player_options,
         except Exception as e:
             print(f"Error creating table: {str(e)}")
-            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
+            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options,
 
     # Handle axis dropdown changes
     elif trigger_id in ['x-axis-dropdown', 'y-axis-dropdown'] and selected_x and selected_y:
@@ -974,10 +967,10 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
                 fig.update_layout(yaxis=dict(autorange="reversed"))
             else:
                 fig.update_layout(yaxis=dict(autorange=True))
-            return fig, empty_table, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
+            return fig, empty_table, empty_radar, stored_player_options, stored_player_options,
         except Exception as e:
             print(f"Error updating plot for axis change: {str(e)}")
-            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
+            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options,
 
     # Handle Sample Chart dropdown changes
     elif trigger_id in 'sample-chart-dropdown' and selected_sample:
@@ -1008,10 +1001,10 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
             else:
                 fig.update_layout(yaxis=dict(autorange=True))
             fig.update_layout(title=f'{selected_sample}')
-            return fig, empty_table, empty_radar, stored_player_options, stored_player_options, #selected_sample
+            return fig, empty_table, empty_radar, stored_player_options, stored_player_options,
         except Exception as e:
             print(f"Error updating plot for axis change: {str(e)}")
-            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, #selected_sample
+            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options,
 
     # Handle Table dropdown changes
     elif trigger_id in 'stats-table-dropdown' and selected_col:
