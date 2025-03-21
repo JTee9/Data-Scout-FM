@@ -89,6 +89,18 @@ p {
 color: #0f2537;
 }
 
+label {
+color: #e8e4d6;
+}
+
+.stats-label {
+color: #0f2537;
+}
+
+.attributes-label {
+color: #0f2537;
+}
+
 /* Radio-buttons */
 
 .home-button {

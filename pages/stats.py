@@ -107,7 +107,8 @@ layout = html.Div([
         html.Div(id='graph-dropdown-container', children=[
             dbc.Collapse(id='scatter-object-collapse', is_open=False, children=dcc.Graph(id='scatterplot-graph', style={'width': '100%', 'height': '90%'})),
             html.Div(id='graph-dropdowns', children=[
-                html.P('Sample Charts (Add other filters (e.g. Age, Transfer Value) with the "Filter Data" Button)'),
+                html.Label('Sample Charts (Add other filters (e.g. Age, Transfer Value) with the "Filter Data" Button)',
+                           className='stats-label'),
                 dcc.Dropdown(
                     id='sample-chart-dropdown',
                     options=[{'label': key, 'value': key} for key in sample_charts.keys()],
@@ -115,14 +116,14 @@ layout = html.Div([
                     clearable=False,
                     placeholder='Select a Sample Chart'
                 ),
-                html.P('Select X Axis:'),
+                html.Label('Select X Axis:', className='stats-label'),
                 dcc.Dropdown(
                     id='x-axis-dropdown',
                     options=[],
                     value='',
                     clearable=False
                 ),
-                html.P('Select Y Axis:'),
+                html.Label('Select Y Axis:', className='stats-label'),
                 dcc.Dropdown(
                     id='y-axis-dropdown',
                     options=[],
@@ -133,7 +134,7 @@ layout = html.Div([
         ], style={'width': '100%', 'height': '100%', 'display': 'none'}), # Initially hidden
 
         html.Div(id='stats-table-container', style={'width': '100%', 'height': '100%', 'display': 'none'}, children=[
-                html.P('Select Columns to Include in Table'),
+                html.Label('Select Columns to Include in Table', className='stats-label'),
                 dcc.Dropdown(
                     id='stats-table-dropdown',
                     options=[],
@@ -151,7 +152,7 @@ layout = html.Div([
         html.Div(id='stats-radar-container', style={'width': '100%', 'height': '100%', 'display': 'none'}, children=[
                 html.Div(id='stats-radar-dropdowns', children=[
                     html.Div(children=[
-                        html.P('Select First Player for Radar Comparison Chart'),
+                        html.Label('Select First Player for Radar Comparison Chart', className='stats-label'),
                         dcc.Dropdown(
                             id='player-dropdown',
                             options=[],
@@ -163,7 +164,7 @@ layout = html.Div([
                             }
                         )]),
                     html.Div(children=[
-                        html.P('Select Second Player for Radar Comparison Chart'),
+                        html.Label('Select Second Player for Radar Comparison Chart', className='stats-label'),
                         dcc.Dropdown(
                             id='player-dropdown1',
                             options=[],
@@ -178,7 +179,7 @@ layout = html.Div([
 
                 html.Div(children=[
                     dbc.Collapse(id='radar-object-collapse', is_open=False, children=html.Img(id='stats-radar-chart', style={'width': '80%', 'height': '60%'})),
-                    html.P('Select Radar Chart Metrics'),
+                    html.Label('Select Radar Chart Metrics', className='stats-label'),
                     dcc.Dropdown(
                         id='radar-preset-values-dropdown',
                         options=[{'label': key, 'value': key} for key in preset_radar_values.keys()],
@@ -190,7 +191,7 @@ layout = html.Div([
                         }
                     ),
                     html.Div(id='custom-radar-div', children=[
-                        html.P('Select Metrics to Include in Custom Radar Chart'),
+                        html.Label('Select Metrics to Include in Custom Radar Chart', className='stats-label'),
                         dcc.Dropdown(
                             id='custom-radar-values-dropdown',
                             options=[],
