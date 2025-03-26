@@ -1,6 +1,6 @@
 # Todo -------------------------------------------------------
 # 1. Fix tables in stats & attributes so that names are visible and the layout is prettier
-# 2. Do something with 'Personality'?
+# 2. Utilize Role scores
 
 import dash
 from dash import html, dcc, callback, ctx
@@ -53,7 +53,7 @@ layout = html.Div([
         html.Div(id='output-container', style={'width': '100%', 'height': '600px'}, children=[
             # Table
             dbc.Collapse(id='table-container', is_open=False, style={'width': '100%', 'height': '100%'}, children=[
-                html.Label('Filter by Position', className='attributes-label'),
+                html.Label('Filter Players by Position', className='attributes-label'),
                 dcc.Dropdown(
                     id='position-dropdown',
                     options=[{'label': key, 'value': key} for key in position_filters.keys()],

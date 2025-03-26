@@ -2,6 +2,7 @@
 # 1. Long names overlap on the radar chart.
 # 2. Fix empty fig objects to make the default page look better.
 # 3. Fix radar reverse axis for negative stats
+# 4. Add Role scores?
 
 import base64
 from io import BytesIO
