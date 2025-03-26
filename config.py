@@ -61,6 +61,57 @@ attribute_filters = {
     'Striker': ['Name', 'Age', 'Position', 'Club', 'Division', 'Dri', 'Fin', 'Fir', 'Tec', 'Cmp', 'OtB', 'Acc', 'Jum', 'Pac']
 }
 
+# Role Score Attribute filters
+# (allow users to view position role scores in table and highlight max() to show most suitable position?)
+role_score_filters = {
+    'Goalkeeper': [
+        'goalkeeper_score', 'sweeper_keeper_de_score', 'sweeper_keeper_su_score', 'sweeper_keeper_at_score'
+    ],
+    'Central Defender': [
+        'central_def_de_score', 'central_def_st_score', 'central_def_co_score', 'no_nonsense_cb_de_score',
+        'no_nonsense_cb_st_score', 'no_nonsense_cb_co_score', 'wide_cb_de_score', 'wide_cb_su_score',
+        'wide_cb_at_score', 'ball_playing_def_de_score', 'ball_playing_def_st_score', 'ball_playing_def_co_score',
+        'libero_de_score', 'libero_su_score'
+    ],
+    'Full-back & Wing-back': [
+        'fullback_de_score', 'fullback_su_score', 'fullback_at_score', 'fullback_au_score', 'no_nonsense_fb_score',
+        'inverted_fb_score', 'wingback_de_score', 'wingback_su_score', 'wingback_at_score', 'wingback_au_score',
+        'complete_wingback_su_score', 'complete_wingback_at_score', 'inverted_wb_de_score', 'inverted_wb_su_score',
+        'inverted_wb_at_score'
+    ],
+    'Defensive Midfielder': [
+        'anchor_score', 'half_back_score', 'defensive_midfielder_de_score', 'defensive_midfielder_su_score',
+        'segundo_volante_su_score', 'segundo_volante_at_score', 'regista_score', 'ball_winning_midfielder_de_score',
+        'ball_winning_midfielder_su_score', 'deep_lying_playmaker_de_score', 'deep_lying_playmaker_su_score',
+        'roaming_playmaker_score'
+    ],
+    'Central Midfielder': [
+        'ball_winning_midfielder_de_score', 'ball_winning_midfielder_su_score', 'deep_lying_playmaker_de_score',
+        'deep_lying_playmaker_su_score', 'roaming_playmaker_score', 'carrilero_role_score', 'box_to_box_midfielder_score',
+        'central_midfielder_de_score', 'central_midfielder_su_score', 'central_midfielder_at_score',
+        'central_midfielder_au_score', 'mezzala_su_score', 'mezzala_at_score', 'advanced_playmaker_su_score',
+        'advanced_playmaker_at_score'
+    ],
+    'Winger': [
+        'defensive_winger_de_score', 'defensive_winger_su_score', 'wide_midfielder_de_score',
+           'wide_midfielder_su_score', 'wide_midfielder_at_score', 'wide_midfielder_au_score',
+           'wide_playmaker_su_score', 'wide_playmaker_at_score', 'inverted_winger_su_score',
+           'inverted_winger_at_score', 'winger_su_score', 'winger_at_score', 'inside_forward_su_score',
+           'inside_forward_at_score', 'raumdeuter_score', 'wide_target_forward_su_score',
+           'wide_target_forward_at_score',
+    ],
+    'Attacking Midfielder': [
+        'advanced_playmaker_su_score', 'advanced_playmaker_at_score', 'trequartista_score', 'enganche_score',
+        'attacking_midfielder_su_score', 'attacking_midfielder_at_score', 'shadow_striker_score'
+    ],
+    'Striker': [
+        'advanced_forward_score', 'poacher_score', 'false_nine_score', 'target_forward_su_score',
+        'target_forward_at_score', 'deep_lying_forward_su_score', 'deep_lying_forward_at_score',
+        'pressing_forward_de_score', 'pressing_forward_su_score', 'pressing_forward_at_score',
+        'complete_forward_su_score', 'complete_forward_at_score'
+    ]
+}
+
 
 # Negative stat categories
 negative_stat_categories = ['Poss Lost/90', 'Hdrs L/90', 'Gl Mst', 'Conc', 'Con/90', 'Off', 'Fls', 'Yel', 'Red', 'Tcon', 'Tcon/90',

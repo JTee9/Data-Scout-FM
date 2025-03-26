@@ -493,6 +493,7 @@ def build_squad_attributes_dataframe(squad_attributes_file):
                          wide_target_forward_at_pref_attributes,
                          'wide_target_forward_at_score')
 
+    # Attacking Midfielder role scores
     trequartista_key_attributes = ['Acc', 'Cmp', 'Dec', 'Fla', 'OtB', 'Vis', 'Dri', 'Fir', 'Pas', 'Tec']
     trequartista_pref_attributes = ['Agi', 'Bal', 'Ant', 'Fin']
     calculate_role_score(squad_attributes_df, trequartista_key_attributes, trequartista_pref_attributes,
@@ -520,6 +521,7 @@ def build_squad_attributes_dataframe(squad_attributes_file):
     calculate_role_score(squad_attributes_df, shadow_striker_key_attributes, shadow_striker_pref_attributes,
                          'shadow_striker_score')
 
+    # Striker role scores
     advanced_forward_key_attributes = ['Acc', 'Cmp', 'OtB', 'Dri', 'Fin', 'Fir', 'Tec']
     advanced_forward_pref_attributes = ['Agi', 'Bal', 'Pac', 'Sta', 'Ant', 'Dec', 'Wor', 'Pas']
     calculate_role_score(squad_attributes_df, advanced_forward_key_attributes, advanced_forward_pref_attributes,
