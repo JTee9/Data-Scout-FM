@@ -1,7 +1,6 @@
 # Todo -------------------------------------------------------
 # 1. Fix tables in stats & attributes so that names are visible and the layout is prettier
 # 2. Utilize Role scores
-# (can't see labels on Table - is it really the right info to show?)
 
 import dash
 from dash import html, dcc, callback, ctx

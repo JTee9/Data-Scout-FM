@@ -62,57 +62,55 @@ attribute_filters = {
     # Role Score Filters
     'Goalkeeper - Role Scores': [
         'Name', 'Age', 'Position', 'Club', 'Division',
-        'goalkeeper_score', 'sweeper_keeper_de_score', 'sweeper_keeper_su_score', 'sweeper_keeper_at_score'
+        'G_score', 'SK_de_score', 'SK_su_score', 'SK_at_score'
     ],
     'Central Defender - Role Scores': [
         'Name', 'Age', 'Position', 'Club', 'Division',
-        'central_def_de_score', 'central_def_st_score', 'central_def_co_score', 'no_nonsense_cb_de_score',
-        'no_nonsense_cb_st_score', 'no_nonsense_cb_co_score', 'wide_cb_de_score', 'wide_cb_su_score',
-        'wide_cb_at_score', 'ball_playing_def_de_score', 'ball_playing_def_st_score', 'ball_playing_def_co_score',
-        'libero_de_score', 'libero_su_score'
+        'CD_de_score', 'CD_st_score', 'CD_co_score', 'NCB_de_score',
+        'NCB_st_score', 'NCB_co_score', 'WCB_de_score', 'WCB_su_score',
+        'WCB_at_score', 'BPD_de_score', 'BPD_st_score', 'BPD_co_score',
+        'L_de_score', 'L_su_score'
     ],
     'Full-back & Wing-back - Role Scores': [
         'Name', 'Age', 'Position', 'Club', 'Division',
-        'fullback_de_score', 'fullback_su_score', 'fullback_at_score', 'fullback_au_score', 'no_nonsense_fb_score',
-        'inverted_fb_score', 'wingback_de_score', 'wingback_su_score', 'wingback_at_score', 'wingback_au_score',
-        'complete_wingback_su_score', 'complete_wingback_at_score', 'inverted_wb_de_score', 'inverted_wb_su_score',
-        'inverted_wb_at_score'
+        'FB_de_score', 'FB_su_score', 'FB_at_score', 'FB_au_score', 'NFB_score',
+        'IFB_score', 'WB_de_score', 'WB_su_score', 'WB_at_score', 'WB_au_score',
+        'CWB_su_score', 'CWB_at_score', 'IWB_de_score', 'IWB_su_score',
+        'IWB_at_score'
     ],
     'Defensive Midfielder - Role Scores': [
         'Name', 'Age', 'Position', 'Club', 'Division',
-        'anchor_score', 'half_back_score', 'defensive_midfielder_de_score', 'defensive_midfielder_su_score',
-        'segundo_volante_su_score', 'segundo_volante_at_score', 'regista_score', 'ball_winning_midfielder_de_score',
-        'ball_winning_midfielder_su_score', 'deep_lying_playmaker_de_score', 'deep_lying_playmaker_su_score',
-        'roaming_playmaker_score'
+        'A_score', 'HB_score', 'DM_de_score', 'DM_su_score',
+        'VOL_su_score', 'VOL_at_score', 'RGA_score', 'BWM_de_score',
+        'BWM_su_score', 'DLP_de_score', 'DLP_su_score',
+        'RPM_score'
     ],
     'Central Midfielder - Role Scores': [
         'Name', 'Age', 'Position', 'Club', 'Division',
-        'ball_winning_midfielder_de_score', 'ball_winning_midfielder_su_score', 'deep_lying_playmaker_de_score',
-        'deep_lying_playmaker_su_score', 'roaming_playmaker_score', 'carrilero_role_score', 'box_to_box_midfielder_score',
-        'central_midfielder_de_score', 'central_midfielder_su_score', 'central_midfielder_at_score',
-        'central_midfielder_au_score', 'mezzala_su_score', 'mezzala_at_score', 'advanced_playmaker_su_score',
-        'advanced_playmaker_at_score'
+        'BWM_de_score', 'BWM_su_score', 'DLP_de_score',
+        'DLP_su_score', 'RPM_score', 'CAR_role_score', 'BBM_score',
+        'CM_de_score', 'CM_su_score', 'CM_at_score',
+        'CM_au_score', 'MEZ_su_score', 'MEZ_at_score', 'AP_su_score',
+        'AP_at_score'
     ],
     'Winger - Role Scores': [
         'Name', 'Age', 'Position', 'Club', 'Division',
-        'defensive_winger_de_score', 'defensive_winger_su_score', 'wide_midfielder_de_score',
-       'wide_midfielder_su_score', 'wide_midfielder_at_score', 'wide_midfielder_au_score',
-       'wide_playmaker_su_score', 'wide_playmaker_at_score', 'inverted_winger_su_score',
-       'inverted_winger_at_score', 'winger_su_score', 'winger_at_score', 'inside_forward_su_score',
-       'inside_forward_at_score', 'raumdeuter_score', 'wide_target_forward_su_score',
-       'wide_target_forward_at_score',
+        'DW_de_score', 'DW_su_score', 'WM_de_score',
+        'WM_su_score', 'WM_at_score', 'WM_au_score',
+        'WP_su_score', 'WP_at_score', 'IW_su_score', 'IW_at_score',
+        'W_su_score', 'W_at_score', 'IF_su_score', 'IF_at_score',
+        'RMD_score', 'WT_su_score', 'WT_at_score',
     ],
     'Attacking Midfielder - Role Scores': [
         'Name', 'Age', 'Position', 'Club', 'Division',
-        'advanced_playmaker_su_score', 'advanced_playmaker_at_score', 'trequartista_score', 'enganche_score',
-        'attacking_midfielder_su_score', 'attacking_midfielder_at_score', 'shadow_striker_score'
+        'AP_su_score', 'AP_at_score', 'T_score', 'EG_score',
+        'AM_su_score', 'AM_at_score', 'SS_score'
     ],
     'Striker - Role Scores': [
         'Name', 'Age', 'Position', 'Club', 'Division',
-        'advanced_forward_score', 'poacher_score', 'false_nine_score', 'target_forward_su_score',
-        'target_forward_at_score', 'deep_lying_forward_su_score', 'deep_lying_forward_at_score',
-        'pressing_forward_de_score', 'pressing_forward_su_score', 'pressing_forward_at_score',
-        'complete_forward_su_score', 'complete_forward_at_score'
+        'AF_score', 'P_score', 'F9_score', 'TF_su_score', 'TF_at_score',
+        'DLF_su_score', 'DLF_at_score', 'PF_de_score', 'PF_su_score',
+        'PF_at_score', 'CF_su_score', 'CF_at_score'
     ]
 }
 
