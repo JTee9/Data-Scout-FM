@@ -1,6 +1,7 @@
 # Todo -------------------------------------------------------
 # 1. Fix tables in stats & attributes so that names are visible and the layout is prettier
 # 2. Utilize Role scores
+# (can't see labels on Table - is it really the right info to show?)
 
 import dash
 from dash import html, dcc, callback, ctx
@@ -10,9 +11,9 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
+import numpy as np
 import io
 from config import position_filters, attribute_filters
-
 
 # Register Page
 dash.register_page(__name__, path='/attributes', title='Scout FM Attributes')
@@ -209,6 +210,11 @@ def update_table(uploaded_dataframes, selected_dataset, selected_attribute_filte
     # Apply Attribute Filter
     att_filter = attribute_filters[selected_attribute_filter]
     df_att_filter = df[att_filter].drop(columns=['Club', 'Division'])
+
+    table_values = df_att_filter.transpose().values.tolist()
+    # Set conditional font color
+
+
     # Create Table figure
     fig = go.Figure(data=[go.Table(
         header=dict(
@@ -217,7 +223,7 @@ def update_table(uploaded_dataframes, selected_dataset, selected_attribute_filte
             align='left'
         ),
         cells=dict(
-            values=df_att_filter.transpose().values.tolist(),
+            values=table_values,
             fill_color='white',
             align='left'
         )
@@ -283,6 +289,14 @@ def update_radar_chart(uploaded_dataframes, selected_attribute_filter, selected_
     for attribute in categories:
         squad_attributes_values.append(squad_attributes_df.iloc[squad_attributes_index][attribute])
 
+    # range value
+    if 'Role Scores' in selected_attribute_filter:
+        max_range = max(shortlist_attributes_values, squad_attributes_values)
+        print(max_range)
+        range = [20, 90]
+    else:
+        range = [0, 20]
+
     fig = go.Figure()
     fig.add_trace(go.Scatterpolar(
         r=shortlist_attributes_values,
@@ -300,7 +314,7 @@ def update_radar_chart(uploaded_dataframes, selected_attribute_filter, selected_
         polar=dict(
             radialaxis=dict(
                 visible=True,
-                range=[0, 20]
+                range=range
             )),
         showlegend=True
     )

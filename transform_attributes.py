@@ -101,8 +101,8 @@ def build_squad_attributes_dataframe(squad_attributes_file):
         pref_attributes_total = df[pref_attributes].sum(axis=1)
         role_total = (3 * key_attributes_total) + (2 * pref_attributes_total)
         role_max = (3 * (20 * len(key_attributes))) + (2 * (20 * len(pref_attributes)))
-        role_score = (role_total / role_max).astype(float).round(2)
-        df[column_title] = role_score
+        role_score = (role_total / role_max) * 100
+        df[column_title] = role_score.round(0).astype(int)
         return df
 
     # Goalkeeper role scores --------------------------------
@@ -758,8 +758,8 @@ def build_shortlist_attributes_dataframe(shortlist_attributes_file):
         pref_attributes_total = df[pref_attributes].sum(axis=1)
         role_total = (3 * key_attributes_total) + (2 * pref_attributes_total)
         role_max = (3 * (20 * len(key_attributes))) + (2 * (20 * len(pref_attributes)))
-        role_score = (role_total / role_max).astype(float).round(2)
-        df[column_title] = role_score
+        role_score = (role_total / role_max) * 100
+        df[column_title] = role_score.round(0).astype(int)
         return df
 
     # Goalkeeper role scores --------------------------------
