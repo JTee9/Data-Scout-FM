@@ -60,57 +60,33 @@ attribute_filters = {
     'Winger': ['Name', 'Age', 'Position', 'Club', 'Division', 'Cro', 'Dri', 'Tec', 'Ant', 'Fla', 'Wor', 'Acc', 'Agi', 'Pac'],
     'Striker': ['Name', 'Age', 'Position', 'Club', 'Division', 'Dri', 'Fin', 'Fir', 'Tec', 'Cmp', 'OtB', 'Acc', 'Jum', 'Pac'],
     # Role Score Filters
-    'Goalkeeper - Role Scores': [
-        'Name', 'Age', 'Position', 'Club', 'Division',
-        'G_score', 'SK_de_score', 'SK_su_score', 'SK_at_score'
-    ],
+    'Goalkeeper - Role Scores': ['Name', 'Age', 'Position', 'Club', 'Division', 'G-De', 'SK-De', 'SK-Su', 'SK-At'],
     'Central Defender - Role Scores': [
-        'Name', 'Age', 'Position', 'Club', 'Division',
-        'CD_de_score', 'CD_st_score', 'CD_co_score', 'NCB_de_score',
-        'NCB_st_score', 'NCB_co_score', 'WCB_de_score', 'WCB_su_score',
-        'WCB_at_score', 'BPD_de_score', 'BPD_st_score', 'BPD_co_score',
-        'L_de_score', 'L_su_score'
+        'Name', 'Age', 'Position', 'Club', 'Division', 'CD-De', 'CD-St', 'CD-Co', 'NCB-De', 'NCB-St', 'NCB-Co',
+        'WCB-De', 'WCB-Su', 'WCB-At', 'BPD-De', 'BPD-St', 'BPD-Co', 'L-De', 'L-Su'
     ],
     'Full-back & Wing-back - Role Scores': [
-        'Name', 'Age', 'Position', 'Club', 'Division',
-        'FB_de_score', 'FB_su_score', 'FB_at_score', 'FB_au_score', 'NFB_score',
-        'IFB_score', 'WB_de_score', 'WB_su_score', 'WB_at_score', 'WB_au_score',
-        'CWB_su_score', 'CWB_at_score', 'IWB_de_score', 'IWB_su_score',
-        'IWB_at_score'
+        'Name', 'Age', 'Position', 'Club', 'Division', 'FB-De', 'FB-Su', 'FB-At', 'FB-Au', 'NFB-De', 'IFB-De',
+        'WB-De', 'WB-Su', 'WB-At', 'WB-Au', 'CWB-Su', 'CWB-At', 'IWB-De', 'IWB-Su', 'IWB-At'
     ],
     'Defensive Midfielder - Role Scores': [
-        'Name', 'Age', 'Position', 'Club', 'Division',
-        'A_score', 'HB_score', 'DM_de_score', 'DM_su_score',
-        'VOL_su_score', 'VOL_at_score', 'RGA_score', 'BWM_de_score',
-        'BWM_su_score', 'DLP_de_score', 'DLP_su_score',
-        'RPM_score'
+        'Name', 'Age', 'Position', 'Club', 'Division', 'A-De', 'HB-De', 'DM-De', 'DM-Su', 'VOL-Su', 'VOL-At',
+        'RGA-Su', 'BWM-De', 'BWM-Su', 'DLP-De', 'DLP-Su', 'RPM-Su'
     ],
     'Central Midfielder - Role Scores': [
-        'Name', 'Age', 'Position', 'Club', 'Division',
-        'BWM_de_score', 'BWM_su_score', 'DLP_de_score',
-        'DLP_su_score', 'RPM_score', 'CAR_role_score', 'BBM_score',
-        'CM_de_score', 'CM_su_score', 'CM_at_score',
-        'CM_au_score', 'MEZ_su_score', 'MEZ_at_score', 'AP_su_score',
-        'AP_at_score'
+        'Name', 'Age', 'Position', 'Club', 'Division', 'BWM-De', 'BWM-Su', 'DLP-De', 'DLP-Su', 'RPM-Su', 'CAR-Su',
+        'BBM-Su', 'CM-De', 'CM-Su', 'CM-At', 'CM-Au', 'MEZ-Su', 'MEZ-At', 'AP-Su', 'AP-At'
     ],
     'Winger - Role Scores': [
-        'Name', 'Age', 'Position', 'Club', 'Division',
-        'DW_de_score', 'DW_su_score', 'WM_de_score',
-        'WM_su_score', 'WM_at_score', 'WM_au_score',
-        'WP_su_score', 'WP_at_score', 'IW_su_score', 'IW_at_score',
-        'W_su_score', 'W_at_score', 'IF_su_score', 'IF_at_score',
-        'RMD_score', 'WT_su_score', 'WT_at_score',
+        'Name', 'Age', 'Position', 'Club', 'Division', 'DW-De', 'DW-Su', 'WM-De', 'WM-Su', 'WM-At', 'WM-Au',
+        'WP-Su', 'WP-At', 'IW-Su', 'IW-At', 'W-Su', 'W-At', 'IF-Su', 'IF-At', 'RMD-At', 'WT-Su', 'WT-At',
     ],
     'Attacking Midfielder - Role Scores': [
-        'Name', 'Age', 'Position', 'Club', 'Division',
-        'AP_su_score', 'AP_at_score', 'T_score', 'EG_score',
-        'AM_su_score', 'AM_at_score', 'SS_score'
+        'Name', 'Age', 'Position', 'Club', 'Division', 'AP-Su', 'AP-At', 'T-At', 'EG-Su', 'AM-Su', 'AM-At', 'SS-At'
     ],
     'Striker - Role Scores': [
-        'Name', 'Age', 'Position', 'Club', 'Division',
-        'AF_score', 'P_score', 'F9_score', 'TF_su_score', 'TF_at_score',
-        'DLF_su_score', 'DLF_at_score', 'PF_de_score', 'PF_su_score',
-        'PF_at_score', 'CF_su_score', 'CF_at_score'
+        'Name', 'Age', 'Position', 'Club', 'Division', 'AF-At', 'P-At', 'F9-Su', 'TF-Su', 'TF-At', 'DLF-Su',
+        'DLF-At', 'PF-De', 'PF-Su', 'PF-At', 'CF-Su', 'CF-At'
     ]
 }
 

@@ -109,481 +109,481 @@ def build_squad_attributes_dataframe(squad_attributes_file):
     gk_key_attributes = ['Agi', 'Cnt', 'Pos', 'Aer', 'Cmd', 'Com', 'Han', 'Kic', 'Ref']
     gk_pref_attributes = ['Ant', 'Dec', '1v1', 'Thr']
     calculate_role_score(squad_attributes_df, gk_key_attributes, gk_pref_attributes,
-                         'G_score')
+                         'G-De')
 
     sweeper_keeper_de_key_attributes = ['Agi', 'Ant', 'Cnt', 'Pos', 'Cmd', 'Kic', '1v1', 'Ref', ]
     sweeper_keeper_de_pref_attributes = ['Acc', 'Cmp', 'Dec', 'Vis', 'Aer', 'Com', 'Fir', 'Han', 'Pas', 'TRO', 'Thr']
     calculate_role_score(squad_attributes_df, sweeper_keeper_de_key_attributes, sweeper_keeper_de_pref_attributes,
-                         'SK_de_score')
+                         'SK-De')
 
     sweeper_keeper_su_key_attributes = ['Agi', 'Ant', 'Cmp', 'Cnt', 'Pos', 'Cmd', 'Kic', '1v1', 'Ref', 'TRO']
     sweeper_keeper_su_pref_attributes = ['Acc', 'Dec', 'Vis', 'Aer', 'Com', 'Fir', 'Han', 'Pas', 'Thr']
     calculate_role_score(squad_attributes_df, sweeper_keeper_su_key_attributes, sweeper_keeper_su_pref_attributes,
-                         'SK_su_score')
+                         'SK-Su')
 
     sweeper_keeper_at_key_attributes = ['Agi', 'Ant', 'Cmp', 'Cnt', 'Pos', 'Cmd', 'Kic', '1v1', 'Ref', 'TRO']
     sweeper_keeper_at_pref_attributes = ['Acc', 'Dec', 'Vis', 'Aer', 'Com', 'Ecc', 'Fir', 'Han', 'Pas', 'Thr']
     calculate_role_score(squad_attributes_df, sweeper_keeper_at_key_attributes, sweeper_keeper_at_pref_attributes,
-                         'SK_at_score')
+                         'SK-At')
 
     # Central Defender Role Scores ----------------------------------------
     central_def_de_key_attributes = ['Jum', 'Str', 'Pos', 'Hea', 'Mar', 'Tck']
     central_def_de_pref_attributes = ['Pac', 'Agg', 'Ant', 'Bra', 'Cmp', 'Cnt', 'Dec']
     calculate_role_score(squad_attributes_df, central_def_de_key_attributes, central_def_de_pref_attributes,
-                         'CD_de_score')
+                         'CD-De')
 
     central_def_st_key_attributes = ['Jum', 'Str', 'Agg', 'Bra', 'Pos', 'Dec', 'Hea', 'Tck']
     central_def_st_pref_attributes = ['Mar', 'Ant', 'Cmp', 'Cnt']
     calculate_role_score(squad_attributes_df, central_def_st_key_attributes, central_def_st_pref_attributes,
-                         'CD_st_score')
+                         'CD-St')
 
     central_def_co_key_attributes = ['Pac', 'Ant', 'Cnt', 'Dec', 'Pos', 'Mar', 'Tck']
     central_def_co_pref_attributes = ['Jum', 'Str', 'Bra', 'Cmp', 'Hea']
     calculate_role_score(squad_attributes_df, central_def_co_key_attributes, central_def_co_pref_attributes,
-                         'CD_co_score')
+                         'CD-Co')
 
     no_nonsense_cb_de_key_attributes = ['Jum', 'Str', 'Pos', 'Hea', 'Mar', 'Tck']
     no_nonsense_cb_de_pref_attributes = ['Pac', 'Agg', 'Ant', 'Bra', 'Cnt']
     calculate_role_score(squad_attributes_df, no_nonsense_cb_de_key_attributes, no_nonsense_cb_de_pref_attributes,
-                         'NCB_de_score')
+                         'NCB-De')
 
     no_nonsense_cb_st_key_attributes = ['Jum', 'Str', 'Agg', 'Bra', 'Pos', 'Hea', 'Tck']
     no_nonsense_cb_st_pref_attributes = ['Mar', 'Ant', 'Cnt']
     calculate_role_score(squad_attributes_df, no_nonsense_cb_st_key_attributes, no_nonsense_cb_st_pref_attributes,
-                         'NCB_st_score')
+                         'NCB-St')
 
     no_nonsense_cb_co_key_attributes = ['Pac', 'Ant', 'Cnt', 'Pos', 'Mar', 'Tck']
     no_nonsense_cb_co_pref_attributes = ['Jum', 'Str', 'Bra', 'Hea']
     calculate_role_score(squad_attributes_df, no_nonsense_cb_co_key_attributes, no_nonsense_cb_co_pref_attributes,
-                         'NCB_co_score')
+                         'NCB-Co')
 
     wide_cb_de_key_attributes = ['Jum', 'Str', 'Pos', 'Hea', 'Mar', 'Tck']
     wide_cb_de_pref_attributes = ['Agi', 'Pac', 'Agg', 'Ant', 'Bra', 'Cmp', 'Cnt', 'Wor', 'Dri', 'Fir', 'Pas', 'Tec']
     calculate_role_score(squad_attributes_df, wide_cb_de_key_attributes, wide_cb_de_pref_attributes,
-                         'WCB_de_score')
+                         'WCB-De')
 
     wide_cb_su_key_attributes = ['Jum', 'Pac', 'Str', 'Pos', 'Dri', 'Hea', 'Mar', 'Tck']
     wide_cb_su_pref_attributes = ['Agi', 'Sta', 'Agg', 'Ant', 'Bra', 'Cmp', 'Cnt', 'Dec', 'OtB', 'Wor', 'Cro', 'Fir',
                                   'Pas', 'Tec']
     calculate_role_score(squad_attributes_df, wide_cb_su_key_attributes, wide_cb_su_pref_attributes,
-                         'WCB_su_score')
+                         'WCB-Su')
 
     wide_cb_at_key_attributes = ['Jum', 'Pac', 'Sta', 'Str', 'OtB', 'Cro', 'Dri', 'Hea', 'Mar', 'Tck']
     wide_cb_at_pref_attributes = ['Agi', 'Agg', 'Ant', 'Bra', 'Cmp', 'Cnt', 'Dec', 'Pos', 'Wor', 'Fir', 'Pas', 'Tec']
     calculate_role_score(squad_attributes_df, wide_cb_at_key_attributes, wide_cb_at_pref_attributes,
-                         'WCB_at_score')
+                         'WCB-At')
 
     ball_playing_def_de_key_attributes = ['Jum', 'Str', 'Cmp', 'Pos', 'Hea', 'Mar', 'Pas', 'Tck']
     ball_playing_def_de_pref_attributes = ['Pac', 'Agg', 'Ant', 'Bra', 'Cnt', 'Dec', 'Vis', 'Fir', 'Tec']
     calculate_role_score(squad_attributes_df, ball_playing_def_de_key_attributes, ball_playing_def_de_pref_attributes,
-                         'BPD_de_score')
+                         'BPD-De')
 
     ball_playing_def_st_key_attributes = ['Jum', 'Str', 'Agg', 'Bra', 'Cmp', 'Dec', 'Pos', 'Hea', 'Pas', 'Tck']
     ball_playing_def_st_pref_attributes = ['Ant', 'Cnt', 'Vis', 'Fir', 'Mar', 'Tec']
     calculate_role_score(squad_attributes_df, ball_playing_def_st_key_attributes, ball_playing_def_st_pref_attributes,
-                         'BPD_st_score')
+                         'BPD-St')
 
     ball_playing_def_co_key_attributes = ['Pac', 'Ant', 'Cmp', 'Cnt', 'Dec', 'Pos', 'Mar', 'Pas', 'Tck']
     ball_playing_def_co_pref_attributes = ['Jum', 'Str', 'Bra', 'Vis', 'Fir', 'Hea', 'Tec']
     calculate_role_score(squad_attributes_df, ball_playing_def_co_key_attributes, ball_playing_def_co_pref_attributes,
-                         'BPD_co_score')
+                         'BPD-Co')
 
     libero_de_key_attributes = ['Jum', 'Str', 'Cmp', 'Dec', 'Pos', 'Tea', 'Fir', 'Hea', 'Mar', 'Pas', 'Tck', 'Tec']
     libero_de_pref_attributes = ['Pac', 'Sta', 'Ant', 'Bra', 'Cnt']
     calculate_role_score(squad_attributes_df, libero_de_key_attributes, libero_de_pref_attributes,
-                         'L_de_score')
+                         'L-De')
 
     libero_su_key_attributes = ['Jum', 'Str', 'Cmp', 'Dec', 'Pos', 'Tea', 'Fir', 'Hea', 'Mar', 'Pas', 'Tck', 'Tec']
     libero_su_pref_attributes = ['Pac', 'Sta', 'Ant', 'Bra', 'Cnt', 'Vis', 'Dri']
     calculate_role_score(squad_attributes_df, libero_su_key_attributes, libero_su_pref_attributes,
-                         'L_su_score')
+                         'L-Su')
 
     # Fullback/Wingback role scores ------------------------------------------
     inverted_fb_key_attributes = ['Str', 'Pos', 'Hea', 'Mar', 'Tck']
     inverted_fb_pref_attributes = ['Agi', 'Jum', 'Pac', 'Agg', 'Ant', 'Bra', 'Cmp', 'Cnt', 'Dec', 'Wor', 'Dri', 'Fir',
                                    'Pas', 'Tec']
     calculate_role_score(squad_attributes_df, inverted_fb_key_attributes, inverted_fb_pref_attributes,
-                         'IFB_score')
+                         'IFB-De')
 
     inverted_wb_de_key_attributes = ['Ant', 'Dec', 'Pos', 'Tea', 'Pas', 'Tck']
     inverted_wb_de_pref_attributes = ['Acc', 'Agi', 'Sta', 'Cmp', 'Cnt', 'OtB', 'Wor', 'Fir', 'Mar', 'Tec']
     calculate_role_score(squad_attributes_df, inverted_wb_de_key_attributes, inverted_wb_de_pref_attributes,
-                         'IWB_de_score')
+                         'IWB-De')
 
     inverted_wb_su_key_attributes = ['Cmp', 'Dec', 'Tea', 'Fir', 'Pas', 'Tck']
     inverted_wb_su_pref_attributes = ['Acc', 'Agi', 'Sta', 'Ant', 'Cnt', 'OtB', 'Pos', 'Vis', 'Wor', 'Mar', 'Tec']
     calculate_role_score(squad_attributes_df, inverted_wb_su_key_attributes, inverted_wb_su_pref_attributes,
-                         'IWB_su_score')
+                         'IWB-Su')
 
     inverted_wb_at_key_attributes = ['Acc', 'Cmp', 'Dec', 'OtB', 'Tea', 'Vis', 'Fir', 'Pas', 'Tck', 'Tec']
     inverted_wb_at_pref_attributes = ['Agi', 'Pac', 'Sta', 'Ant', 'Cnt', 'Fla', 'Pos', 'Wor', 'Cro', 'Dri', 'Lon',
                                       'Mar']
     calculate_role_score(squad_attributes_df, inverted_wb_at_key_attributes, inverted_wb_at_pref_attributes,
-                         'IWB_at_score')
+                         'IWB-At')
 
     fullback_de_key_attributes = ['Ant', 'Cnt', 'Pos', 'Mar', 'Tck']
     fullback_de_pref_attributes = ['Pac', 'Sta', 'Dec', 'Tea', 'Wor', 'Cro', 'Pas']
     calculate_role_score(squad_attributes_df, fullback_de_key_attributes, fullback_de_pref_attributes,
-                         'FB_de_score')
+                         'FB-De')
 
     fullback_su_key_attributes = ['Ant', 'Cnt', 'Pos', 'Mar', 'Tck']
     fullback_su_pref_attributes = ['Pac', 'Sta', 'Dec', 'Tea', 'Wor', 'Cro', 'Dri', 'Pas', 'Tec']
     calculate_role_score(squad_attributes_df, fullback_su_key_attributes, fullback_su_pref_attributes,
-                         'FB_su_score')
+                         'FB-Su')
 
     fullback_at_key_attributes = ['Ant', 'Pos', 'Tea', 'Cro', 'Mar', 'Tck']
     fullback_at_pref_attributes = ['Agi', 'Pac', 'Sta', 'Cnt', 'Dec', 'OtB', 'Wor', 'Dri', 'Fir', 'Pas', 'Tec']
     calculate_role_score(squad_attributes_df, fullback_at_key_attributes, fullback_at_pref_attributes,
-                         'FB_at_score')
+                         'FB-At')
 
     fullback_au_key_attributes = ['Ant', 'Cnt', 'Pos', 'Tea', 'Mar', 'Tck']
     fullback_au_pref_attributes = ['Agi', 'Pac', 'Sta', 'Dec', 'Wor', 'Cro', 'Dri', 'Pas', 'Tec']
     calculate_role_score(squad_attributes_df, fullback_au_key_attributes, fullback_au_pref_attributes,
-                         'FB_au_score')
+                         'FB-Au')
 
     wingback_de_key_attributes = ['Acc', 'Sta', 'Ant', 'Pos', 'Tea', 'Wor', 'Mar', 'Tck']
     wingback_de_pref_attributes = ['Agi', 'Bal', 'Pac', 'Cnt', 'Dec', 'OtB', 'Cro', 'Dri', 'Fir', 'Pas', 'Tec']
     calculate_role_score(squad_attributes_df, wingback_de_key_attributes, wingback_de_pref_attributes,
-                         'WB_de_score')
+                         'WB-De')
 
     wingback_su_key_attributes = ['Acc', 'Sta', 'OtB', 'Tea', 'Wor', 'Cro', 'Dri', 'Mar', 'Tck']
     wingback_su_pref_attributes = ['Agi', 'Bal', 'Pac', 'Ant', 'Cnt', 'Dec', 'Pos', 'Fir', 'Pas', 'Tec']
     calculate_role_score(squad_attributes_df, wingback_su_key_attributes, wingback_su_pref_attributes,
-                         'WB_su_score')
+                         'WB-Su')
 
     wingback_at_key_attributes = ['Acc', 'Pac', 'Sta', 'OtB', 'Tea', 'Wor', 'Cro', 'Dri', 'Tck', 'Tec']
     wingback_at_pref_attributes = ['Agi', 'Bal', 'Ant', 'Cnt', 'Dec', 'Fla', 'Pos', 'Fir', 'Mar', 'Pas']
     calculate_role_score(squad_attributes_df, wingback_at_key_attributes, wingback_at_pref_attributes,
-                         'WB_at_score')
+                         'WB-At')
 
     wingback_au_key_attributes = ['Acc', 'Sta', 'OtB', 'Tea', 'Wor', 'Cro', 'Dri', 'Mar', 'Tck']
     wingback_au_pref_attributes = ['Agi', 'Bal', 'Pac', 'Ant', 'Cnt', 'Dec', 'Pos', 'Fir', 'Pas', 'Tec']
     calculate_role_score(squad_attributes_df, wingback_au_key_attributes, wingback_au_pref_attributes,
-                         'WB_au_score')
+                         'WB-Au')
 
     no_nonsense_fb_key_attributes = ['Str', 'Ant', 'Pos', 'Mar', 'Tck']
     no_nonsense_fb_pref_attributes = ['Agg', 'Bra', 'Cnt', 'Tea', 'Hea']
     calculate_role_score(squad_attributes_df, no_nonsense_fb_key_attributes, no_nonsense_fb_pref_attributes,
-                         'NFB_score')
+                         'NFB-De')
 
     complete_wingback_su_key_attributes = ['Acc', 'Sta', 'OtB', 'Tea', 'Wor', 'Cro', 'Dri', 'Tec']
     complete_wingback_su_pref_attributes = ['Agi', 'Bal', 'Pac', 'Ant', 'Dec', 'Fla', 'Pos', 'Fir', 'Mar', 'Pas', 'Tck']
     calculate_role_score(squad_attributes_df, complete_wingback_su_key_attributes, complete_wingback_su_pref_attributes,
-                         'CWB_su_score')
+                         'CWB-Su')
 
     complete_wingback_at_key_attributes = ['Acc', 'Sta', 'Fla', 'OtB', 'Tea', 'Wor', 'Cro', 'Dri', 'Tec']
     complete_wingback_at_pref_attributes = ['Agi', 'Bal', 'Pac', 'Ant', 'Dec', 'Pos', 'Fir', 'Mar', 'Pas', 'Tck']
     calculate_role_score(squad_attributes_df, complete_wingback_at_key_attributes, complete_wingback_at_pref_attributes,
-                         'CWB_at_score')
+                         'CWB-At')
 
     # Defensive Midfielder role scores -------------------------------------------
     segundo_volante_su_key_attributes = ['Pac', 'Sta', 'OtB', 'Pos', 'Wor', 'Mar', 'Pas', 'Tck']
     segundo_volante_su_pref_attributes = ['Acc', 'Bal', 'Str', 'Ant', 'Cmp', 'Cnt', 'Dec', 'Fin', 'Fir', 'Lon']
     calculate_role_score(squad_attributes_df, segundo_volante_su_key_attributes, segundo_volante_su_pref_attributes,
-                         'VOL_su_score')
+                         'VOL-Su')
 
     segundo_volante_at_key_attributes = ['Pac', 'Sta', 'Ant', 'OtB', 'Pos', 'Wor', 'Fin', 'Lon', 'Pas', 'Tck']
     segundo_volante_at_pref_attributes = ['Acc', 'Bal', 'Str', 'Cmp', 'Cnt', 'Dec', 'Fir', 'Mar']
     calculate_role_score(squad_attributes_df, segundo_volante_at_key_attributes, segundo_volante_at_pref_attributes,
-                         'VOL_at_score')
+                         'VOL-At')
 
     half_back_key_attributes = ['Ant', 'Cmp', 'Cnt', 'Dec', 'Pos', 'Tea', 'Mar', 'Tck']
     half_back_pref_attributes = ['Jum', 'Sta', 'Str', 'Agg', 'Bra', 'Wor', 'Fir', 'Pas']
     calculate_role_score(squad_attributes_df, half_back_key_attributes, half_back_pref_attributes,
-                         'HB_score')
+                         'HB-De')
 
     defensive_midfielder_de_key_attributes = ['Ant', 'Cnt', 'Pos', 'Tea', 'Tck']
     defensive_midfielder_de_pref_attributes = ['Sta', 'Str', 'Agg', 'Cmp', 'Dec', 'Wor', 'Mar', 'Pas']
     calculate_role_score(squad_attributes_df, defensive_midfielder_de_key_attributes,
                          defensive_midfielder_de_pref_attributes,
-                         'DM_de_score')
+                         'DM-De')
 
     defensive_midfielder_su_key_attributes = ['Ant', 'Cnt', 'Pos', 'Tea', 'Tck']
     defensive_midfielder_su_pref_attributes = ['Sta', 'Str', 'Agg', 'Cmp', 'Dec', 'Wor', 'Fir', 'Mar', 'Pas']
     calculate_role_score(squad_attributes_df, defensive_midfielder_su_key_attributes,
                          defensive_midfielder_su_pref_attributes,
-                         'DM_su_score')
+                         'DM-Su')
 
     anchor_key_attributes = ['Ant', 'Cnt', 'Dec', 'Pos', 'Mar', 'Tck']
     anchor_pref_attributes = ['Str', 'Cmp', 'Tea']
     calculate_role_score(squad_attributes_df, anchor_key_attributes, anchor_pref_attributes,
-                         'A_score')
+                         'A-De')
 
     regista_key_attributes = ['Cmp', 'Dec', 'Fla', 'OtB', 'Tea', 'Vis', 'Fir', 'Pas', 'Tec']
     regista_pref_attributes = ['Bal', 'Ant', 'Dri', 'Lon']
     calculate_role_score(squad_attributes_df, regista_key_attributes, regista_pref_attributes,
-                         'RGA_score')
+                         'RGA-Su')
 
     ball_winning_midfielder_de_key_attributes = ['Sta', 'Agg', 'Ant', 'Tea', 'Wor', 'Tck']
     ball_winning_midfielder_de_pref_attributes = ['Agi', 'Pac', 'Str', 'Bra', 'Cnt', 'Pos', 'Mar']
     calculate_role_score(squad_attributes_df, ball_winning_midfielder_de_key_attributes,
                          ball_winning_midfielder_de_pref_attributes,
-                         'BWM_de_score')
+                         'BWM-De')
 
     ball_winning_midfielder_su_key_attributes = ['Sta', 'Agg', 'Ant', 'Tea', 'Wor', 'Tck']
     ball_winning_midfielder_su_pref_attributes = ['Agi', 'Pac', 'Str', 'Bra', 'Cnt', 'Mar', 'Pas']
     calculate_role_score(squad_attributes_df, ball_winning_midfielder_su_key_attributes,
                          ball_winning_midfielder_su_pref_attributes,
-                         'BWM_su_score')
+                         'BWM-Su')
 
     deep_lying_playmaker_de_key_attributes = ['Cmp', 'Dec', 'Tea', 'Vis', 'Fir', 'Pas', 'Tec']
     deep_lying_playmaker_de_pref_attributes = ['Bal', 'Ant', 'Pos', 'Tck']
     calculate_role_score(squad_attributes_df, deep_lying_playmaker_de_key_attributes,
                          deep_lying_playmaker_de_pref_attributes,
-                         'DLP_de_score')
+                         'DLP-De')
 
     deep_lying_playmaker_su_key_attributes = ['Cmp', 'Dec', 'Tea', 'Vis', 'Fir', 'Pas', 'Tec']
     deep_lying_playmaker_su_pref_attributes = ['Bal', 'Ant', 'OtB', 'Pos']
     calculate_role_score(squad_attributes_df, deep_lying_playmaker_su_key_attributes,
                          deep_lying_playmaker_su_pref_attributes,
-                         'DLP_su_score')
+                         'DLP-Su')
 
     roaming_playmaker_key_attributes = ['Acc', 'Sta', 'Ant', 'Cmp', 'Dec', 'OtB', 'Tea', 'Vis', 'Wor', 'Fir', 'Pas',
                                         'Tec']
     roaming_playmaker_pref_attributes = ['Agi', 'Bal', 'Pac', 'Cnt', 'Pos', 'Dri', 'Lon']
     calculate_role_score(squad_attributes_df, roaming_playmaker_key_attributes, roaming_playmaker_pref_attributes,
-                         'RPM_score')
+                         'RPM-Su')
 
     # Central Midfielder role scores --------------------------------------------
     advanced_playmaker_su_key_attributes = ['Cmp', 'Dec', 'OtB', 'Tea', 'Vis', 'Fir', 'Pas', 'Tec']
     advanced_playmaker_su_pref_attributes = ['Agi', 'Ant', 'Cnt', 'Fla', 'Dri']
     calculate_role_score(squad_attributes_df, advanced_playmaker_su_key_attributes,
                          advanced_playmaker_su_pref_attributes,
-                         'AP_su_score')
+                         'AP-Su')
 
     advanced_playmaker_at_key_attributes = ['Cmp', 'Dec', 'OtB', 'Tea', 'Vis', 'Fir', 'Pas', 'Tec']
     advanced_playmaker_at_pref_attributes = ['Acc', 'Agi', 'Ant', 'Cnt', 'Fla', 'Dri']
     calculate_role_score(squad_attributes_df, advanced_playmaker_at_key_attributes,
                          advanced_playmaker_at_pref_attributes,
-                         'AP_at_score')
+                         'AP-At')
 
     carrilero_key_attributes = ['Sta', 'Dec', 'Pos', 'Tea', 'Fir', 'Pas', 'Tck']
     carrilero_pref_attributes = ['Ant', 'Cmp', 'Cnt', 'OtB', 'Vis', 'Wor', 'Tec']
     calculate_role_score(squad_attributes_df, carrilero_key_attributes, carrilero_pref_attributes,
-                         'CAR_role_score')
+                         'CAR-Su')
 
     mezzala_su_key_attributes = ['Acc', 'Dec', 'OtB', 'Wor', 'Pas', 'Tec']
     mezzala_su_pref_attributes = ['Bal', 'Sta', 'Ant', 'Cmp', 'Vis', 'Dri', 'Fir', 'Lon', 'Tck']
     calculate_role_score(squad_attributes_df, mezzala_su_key_attributes, mezzala_su_pref_attributes,
-                         'MEZ_su_score')
+                         'MEZ-Su')
 
     mezzala_at_key_attributes = ['Acc', 'Dec', 'OtB', 'Vis', 'Wor', 'Dri', 'Pas', 'Tec']
     mezzala_at_pref_attributes = ['Bal', 'Sta', 'Ant', 'Cmp', 'Fla', 'Fin', 'Fir', 'Lon']
     calculate_role_score(squad_attributes_df, mezzala_at_key_attributes, mezzala_at_pref_attributes,
-                         'MEZ_at_score')
+                         'MEZ-At')
 
     central_midfielder_de_key_attributes = ['Cnt', 'Dec', 'Pos', 'Tea', 'Tck']
     central_midfielder_de_pref_attributes = ['Sta', 'Agg', 'Ant', 'Cmp', 'Wor', 'Fir', 'Mar', 'Pas', 'Tec']
     calculate_role_score(squad_attributes_df, central_midfielder_de_key_attributes,
                          central_midfielder_de_pref_attributes,
-                         'CM_de_score')
+                         'CM-De')
 
     central_midfielder_su_key_attributes = ['Dec', 'Tea', 'Fir', 'Pas', 'Tck']
     central_midfielder_su_pref_attributes = ['Sta', 'Ant', 'Cmp', 'Cnt', 'OtB', 'Vis', 'Wor', 'Tec']
     calculate_role_score(squad_attributes_df, central_midfielder_su_key_attributes,
                          central_midfielder_su_pref_attributes,
-                         'CM_su_score')
+                         'CM-Su')
 
     central_midfielder_at_key_attributes = ['Dec', 'OtB', 'Fir', 'Pas']
     central_midfielder_at_pref_attributes = ['Acc', 'Sta', 'Ant', 'Cmp', 'Tea', 'Vis', 'Wor', 'Lon', 'Tck', 'Tec']
     calculate_role_score(squad_attributes_df, central_midfielder_at_key_attributes,
                          central_midfielder_at_pref_attributes,
-                         'CM_at_score')
+                         'CM-At')
 
     central_midfielder_au_key_attributes = ['Dec', 'Tea', 'Fir', 'Pas', 'Tck']
     central_midfielder_au_pref_attributes = ['Sta', 'Ant', 'Cmp', 'Cnt', 'OtB', 'Vis', 'Wor', 'Tec']
     calculate_role_score(squad_attributes_df, central_midfielder_au_key_attributes,
                          central_midfielder_au_pref_attributes,
-                         'CM_au_score')
+                         'CM-Au')
 
     box_to_box_midfielder_key_attributes = ['Sta', 'OtB', 'Tea', 'Wor', 'Pas', 'Tck']
     box_to_box_midfielder_pref_attributes = ['Acc', 'Bal', 'Pac', 'Str', 'Agg', 'Ant', 'Cmp', 'Dec', 'Pos', 'Dri',
                                              'Fin', 'Fir', 'Lon', 'Tec']
     calculate_role_score(squad_attributes_df, box_to_box_midfielder_key_attributes,
                          box_to_box_midfielder_pref_attributes,
-                         'BBM_score')
+                         'BBM-Su')
 
     # Winger role scores --------------------------------------
     defensive_winger_de_key_attributes = ['Sta', 'Ant', 'OtB', 'Pos', 'Tea', 'Wor', 'Tec']
     defensive_winger_de_pref_attributes = ['Acc', 'Agg', 'Cnt', 'Dec', 'Cro', 'Dri', 'Fir', 'Mar', 'Tck']
     calculate_role_score(squad_attributes_df, defensive_winger_de_key_attributes, defensive_winger_de_pref_attributes,
-                         'DW_de_score')
+                         'DW-De')
 
     defensive_winger_su_key_attributes = ['Sta', 'OtB', 'Tea', 'Wor', 'Cro', 'Tec']
     defensive_winger_su_pref_attributes = ['Acc', 'Agg', 'Ant', 'Cmp', 'Cnt', 'Dec', 'Pos', 'Dri', 'Fir', 'Mar', 'Pas',
                                            'Tck']
     calculate_role_score(squad_attributes_df, defensive_winger_su_key_attributes, defensive_winger_su_pref_attributes,
-                         'DW_su_score')
+                         'DW-Su')
 
     wide_midfielder_de_key_attributes = ['Cnt', 'Dec', 'Pos', 'Tea', 'Wor', 'Pas', 'Tck']
     wide_midfielder_de_pref_attributes = ['Sta', 'Ant', 'Cmp', 'Cro', 'Fir', 'Mar', 'Tec']
     calculate_role_score(squad_attributes_df, wide_midfielder_de_key_attributes, wide_midfielder_de_pref_attributes,
-                         'WM_de_score')
+                         'WM-De')
 
     wide_midfielder_su_key_attributes = ['Sta', 'Dec', 'Tea', 'Wor', 'Pas', 'Tck']
     wide_midfielder_su_pref_attributes = ['Ant', 'Cmp', 'Cnt', 'OtB', 'Pos', 'Vis', 'Cro', 'Fir', 'Tec']
     calculate_role_score(squad_attributes_df, wide_midfielder_su_key_attributes, wide_midfielder_su_pref_attributes,
-                         'WM_su_score')
+                         'WM-Su')
 
     wide_midfielder_at_key_attributes = ['Sta', 'Dec', 'Tea', 'Wor', 'Cro', 'Fir', 'Pas']
     wide_midfielder_at_pref_attributes = ['Ant', 'Cmp', 'OtB', 'Vis', 'Tck', 'Tec']
     calculate_role_score(squad_attributes_df, wide_midfielder_at_key_attributes, wide_midfielder_at_pref_attributes,
-                         'WM_at_score')
+                         'WM-At')
 
     wide_midfielder_au_key_attributes = ['Sta', 'Dec', 'Tea', 'Wor', 'Pas', 'Tck']
     wide_midfielder_au_pref_attributes = ['Ant', 'Cmp', 'Cnt', 'OtB', 'Pos', 'Vis', 'Cro', 'Fir', 'Tec']
     calculate_role_score(squad_attributes_df, wide_midfielder_au_key_attributes, wide_midfielder_au_pref_attributes,
-                         'WM_au_score')
+                         'WM-Au')
 
     wide_playmaker_su_key_attributes = ['Cmp', 'Dec', 'Tea', 'Vis', 'Fir', 'Pas', 'Tec']
     wide_playmaker_su_pref_attributes = ['Agi', 'OtB', 'Dri']
     calculate_role_score(squad_attributes_df, wide_playmaker_su_key_attributes, wide_playmaker_su_pref_attributes,
-                         'WP_su_score')
+                         'WP-Su')
 
     wide_playmaker_at_key_attributes = ['Cmp', 'Dec', 'Tea', 'Vis', 'Dri', 'Fir', 'Pas', 'Tec']
     wide_playmaker_at_pref_attributes = ['Acc', 'Agi', 'Ant', 'Fla']
     calculate_role_score(squad_attributes_df, wide_playmaker_at_key_attributes, wide_playmaker_at_pref_attributes,
-                         'WP_at_score')
+                         'WP-At')
 
     inverted_winger_su_key_attributes = ['Acc', 'Agi', 'Cro', 'Dri', 'Pas', 'Tec']
     inverted_winger_su_pref_attributes = ['Bal', 'Pac', 'Sta', 'Cmp', 'Dec', 'OtB', 'Vis', 'Wor', 'Fir', 'Lon']
     calculate_role_score(squad_attributes_df, inverted_winger_su_key_attributes, inverted_winger_su_pref_attributes,
-                         'IW_su_score')
+                         'IW-Su')
 
     inverted_winger_at_key_attributes = ['Acc', 'Agi', 'Cro', 'Dri', 'Pas', 'Tec']
     inverted_winger_at_pref_attributes = ['Bal', 'Pac', 'Sta', 'Ant', 'Cmp', 'Dec', 'Fla', 'OtB', 'Vis', 'Wor', 'Fir',
                                           'Lon']
     calculate_role_score(squad_attributes_df, inverted_winger_at_key_attributes, inverted_winger_at_pref_attributes,
-                         'IW_at_score')
+                         'IW-At')
 
     winger_su_key_attributes = ['Acc', 'Agi', 'Cro', 'Dri', 'Tec']
     winger_su_pref_attributes = ['Bal', 'Pac', 'Sta', 'OtB', 'Wor', 'Fir', 'Pas']
     calculate_role_score(squad_attributes_df, winger_su_key_attributes, winger_su_pref_attributes,
-                         'W_su_score')
+                         'W-Su')
 
     winger_at_key_attributes = ['Acc', 'Agi', 'Cro', 'Dri', 'Tec']
     winger_at_pref_attributes = ['Bal', 'Pac', 'Sta', 'Ant', 'Fla', 'OtB', 'Wor', 'Fir', 'Pas']
     calculate_role_score(squad_attributes_df, winger_at_key_attributes, winger_at_pref_attributes,
-                         'W_at_score')
+                         'W-At')
 
     inside_forward_su_key_attributes = ['Acc', 'Agi', 'OtB', 'Dri', 'Fin', 'Fir', 'Tec']
     inside_forward_su_pref_attributes = ['Bal', 'Pac', 'Sta', 'Ant', 'Cmp', 'Fla', 'Vis', 'Wor', 'Lon', 'Pas']
     calculate_role_score(squad_attributes_df, inside_forward_su_key_attributes, inside_forward_su_pref_attributes,
-                         'IF_su_score')
+                         'IF-Su')
 
     inside_forward_at_key_attributes = ['Acc', 'Agi', 'Ant', 'OtB', 'Dri', 'Fin', 'Fir', 'Tec']
     inside_forward_at_pref_attributes = ['Bal', 'Pac', 'Sta', 'Cmp', 'Fla', 'Wor', 'Lon', 'Pas']
     calculate_role_score(squad_attributes_df, inside_forward_at_key_attributes, inside_forward_at_pref_attributes,
-                         'IF_at_score')
+                         'IF-At')
 
     raumdeuter_key_attributes = ['Bal', 'Ant', 'Cmp', 'Cnt', 'Dec', 'OtB', 'Fin']
     raumdeuter_pref_attributes = ['Acc', 'Sta', 'Wor', 'Fir', 'Tec']
     calculate_role_score(squad_attributes_df, raumdeuter_key_attributes, raumdeuter_pref_attributes,
-                         'RMD_score')
+                         'RMD-At')
 
     wide_target_forward_su_key_attributes = ['Jum', 'Str', 'Bra', 'Tea', 'Hea']
     wide_target_forward_su_pref_attributes = ['Bal', 'Sta', 'Ant', 'OtB', 'Wor', 'Cro', 'Fir']
     calculate_role_score(squad_attributes_df, wide_target_forward_su_key_attributes,
                          wide_target_forward_su_pref_attributes,
-                         'WT_su_score')
+                         'WT-Su')
 
     wide_target_forward_at_key_attributes = ['Jum', 'Str', 'Bra', 'OtB', 'Hea']
     wide_target_forward_at_pref_attributes = ['Bal', 'Sta', 'Ant', 'Tea', 'Wor', 'Cro', 'Fin', 'Fir']
     calculate_role_score(squad_attributes_df, wide_target_forward_at_key_attributes,
                          wide_target_forward_at_pref_attributes,
-                         'WT_at_score')
+                         'WT-At')
 
     # Attacking Midfielder role scores ---------------------
     trequartista_key_attributes = ['Acc', 'Cmp', 'Dec', 'Fla', 'OtB', 'Vis', 'Dri', 'Fir', 'Pas', 'Tec']
     trequartista_pref_attributes = ['Agi', 'Bal', 'Ant', 'Fin']
     calculate_role_score(squad_attributes_df, trequartista_key_attributes, trequartista_pref_attributes,
-                         'T_score')
+                         'T-At')
 
     enganche_key_attributes = ['Cmp', 'Dec', 'Vis', 'Fir', 'Pas', 'Tec']
     enganche_pref_attributes = ['Agi', 'Ant', 'Fla', 'OtB', 'Tea', 'Dri']
     calculate_role_score(squad_attributes_df, enganche_key_attributes, enganche_pref_attributes,
-                         'EG_score')
+                         'EG-Su')
 
     attacking_midfielder_su_key_attributes = ['Ant', 'Dec', 'Fla', 'OtB', 'Fir', 'Lon', 'Pas', 'Tec']
     attacking_midfielder_su_pref_attributes = ['Agi', 'Cmp', 'Vis', 'Dri']
     calculate_role_score(squad_attributes_df, attacking_midfielder_su_key_attributes,
                          attacking_midfielder_su_pref_attributes,
-                         'AM_su_score')
+                         'AM-Su')
 
     attacking_midfielder_at_key_attributes = ['Ant', 'Dec', 'Fla', 'OtB', 'Fir', 'Lon', 'Pas', 'Tec', 'Dri']
     attacking_midfielder_at_pref_attributes = ['Agi', 'Cmp', 'Vis', 'Fin']
     calculate_role_score(squad_attributes_df, attacking_midfielder_at_key_attributes,
                          attacking_midfielder_at_pref_attributes,
-                         'AM_at_score')
+                         'AM-At')
 
     shadow_striker_key_attributes = ['Acc', 'Ant', 'Cmp', 'OtB', 'Dri', 'Fin', 'Fir']
     shadow_striker_pref_attributes = ['Agi', 'Bal', 'Pac', 'Sta', 'Cnt', 'Dec', 'Wor', 'Pas', 'Tec']
     calculate_role_score(squad_attributes_df, shadow_striker_key_attributes, shadow_striker_pref_attributes,
-                         'SS_score')
+                         'SS-At')
 
     # Striker role scores
     advanced_forward_key_attributes = ['Acc', 'Cmp', 'OtB', 'Dri', 'Fin', 'Fir', 'Tec']
     advanced_forward_pref_attributes = ['Agi', 'Bal', 'Pac', 'Sta', 'Ant', 'Dec', 'Wor', 'Pas']
     calculate_role_score(squad_attributes_df, advanced_forward_key_attributes, advanced_forward_pref_attributes,
-                         'AF_score')
+                         'AF-At')
 
     poacher_key_attributes = ['Ant', 'Cmp', 'OtB', 'Fin']
     poacher_pref_attributes = ['Acc', 'Dec', 'Fir', 'Hea', 'Tec']
     calculate_role_score(squad_attributes_df, poacher_key_attributes, poacher_pref_attributes,
-                         'P_score')
+                         'P-At')
 
     false_nine_key_attributes = ['Acc', 'Agi', 'Cmp', 'Dec', 'OtB', 'Vis', 'Dri', 'Fir', 'Pas', 'Tec']
     false_nine_pref_attributes = ['Bal', 'Ant', 'Fla', 'Tea', 'Fin']
     calculate_role_score(squad_attributes_df, false_nine_key_attributes, false_nine_pref_attributes,
-                         'F9_score')
+                         'F9-Su')
 
     target_forward_su_key_attributes = ['Bal', 'Jum', 'Str', 'Bra', 'Tea', 'Hea']
     target_forward_su_pref_attributes = ['Agg', 'Ant', 'Cmp', 'Dec', 'OtB', 'Fin', 'Fir']
     calculate_role_score(squad_attributes_df, target_forward_su_key_attributes, target_forward_su_pref_attributes,
-                         'TF_su_score')
+                         'TF-Su')
 
     target_forward_at_key_attributes = ['Bal', 'Jum', 'Str', 'Bra', 'Cmp', 'OtB', 'Fin', 'Hea']
     target_forward_at_pref_attributes = ['Agg', 'Ant', 'Dec', 'Tea', 'Fir']
     calculate_role_score(squad_attributes_df, target_forward_at_key_attributes, target_forward_at_pref_attributes,
-                         'TF_at_score')
+                         'TF-At')
 
     deep_lying_forward_su_key_attributes = ['Cmp', 'Dec', 'OtB', 'Tea', 'Fir', 'Pas', 'Tec']
     deep_lying_forward_su_pref_attributes = ['Bal', 'Str', 'Ant', 'Fla', 'Vis', 'Fin']
     calculate_role_score(squad_attributes_df, deep_lying_forward_su_key_attributes,
                          deep_lying_forward_su_pref_attributes,
-                         'DLF_su_score')
+                         'DLF-Su')
 
     deep_lying_forward_at_key_attributes = ['Cmp', 'Dec', 'OtB', 'Tea', 'Fir', 'Pas', 'Tec']
     deep_lying_forward_at_pref_attributes = ['Bal', 'Str', 'Ant', 'Fla', 'Vis', 'Dri', 'Fin']
     calculate_role_score(squad_attributes_df, deep_lying_forward_at_key_attributes,
                          deep_lying_forward_at_pref_attributes,
-                         'DLF_at_score')
+                         'DLF-At')
 
     pressing_forward_de_key_attributes = ['Acc', 'Pac', 'Sta', 'Agg', 'Ant', 'Bra', 'Dec', 'Tea', 'Wor']
     pressing_forward_de_pref_attributes = ['Agi', 'Bal', 'Str', 'Cmp', 'Cnt', 'Fir']
     calculate_role_score(squad_attributes_df, pressing_forward_de_key_attributes, pressing_forward_de_pref_attributes,
-                         'PF_de_score')
+                         'PF-De')
 
     pressing_forward_su_key_attributes = ['Acc', 'Pac', 'Sta', 'Agg', 'Ant', 'Bra', 'Dec', 'Tea', 'Wor']
     pressing_forward_su_pref_attributes = ['Agi', 'Bal', 'Str', 'Cmp', 'Cnt', 'OtB', 'Fir', 'Pas']
     calculate_role_score(squad_attributes_df, pressing_forward_su_key_attributes, pressing_forward_su_pref_attributes,
-                         'PF_su_score')
+                         'PF-Su')
 
     pressing_forward_at_key_attributes = ['Acc', 'Pac', 'Sta', 'Agg', 'Ant', 'Bra', 'OtB', 'Tea', 'Wor']
     pressing_forward_at_pref_attributes = ['Agi', 'Bal', 'Str', 'Cmp', 'Cnt', 'Dec', 'Fin', 'Fir']
     calculate_role_score(squad_attributes_df, pressing_forward_at_key_attributes, pressing_forward_at_pref_attributes,
-                         'PF_at_score')
+                         'PF-At')
 
     complete_forward_su_key_attributes = ['Acc', 'Agi', 'Str', 'Ant', 'Cmp', 'Dec', 'OtB', 'Vis', 'Dri', 'Fir', 'Hea',
                                           'Lon', 'Pas', 'Tec']
     complete_forward_su_pref_attributes = ['Bal', 'Jum', 'Pac', 'Sta', 'Tea', 'Wor', 'Fin']
     calculate_role_score(squad_attributes_df, complete_forward_su_key_attributes, complete_forward_su_pref_attributes,
-                         'CF_su_score')
+                         'CF-Su')
 
     complete_forward_at_key_attributes = ['Acc', 'Agi', 'Str', 'Ant', 'Cmp', 'OtB', 'Dri', 'Fin', 'Fir', 'Hea', 'Tec']
     complete_forward_at_pref_attributes = ['Bal', 'Jum', 'Pac', 'Sta', 'Dec', 'Tea', 'Vis', 'Wor', 'Lon', 'Pas']
     calculate_role_score(squad_attributes_df, complete_forward_at_key_attributes, complete_forward_at_pref_attributes,
-                         'CF_at_score')
+                         'CF-At')
 
     # Custom attributes for 'overall' radar -----------------------------------------
     squad_attributes_df['Speed'] = squad_attributes_df[['Acc', 'Pac']].mean(axis=1).apply(np.floor)
@@ -766,490 +766,490 @@ def build_shortlist_attributes_dataframe(shortlist_attributes_file):
     gk_key_attributes = ['Agi', 'Cnt', 'Pos', 'Aer', 'Cmd', 'Com', 'Han', 'Kic', 'Ref']
     gk_pref_attributes = ['Ant', 'Dec', '1v1', 'Thr']
     calculate_role_score(shortlist_attributes_df, gk_key_attributes, gk_pref_attributes,
-                         'G_score')
+                         'G-De')
 
     sweeper_keeper_de_key_attributes = ['Agi', 'Ant', 'Cnt', 'Pos', 'Cmd', 'Kic', '1v1', 'Ref', ]
     sweeper_keeper_de_pref_attributes = ['Acc', 'Cmp', 'Dec', 'Vis', 'Aer', 'Com', 'Fir', 'Han', 'Pas', 'TRO', 'Thr']
     calculate_role_score(shortlist_attributes_df, sweeper_keeper_de_key_attributes, sweeper_keeper_de_pref_attributes,
-                         'SK_de_score')
+                         'SK-De')
 
     sweeper_keeper_su_key_attributes = ['Agi', 'Ant', 'Cmp', 'Cnt', 'Pos', 'Cmd', 'Kic', '1v1', 'Ref', 'TRO']
     sweeper_keeper_su_pref_attributes = ['Acc', 'Dec', 'Vis', 'Aer', 'Com', 'Fir', 'Han', 'Pas', 'Thr']
     calculate_role_score(shortlist_attributes_df, sweeper_keeper_su_key_attributes, sweeper_keeper_su_pref_attributes,
-                         'SK_su_score')
+                         'SK-Su')
 
     sweeper_keeper_at_key_attributes = ['Agi', 'Ant', 'Cmp', 'Cnt', 'Pos', 'Cmd', 'Kic', '1v1', 'Ref', 'TRO']
     sweeper_keeper_at_pref_attributes = ['Acc', 'Dec', 'Vis', 'Aer', 'Com', 'Ecc', 'Fir', 'Han', 'Pas', 'Thr']
     calculate_role_score(shortlist_attributes_df, sweeper_keeper_at_key_attributes, sweeper_keeper_at_pref_attributes,
-                         'SK_at_score')
+                         'SK-At')
 
     # Central Defender Role Scores ----------------------------------------
     central_def_de_key_attributes = ['Jum', 'Str', 'Pos', 'Hea', 'Mar', 'Tck']
     central_def_de_pref_attributes = ['Pac', 'Agg', 'Ant', 'Bra', 'Cmp', 'Cnt', 'Dec']
     calculate_role_score(shortlist_attributes_df, central_def_de_key_attributes, central_def_de_pref_attributes,
-                         'CD_de_score')
+                         'CD-De')
 
     central_def_st_key_attributes = ['Jum', 'Str', 'Agg', 'Bra', 'Pos', 'Dec', 'Hea', 'Tck']
     central_def_st_pref_attributes = ['Mar', 'Ant', 'Cmp', 'Cnt']
     calculate_role_score(shortlist_attributes_df, central_def_st_key_attributes, central_def_st_pref_attributes,
-                         'CD_st_score')
+                         'CD-St')
 
     central_def_co_key_attributes = ['Pac', 'Ant', 'Cnt', 'Dec', 'Pos', 'Mar', 'Tck']
     central_def_co_pref_attributes = ['Jum', 'Str', 'Bra', 'Cmp', 'Hea']
     calculate_role_score(shortlist_attributes_df, central_def_co_key_attributes, central_def_co_pref_attributes,
-                         'CD_co_score')
+                         'CD-Co')
 
     no_nonsense_cb_de_key_attributes = ['Jum', 'Str', 'Pos', 'Hea', 'Mar', 'Tck']
     no_nonsense_cb_de_pref_attributes = ['Pac', 'Agg', 'Ant', 'Bra', 'Cnt']
     calculate_role_score(shortlist_attributes_df, no_nonsense_cb_de_key_attributes, no_nonsense_cb_de_pref_attributes,
-                         'NCB_de_score')
+                         'NCB-De')
 
     no_nonsense_cb_st_key_attributes = ['Jum', 'Str', 'Agg', 'Bra', 'Pos', 'Hea', 'Tck']
     no_nonsense_cb_st_pref_attributes = ['Mar', 'Ant', 'Cnt']
     calculate_role_score(shortlist_attributes_df, no_nonsense_cb_st_key_attributes, no_nonsense_cb_st_pref_attributes,
-                         'NCB_st_score')
+                         'NCB-St')
 
     no_nonsense_cb_co_key_attributes = ['Pac', 'Ant', 'Cnt', 'Pos', 'Mar', 'Tck']
     no_nonsense_cb_co_pref_attributes = ['Jum', 'Str', 'Bra', 'Hea']
     calculate_role_score(shortlist_attributes_df, no_nonsense_cb_co_key_attributes, no_nonsense_cb_co_pref_attributes,
-                         'NCB_co_score')
+                         'NCB-Co')
 
     wide_cb_de_key_attributes = ['Jum', 'Str', 'Pos', 'Hea', 'Mar', 'Tck']
     wide_cb_de_pref_attributes = ['Agi', 'Pac', 'Agg', 'Ant', 'Bra', 'Cmp', 'Cnt', 'Wor', 'Dri', 'Fir', 'Pas', 'Tec']
     calculate_role_score(shortlist_attributes_df, wide_cb_de_key_attributes, wide_cb_de_pref_attributes,
-                         'WCB_de_score')
+                         'WCB-De')
 
     wide_cb_su_key_attributes = ['Jum', 'Pac', 'Str', 'Pos', 'Dri', 'Hea', 'Mar', 'Tck']
     wide_cb_su_pref_attributes = ['Agi', 'Sta', 'Agg', 'Ant', 'Bra', 'Cmp', 'Cnt', 'Dec', 'OtB', 'Wor', 'Cro', 'Fir',
                                   'Pas', 'Tec']
     calculate_role_score(shortlist_attributes_df, wide_cb_su_key_attributes, wide_cb_su_pref_attributes,
-                         'WCB_su_score')
+                         'WCB-Su')
 
     wide_cb_at_key_attributes = ['Jum', 'Pac', 'Sta', 'Str', 'OtB', 'Cro', 'Dri', 'Hea', 'Mar', 'Tck']
     wide_cb_at_pref_attributes = ['Agi', 'Agg', 'Ant', 'Bra', 'Cmp', 'Cnt', 'Dec', 'Pos', 'Wor', 'Fir', 'Pas', 'Tec']
     calculate_role_score(shortlist_attributes_df, wide_cb_at_key_attributes, wide_cb_at_pref_attributes,
-                         'WCB_at_score')
+                         'WCB-At')
 
     ball_playing_def_de_key_attributes = ['Jum', 'Str', 'Cmp', 'Pos', 'Hea', 'Mar', 'Pas', 'Tck']
     ball_playing_def_de_pref_attributes = ['Pac', 'Agg', 'Ant', 'Bra', 'Cnt', 'Dec', 'Vis', 'Fir', 'Tec']
     calculate_role_score(shortlist_attributes_df, ball_playing_def_de_key_attributes,
                          ball_playing_def_de_pref_attributes,
-                         'BPD_de_score')
+                         'BPD-De')
 
     ball_playing_def_st_key_attributes = ['Jum', 'Str', 'Agg', 'Bra', 'Cmp', 'Dec', 'Pos', 'Hea', 'Pas', 'Tck']
     ball_playing_def_st_pref_attributes = ['Ant', 'Cnt', 'Vis', 'Fir', 'Mar', 'Tec']
     calculate_role_score(shortlist_attributes_df, ball_playing_def_st_key_attributes,
                          ball_playing_def_st_pref_attributes,
-                         'BPD_st_score')
+                         'BPD-St')
 
     ball_playing_def_co_key_attributes = ['Pac', 'Ant', 'Cmp', 'Cnt', 'Dec', 'Pos', 'Mar', 'Pas', 'Tck']
     ball_playing_def_co_pref_attributes = ['Jum', 'Str', 'Bra', 'Vis', 'Fir', 'Hea', 'Tec']
     calculate_role_score(shortlist_attributes_df, ball_playing_def_co_key_attributes,
                          ball_playing_def_co_pref_attributes,
-                         'BPD_co_score')
+                         'BPD-Co')
 
     libero_de_key_attributes = ['Jum', 'Str', 'Cmp', 'Dec', 'Pos', 'Tea', 'Fir', 'Hea', 'Mar', 'Pas', 'Tck', 'Tec']
     libero_de_pref_attributes = ['Pac', 'Sta', 'Ant', 'Bra', 'Cnt']
     calculate_role_score(shortlist_attributes_df, libero_de_key_attributes, libero_de_pref_attributes,
-                         'L_de_score')
+                         'L-De')
 
     libero_su_key_attributes = ['Jum', 'Str', 'Cmp', 'Dec', 'Pos', 'Tea', 'Fir', 'Hea', 'Mar', 'Pas', 'Tck', 'Tec']
     libero_su_pref_attributes = ['Pac', 'Sta', 'Ant', 'Bra', 'Cnt', 'Vis', 'Dri']
     calculate_role_score(shortlist_attributes_df, libero_su_key_attributes, libero_su_pref_attributes,
-                         'L_su_score')
+                         'L-Su')
 
     # Fullback/Wingback role scores ------------------------------------------
     inverted_fb_key_attributes = ['Str', 'Pos', 'Hea', 'Mar', 'Tck']
     inverted_fb_pref_attributes = ['Agi', 'Jum', 'Pac', 'Agg', 'Ant', 'Bra', 'Cmp', 'Cnt', 'Dec', 'Wor', 'Dri', 'Fir',
                                    'Pas', 'Tec']
     calculate_role_score(shortlist_attributes_df, inverted_fb_key_attributes, inverted_fb_pref_attributes,
-                         'IFB_score')
+                         'IFB-De')
 
     inverted_wb_de_key_attributes = ['Ant', 'Dec', 'Pos', 'Tea', 'Pas', 'Tck']
     inverted_wb_de_pref_attributes = ['Acc', 'Agi', 'Sta', 'Cmp', 'Cnt', 'OtB', 'Wor', 'Fir', 'Mar', 'Tec']
     calculate_role_score(shortlist_attributes_df, inverted_wb_de_key_attributes, inverted_wb_de_pref_attributes,
-                         'IWB_de_score')
+                         'IWB-De')
 
     inverted_wb_su_key_attributes = ['Cmp', 'Dec', 'Tea', 'Fir', 'Pas', 'Tck']
     inverted_wb_su_pref_attributes = ['Acc', 'Agi', 'Sta', 'Ant', 'Cnt', 'OtB', 'Pos', 'Vis', 'Wor', 'Mar', 'Tec']
     calculate_role_score(shortlist_attributes_df, inverted_wb_su_key_attributes, inverted_wb_su_pref_attributes,
-                         'IWB_su_score')
+                         'IWB-Su')
 
     inverted_wb_at_key_attributes = ['Acc', 'Cmp', 'Dec', 'OtB', 'Tea', 'Vis', 'Fir', 'Pas', 'Tck', 'Tec']
     inverted_wb_at_pref_attributes = ['Agi', 'Pac', 'Sta', 'Ant', 'Cnt', 'Fla', 'Pos', 'Wor', 'Cro', 'Dri', 'Lon',
                                       'Mar']
     calculate_role_score(shortlist_attributes_df, inverted_wb_at_key_attributes, inverted_wb_at_pref_attributes,
-                         'IWB_at_score')
+                         'IWB-At')
 
     fullback_de_key_attributes = ['Ant', 'Cnt', 'Pos', 'Mar', 'Tck']
     fullback_de_pref_attributes = ['Pac', 'Sta', 'Dec', 'Tea', 'Wor', 'Cro', 'Pas']
     calculate_role_score(shortlist_attributes_df, fullback_de_key_attributes, fullback_de_pref_attributes,
-                         'FB_de_score')
+                         'FB-De')
 
     fullback_su_key_attributes = ['Ant', 'Cnt', 'Pos', 'Mar', 'Tck']
     fullback_su_pref_attributes = ['Pac', 'Sta', 'Dec', 'Tea', 'Wor', 'Cro', 'Dri', 'Pas', 'Tec']
     calculate_role_score(shortlist_attributes_df, fullback_su_key_attributes, fullback_su_pref_attributes,
-                         'FB_su_score')
+                         'FB-Su')
 
     fullback_at_key_attributes = ['Ant', 'Pos', 'Tea', 'Cro', 'Mar', 'Tck']
     fullback_at_pref_attributes = ['Agi', 'Pac', 'Sta', 'Cnt', 'Dec', 'OtB', 'Wor', 'Dri', 'Fir', 'Pas', 'Tec']
     calculate_role_score(shortlist_attributes_df, fullback_at_key_attributes, fullback_at_pref_attributes,
-                         'FB_at_score')
+                         'FB-At')
 
     fullback_au_key_attributes = ['Ant', 'Cnt', 'Pos', 'Tea', 'Mar', 'Tck']
     fullback_au_pref_attributes = ['Agi', 'Pac', 'Sta', 'Dec', 'Wor', 'Cro', 'Dri', 'Pas', 'Tec']
     calculate_role_score(shortlist_attributes_df, fullback_au_key_attributes, fullback_au_pref_attributes,
-                         'FB_au_score')
+                         'FB-Au')
 
     wingback_de_key_attributes = ['Acc', 'Sta', 'Ant', 'Pos', 'Tea', 'Wor', 'Mar', 'Tck']
     wingback_de_pref_attributes = ['Agi', 'Bal', 'Pac', 'Cnt', 'Dec', 'OtB', 'Cro', 'Dri', 'Fir', 'Pas', 'Tec']
     calculate_role_score(shortlist_attributes_df, wingback_de_key_attributes, wingback_de_pref_attributes,
-                         'WB_de_score')
+                         'WB-De')
 
     wingback_su_key_attributes = ['Acc', 'Sta', 'OtB', 'Tea', 'Wor', 'Cro', 'Dri', 'Mar', 'Tck']
     wingback_su_pref_attributes = ['Agi', 'Bal', 'Pac', 'Ant', 'Cnt', 'Dec', 'Pos', 'Fir', 'Pas', 'Tec']
     calculate_role_score(shortlist_attributes_df, wingback_su_key_attributes, wingback_su_pref_attributes,
-                         'WB_su_score')
+                         'WB-Su')
 
     wingback_at_key_attributes = ['Acc', 'Pac', 'Sta', 'OtB', 'Tea', 'Wor', 'Cro', 'Dri', 'Tck', 'Tec']
     wingback_at_pref_attributes = ['Agi', 'Bal', 'Ant', 'Cnt', 'Dec', 'Fla', 'Pos', 'Fir', 'Mar', 'Pas']
     calculate_role_score(shortlist_attributes_df, wingback_at_key_attributes, wingback_at_pref_attributes,
-                         'WB_at_score')
+                         'WB-At')
 
     wingback_au_key_attributes = ['Acc', 'Sta', 'OtB', 'Tea', 'Wor', 'Cro', 'Dri', 'Mar', 'Tck']
     wingback_au_pref_attributes = ['Agi', 'Bal', 'Pac', 'Ant', 'Cnt', 'Dec', 'Pos', 'Fir', 'Pas', 'Tec']
     calculate_role_score(shortlist_attributes_df, wingback_au_key_attributes, wingback_au_pref_attributes,
-                         'WB_au_score')
+                         'WB-Au')
 
     no_nonsense_fb_key_attributes = ['Str', 'Ant', 'Pos', 'Mar', 'Tck']
     no_nonsense_fb_pref_attributes = ['Agg', 'Bra', 'Cnt', 'Tea', 'Hea']
     calculate_role_score(shortlist_attributes_df, no_nonsense_fb_key_attributes, no_nonsense_fb_pref_attributes,
-                         'NFB_score')
+                         'NFB-De')
 
     complete_wingback_su_key_attributes = ['Acc', 'Sta', 'OtB', 'Tea', 'Wor', 'Cro', 'Dri', 'Tec']
     complete_wingback_su_pref_attributes = ['Agi', 'Bal', 'Pac', 'Ant', 'Dec', 'Fla', 'Pos', 'Fir', 'Mar', 'Pas', 'Tck']
     calculate_role_score(shortlist_attributes_df, complete_wingback_su_key_attributes,
                          complete_wingback_su_pref_attributes,
-                         'CWB_su_score')
+                         'CWB-Su')
 
     complete_wingback_at_key_attributes = ['Acc', 'Sta', 'Fla', 'OtB', 'Tea', 'Wor', 'Cro', 'Dri', 'Tec']
     complete_wingback_at_pref_attributes = ['Agi', 'Bal', 'Pac', 'Ant', 'Dec', 'Pos', 'Fir', 'Mar', 'Pas', 'Tck']
     calculate_role_score(shortlist_attributes_df, complete_wingback_at_key_attributes,
                          complete_wingback_at_pref_attributes,
-                         'CWB_at_score')
+                         'CWB-At')
 
     # Defensive Midfielder role scores -------------------------------------------
     segundo_volante_su_key_attributes = ['Pac', 'Sta', 'OtB', 'Pos', 'Wor', 'Mar', 'Pas', 'Tck']
     segundo_volante_su_pref_attributes = ['Acc', 'Bal', 'Str', 'Ant', 'Cmp', 'Cnt', 'Dec', 'Fin', 'Fir', 'Lon']
     calculate_role_score(shortlist_attributes_df, segundo_volante_su_key_attributes, segundo_volante_su_pref_attributes,
-                         'VOL_su_score')
+                         'VOL-Su')
 
     segundo_volante_at_key_attributes = ['Pac', 'Sta', 'Ant', 'OtB', 'Pos', 'Wor', 'Fin', 'Lon', 'Pas', 'Tck']
     segundo_volante_at_pref_attributes = ['Acc', 'Bal', 'Str', 'Cmp', 'Cnt', 'Dec', 'Fir', 'Mar']
     calculate_role_score(shortlist_attributes_df, segundo_volante_at_key_attributes, segundo_volante_at_pref_attributes,
-                         'VOL_at_score')
+                         'VOL-At')
 
     half_back_key_attributes = ['Ant', 'Cmp', 'Cnt', 'Dec', 'Pos', 'Tea', 'Mar', 'Tck']
     half_back_pref_attributes = ['Jum', 'Sta', 'Str', 'Agg', 'Bra', 'Wor', 'Fir', 'Pas']
     calculate_role_score(shortlist_attributes_df, half_back_key_attributes, half_back_pref_attributes,
-                         'HB_score')
+                         'HB-De')
 
     defensive_midfielder_de_key_attributes = ['Ant', 'Cnt', 'Pos', 'Tea', 'Tck']
     defensive_midfielder_de_pref_attributes = ['Sta', 'Str', 'Agg', 'Cmp', 'Dec', 'Wor', 'Mar', 'Pas']
     calculate_role_score(shortlist_attributes_df, defensive_midfielder_de_key_attributes,
                          defensive_midfielder_de_pref_attributes,
-                         'DM_de_score')
+                         'DM-De')
 
     defensive_midfielder_su_key_attributes = ['Ant', 'Cnt', 'Pos', 'Tea', 'Tck']
     defensive_midfielder_su_pref_attributes = ['Sta', 'Str', 'Agg', 'Cmp', 'Dec', 'Wor', 'Fir', 'Mar', 'Pas']
     calculate_role_score(shortlist_attributes_df, defensive_midfielder_su_key_attributes,
                          defensive_midfielder_su_pref_attributes,
-                         'DM_su_score')
+                         'DM-Su')
 
     anchor_key_attributes = ['Ant', 'Cnt', 'Dec', 'Pos', 'Mar', 'Tck']
     anchor_pref_attributes = ['Str', 'Cmp', 'Tea']
     calculate_role_score(shortlist_attributes_df, anchor_key_attributes, anchor_pref_attributes,
-                         'A_score')
+                         'A-De')
 
     regista_key_attributes = ['Cmp', 'Dec', 'Fla', 'OtB', 'Tea', 'Vis', 'Fir', 'Pas', 'Tec']
     regista_pref_attributes = ['Bal', 'Ant', 'Dri', 'Lon']
     calculate_role_score(shortlist_attributes_df, regista_key_attributes, regista_pref_attributes,
-                         'RGA_score')
+                         'RGA-Su')
 
     ball_winning_midfielder_de_key_attributes = ['Sta', 'Agg', 'Ant', 'Tea', 'Wor', 'Tck']
     ball_winning_midfielder_de_pref_attributes = ['Agi', 'Pac', 'Str', 'Bra', 'Cnt', 'Pos', 'Mar']
     calculate_role_score(shortlist_attributes_df, ball_winning_midfielder_de_key_attributes,
                          ball_winning_midfielder_de_pref_attributes,
-                         'BWM_de_score')
+                         'BWM-De')
 
     ball_winning_midfielder_su_key_attributes = ['Sta', 'Agg', 'Ant', 'Tea', 'Wor', 'Tck']
     ball_winning_midfielder_su_pref_attributes = ['Agi', 'Pac', 'Str', 'Bra', 'Cnt', 'Mar', 'Pas']
     calculate_role_score(shortlist_attributes_df, ball_winning_midfielder_su_key_attributes,
                          ball_winning_midfielder_su_pref_attributes,
-                         'BWM_su_score')
+                         'BWM-Su')
 
     deep_lying_playmaker_de_key_attributes = ['Cmp', 'Dec', 'Tea', 'Vis', 'Fir', 'Pas', 'Tec']
     deep_lying_playmaker_de_pref_attributes = ['Bal', 'Ant', 'Pos', 'Tck']
     calculate_role_score(shortlist_attributes_df, deep_lying_playmaker_de_key_attributes,
                          deep_lying_playmaker_de_pref_attributes,
-                         'DLP_de_score')
+                         'DLP-De')
 
     deep_lying_playmaker_su_key_attributes = ['Cmp', 'Dec', 'Tea', 'Vis', 'Fir', 'Pas', 'Tec']
     deep_lying_playmaker_su_pref_attributes = ['Bal', 'Ant', 'OtB', 'Pos']
     calculate_role_score(shortlist_attributes_df, deep_lying_playmaker_su_key_attributes,
                          deep_lying_playmaker_su_pref_attributes,
-                         'DLP_su_score')
+                         'DLP-Su')
 
     roaming_playmaker_key_attributes = ['Acc', 'Sta', 'Ant', 'Cmp', 'Dec', 'OtB', 'Tea', 'Vis', 'Wor', 'Fir', 'Pas',
                                         'Tec']
     roaming_playmaker_pref_attributes = ['Agi', 'Bal', 'Pac', 'Cnt', 'Pos', 'Dri', 'Lon']
     calculate_role_score(shortlist_attributes_df, roaming_playmaker_key_attributes, roaming_playmaker_pref_attributes,
-                         'RPM_score')
+                         'RPM-Su')
 
     # Central Midfielder role scores --------------------------------------------
     advanced_playmaker_su_key_attributes = ['Cmp', 'Dec', 'OtB', 'Tea', 'Vis', 'Fir', 'Pas', 'Tec']
     advanced_playmaker_su_pref_attributes = ['Agi', 'Ant', 'Cnt', 'Fla', 'Dri']
     calculate_role_score(shortlist_attributes_df, advanced_playmaker_su_key_attributes,
                          advanced_playmaker_su_pref_attributes,
-                         'AP_su_score')
+                         'AP-Su')
 
     advanced_playmaker_at_key_attributes = ['Cmp', 'Dec', 'OtB', 'Tea', 'Vis', 'Fir', 'Pas', 'Tec']
     advanced_playmaker_at_pref_attributes = ['Acc', 'Agi', 'Ant', 'Cnt', 'Fla', 'Dri']
     calculate_role_score(shortlist_attributes_df, advanced_playmaker_at_key_attributes,
                          advanced_playmaker_at_pref_attributes,
-                         'AP_at_score')
+                         'AP-At')
 
     carrilero_key_attributes = ['Sta', 'Dec', 'Pos', 'Tea', 'Fir', 'Pas', 'Tck']
     carrilero_pref_attributes = ['Ant', 'Cmp', 'Cnt', 'OtB', 'Vis', 'Wor', 'Tec']
     calculate_role_score(shortlist_attributes_df, carrilero_key_attributes, carrilero_pref_attributes,
-                         'CAR_role_score')
+                         'CAR-Su')
 
     mezzala_su_key_attributes = ['Acc', 'Dec', 'OtB', 'Wor', 'Pas', 'Tec']
     mezzala_su_pref_attributes = ['Bal', 'Sta', 'Ant', 'Cmp', 'Vis', 'Dri', 'Fir', 'Lon', 'Tck']
     calculate_role_score(shortlist_attributes_df, mezzala_su_key_attributes, mezzala_su_pref_attributes,
-                         'MEZ_su_score')
+                         'MEZ-Su')
 
     mezzala_at_key_attributes = ['Acc', 'Dec', 'OtB', 'Vis', 'Wor', 'Dri', 'Pas', 'Tec']
     mezzala_at_pref_attributes = ['Bal', 'Sta', 'Ant', 'Cmp', 'Fla', 'Fin', 'Fir', 'Lon']
     calculate_role_score(shortlist_attributes_df, mezzala_at_key_attributes, mezzala_at_pref_attributes,
-                         'MEZ_at_score')
+                         'MEZ-At')
 
     central_midfielder_de_key_attributes = ['Cnt', 'Dec', 'Pos', 'Tea', 'Tck']
     central_midfielder_de_pref_attributes = ['Sta', 'Agg', 'Ant', 'Cmp', 'Wor', 'Fir', 'Mar', 'Pas', 'Tec']
     calculate_role_score(shortlist_attributes_df, central_midfielder_de_key_attributes,
                          central_midfielder_de_pref_attributes,
-                         'CM_de_score')
+                         'CM-De')
 
     central_midfielder_su_key_attributes = ['Dec', 'Tea', 'Fir', 'Pas', 'Tck']
     central_midfielder_su_pref_attributes = ['Sta', 'Ant', 'Cmp', 'Cnt', 'OtB', 'Vis', 'Wor', 'Tec']
     calculate_role_score(shortlist_attributes_df, central_midfielder_su_key_attributes,
                          central_midfielder_su_pref_attributes,
-                         'CM_su_score')
+                         'CM-Su')
 
     central_midfielder_at_key_attributes = ['Dec', 'OtB', 'Fir', 'Pas']
     central_midfielder_at_pref_attributes = ['Acc', 'Sta', 'Ant', 'Cmp', 'Tea', 'Vis', 'Wor', 'Lon', 'Tck', 'Tec']
     calculate_role_score(shortlist_attributes_df, central_midfielder_at_key_attributes,
                          central_midfielder_at_pref_attributes,
-                         'CM_at_score')
+                         'CM-At')
 
     central_midfielder_au_key_attributes = ['Dec', 'Tea', 'Fir', 'Pas', 'Tck']
     central_midfielder_au_pref_attributes = ['Sta', 'Ant', 'Cmp', 'Cnt', 'OtB', 'Vis', 'Wor', 'Tec']
     calculate_role_score(shortlist_attributes_df, central_midfielder_au_key_attributes,
                          central_midfielder_au_pref_attributes,
-                         'CM_au_score')
+                         'CM-Au')
 
     box_to_box_midfielder_key_attributes = ['Sta', 'OtB', 'Tea', 'Wor', 'Pas', 'Tck']
     box_to_box_midfielder_pref_attributes = ['Acc', 'Bal', 'Pac', 'Str', 'Agg', 'Ant', 'Cmp', 'Dec', 'Pos', 'Dri',
                                              'Fin', 'Fir', 'Lon', 'Tec']
     calculate_role_score(shortlist_attributes_df, box_to_box_midfielder_key_attributes,
                          box_to_box_midfielder_pref_attributes,
-                         'BBM_score')
+                         'BBM-Su')
 
     # Winger role scores --------------------------------------
     defensive_winger_de_key_attributes = ['Sta', 'Ant', 'OtB', 'Pos', 'Tea', 'Wor', 'Tec']
     defensive_winger_de_pref_attributes = ['Acc', 'Agg', 'Cnt', 'Dec', 'Cro', 'Dri', 'Fir', 'Mar', 'Tck']
     calculate_role_score(shortlist_attributes_df, defensive_winger_de_key_attributes,
                          defensive_winger_de_pref_attributes,
-                         'DW_de_score')
+                         'DW-De')
 
     defensive_winger_su_key_attributes = ['Sta', 'OtB', 'Tea', 'Wor', 'Cro', 'Tec']
     defensive_winger_su_pref_attributes = ['Acc', 'Agg', 'Ant', 'Cmp', 'Cnt', 'Dec', 'Pos', 'Dri', 'Fir', 'Mar', 'Pas',
                                            'Tck']
     calculate_role_score(shortlist_attributes_df, defensive_winger_su_key_attributes,
                          defensive_winger_su_pref_attributes,
-                         'DW_su_score')
+                         'DW-Su')
 
     wide_midfielder_de_key_attributes = ['Cnt', 'Dec', 'Pos', 'Tea', 'Wor', 'Pas', 'Tck']
     wide_midfielder_de_pref_attributes = ['Sta', 'Ant', 'Cmp', 'Cro', 'Fir', 'Mar', 'Tec']
     calculate_role_score(shortlist_attributes_df, wide_midfielder_de_key_attributes, wide_midfielder_de_pref_attributes,
-                         'WM_de_score')
+                         'WM-De')
 
     wide_midfielder_su_key_attributes = ['Sta', 'Dec', 'Tea', 'Wor', 'Pas', 'Tck']
     wide_midfielder_su_pref_attributes = ['Ant', 'Cmp', 'Cnt', 'OtB', 'Pos', 'Vis', 'Cro', 'Fir', 'Tec']
     calculate_role_score(shortlist_attributes_df, wide_midfielder_su_key_attributes, wide_midfielder_su_pref_attributes,
-                         'WM_su_score')
+                         'WM-Su')
 
     wide_midfielder_at_key_attributes = ['Sta', 'Dec', 'Tea', 'Wor', 'Cro', 'Fir', 'Pas']
     wide_midfielder_at_pref_attributes = ['Ant', 'Cmp', 'OtB', 'Vis', 'Tck', 'Tec']
     calculate_role_score(shortlist_attributes_df, wide_midfielder_at_key_attributes, wide_midfielder_at_pref_attributes,
-                         'WM_at_score')
+                         'WM-At')
 
     wide_midfielder_au_key_attributes = ['Sta', 'Dec', 'Tea', 'Wor', 'Pas', 'Tck']
     wide_midfielder_au_pref_attributes = ['Ant', 'Cmp', 'Cnt', 'OtB', 'Pos', 'Vis', 'Cro', 'Fir', 'Tec']
     calculate_role_score(shortlist_attributes_df, wide_midfielder_au_key_attributes, wide_midfielder_au_pref_attributes,
-                         'WM_au_score')
+                         'WM-Au')
 
     wide_playmaker_su_key_attributes = ['Cmp', 'Dec', 'Tea', 'Vis', 'Fir', 'Pas', 'Tec']
     wide_playmaker_su_pref_attributes = ['Agi', 'OtB', 'Dri']
     calculate_role_score(shortlist_attributes_df, wide_playmaker_su_key_attributes, wide_playmaker_su_pref_attributes,
-                         'WP_su_score')
+                         'WP-Su')
 
     wide_playmaker_at_key_attributes = ['Cmp', 'Dec', 'Tea', 'Vis', 'Dri', 'Fir', 'Pas', 'Tec']
     wide_playmaker_at_pref_attributes = ['Acc', 'Agi', 'Ant', 'Fla']
     calculate_role_score(shortlist_attributes_df, wide_playmaker_at_key_attributes, wide_playmaker_at_pref_attributes,
-                         'WP_at_score')
+                         'WP-At')
 
     inverted_winger_su_key_attributes = ['Acc', 'Agi', 'Cro', 'Dri', 'Pas', 'Tec']
     inverted_winger_su_pref_attributes = ['Bal', 'Pac', 'Sta', 'Cmp', 'Dec', 'OtB', 'Vis', 'Wor', 'Fir', 'Lon']
     calculate_role_score(shortlist_attributes_df, inverted_winger_su_key_attributes, inverted_winger_su_pref_attributes,
-                         'IW_su_score')
+                         'IW-Su')
 
     inverted_winger_at_key_attributes = ['Acc', 'Agi', 'Cro', 'Dri', 'Pas', 'Tec']
     inverted_winger_at_pref_attributes = ['Bal', 'Pac', 'Sta', 'Ant', 'Cmp', 'Dec', 'Fla', 'OtB', 'Vis', 'Wor', 'Fir',
                                           'Lon']
     calculate_role_score(shortlist_attributes_df, inverted_winger_at_key_attributes, inverted_winger_at_pref_attributes,
-                         'IW_at_score')
+                         'IW-At')
 
     winger_su_key_attributes = ['Acc', 'Agi', 'Cro', 'Dri', 'Tec']
     winger_su_pref_attributes = ['Bal', 'Pac', 'Sta', 'OtB', 'Wor', 'Fir', 'Pas']
     calculate_role_score(shortlist_attributes_df, winger_su_key_attributes, winger_su_pref_attributes,
-                         'winger_su_score')
+                         'W-Su')
 
     winger_at_key_attributes = ['Acc', 'Agi', 'Cro', 'Dri', 'Tec']
     winger_at_pref_attributes = ['Bal', 'Pac', 'Sta', 'Ant', 'Fla', 'OtB', 'Wor', 'Fir', 'Pas']
     calculate_role_score(shortlist_attributes_df, winger_at_key_attributes, winger_at_pref_attributes,
-                         'W_at_score')
+                         'W-At')
 
     inside_forward_su_key_attributes = ['Acc', 'Agi', 'OtB', 'Dri', 'Fin', 'Fir', 'Tec']
     inside_forward_su_pref_attributes = ['Bal', 'Pac', 'Sta', 'Ant', 'Cmp', 'Fla', 'Vis', 'Wor', 'Lon', 'Pas']
     calculate_role_score(shortlist_attributes_df, inside_forward_su_key_attributes, inside_forward_su_pref_attributes,
-                         'IF_su_score')
+                         'IF-Su')
 
     inside_forward_at_key_attributes = ['Acc', 'Agi', 'Ant', 'OtB', 'Dri', 'Fin', 'Fir', 'Tec']
     inside_forward_at_pref_attributes = ['Bal', 'Pac', 'Sta', 'Cmp', 'Fla', 'Wor', 'Lon', 'Pas']
     calculate_role_score(shortlist_attributes_df, inside_forward_at_key_attributes, inside_forward_at_pref_attributes,
-                         'IF_at_score')
+                         'IF-At')
 
     raumdeuter_key_attributes = ['Bal', 'Ant', 'Cmp', 'Cnt', 'Dec', 'OtB', 'Fin']
     raumdeuter_pref_attributes = ['Acc', 'Sta', 'Wor', 'Fir', 'Tec']
     calculate_role_score(shortlist_attributes_df, raumdeuter_key_attributes, raumdeuter_pref_attributes,
-                         'RMD_score')
+                         'RMD-At')
 
     wide_target_forward_su_key_attributes = ['Jum', 'Str', 'Bra', 'Tea', 'Hea']
     wide_target_forward_su_pref_attributes = ['Bal', 'Sta', 'Ant', 'OtB', 'Wor', 'Cro', 'Fir']
     calculate_role_score(shortlist_attributes_df, wide_target_forward_su_key_attributes,
                          wide_target_forward_su_pref_attributes,
-                         'WT_su_score')
+                         'WT-Su')
 
     wide_target_forward_at_key_attributes = ['Jum', 'Str', 'Bra', 'OtB', 'Hea']
     wide_target_forward_at_pref_attributes = ['Bal', 'Sta', 'Ant', 'Tea', 'Wor', 'Cro', 'Fin', 'Fir']
     calculate_role_score(shortlist_attributes_df, wide_target_forward_at_key_attributes,
                          wide_target_forward_at_pref_attributes,
-                         'WT_at_score')
+                         'WT-At')
 
     trequartista_key_attributes = ['Acc', 'Cmp', 'Dec', 'Fla', 'OtB', 'Vis', 'Dri', 'Fir', 'Pas', 'Tec']
     trequartista_pref_attributes = ['Agi', 'Bal', 'Ant', 'Fin']
     calculate_role_score(shortlist_attributes_df, trequartista_key_attributes, trequartista_pref_attributes,
-                         'T_score')
+                         'T-At')
 
     enganche_key_attributes = ['Cmp', 'Dec', 'Vis', 'Fir', 'Pas', 'Tec']
     enganche_pref_attributes = ['Agi', 'Ant', 'Fla', 'OtB', 'Tea', 'Dri']
     calculate_role_score(shortlist_attributes_df, enganche_key_attributes, enganche_pref_attributes,
-                         'EG_score')
+                         'EG-Su')
 
     attacking_midfielder_su_key_attributes = ['Ant', 'Dec', 'Fla', 'OtB', 'Fir', 'Lon', 'Pas', 'Tec']
     attacking_midfielder_su_pref_attributes = ['Agi', 'Cmp', 'Vis', 'Dri']
     calculate_role_score(shortlist_attributes_df, attacking_midfielder_su_key_attributes,
                          attacking_midfielder_su_pref_attributes,
-                         'AM_su_score')
+                         'AM-Su')
 
     attacking_midfielder_at_key_attributes = ['Ant', 'Dec', 'Fla', 'OtB', 'Fir', 'Lon', 'Pas', 'Tec', 'Dri']
     attacking_midfielder_at_pref_attributes = ['Agi', 'Cmp', 'Vis', 'Fin']
     calculate_role_score(shortlist_attributes_df, attacking_midfielder_at_key_attributes,
                          attacking_midfielder_at_pref_attributes,
-                         'AM_at_score')
+                         'AM-At')
 
     shadow_striker_key_attributes = ['Acc', 'Ant', 'Cmp', 'OtB', 'Dri', 'Fin', 'Fir']
     shadow_striker_pref_attributes = ['Agi', 'Bal', 'Pac', 'Sta', 'Cnt', 'Dec', 'Wor', 'Pas', 'Tec']
     calculate_role_score(shortlist_attributes_df, shadow_striker_key_attributes, shadow_striker_pref_attributes,
-                         'SS_score')
+                         'SS-At')
 
     advanced_forward_key_attributes = ['Acc', 'Cmp', 'OtB', 'Dri', 'Fin', 'Fir', 'Tec']
     advanced_forward_pref_attributes = ['Agi', 'Bal', 'Pac', 'Sta', 'Ant', 'Dec', 'Wor', 'Pas']
     calculate_role_score(shortlist_attributes_df, advanced_forward_key_attributes, advanced_forward_pref_attributes,
-                         'AF_score')
+                         'AF-At')
 
     poacher_key_attributes = ['Ant', 'Cmp', 'OtB', 'Fin']
     poacher_pref_attributes = ['Acc', 'Dec', 'Fir', 'Hea', 'Tec']
     calculate_role_score(shortlist_attributes_df, poacher_key_attributes, poacher_pref_attributes,
-                         'P_score')
+                         'P-At')
 
     false_nine_key_attributes = ['Acc', 'Agi', 'Cmp', 'Dec', 'OtB', 'Vis', 'Dri', 'Fir', 'Pas', 'Tec']
     false_nine_pref_attributes = ['Bal', 'Ant', 'Fla', 'Tea', 'Fin']
     calculate_role_score(shortlist_attributes_df, false_nine_key_attributes, false_nine_pref_attributes,
-                         'F9_score')
+                         'F9-Su')
 
     target_forward_su_key_attributes = ['Bal', 'Jum', 'Str', 'Bra', 'Tea', 'Hea']
     target_forward_su_pref_attributes = ['Agg', 'Ant', 'Cmp', 'Dec', 'OtB', 'Fin', 'Fir']
     calculate_role_score(shortlist_attributes_df, target_forward_su_key_attributes, target_forward_su_pref_attributes,
-                         'TF_su_score')
+                         'TF-Su')
 
     target_forward_at_key_attributes = ['Bal', 'Jum', 'Str', 'Bra', 'Cmp', 'OtB', 'Fin', 'Hea']
     target_forward_at_pref_attributes = ['Agg', 'Ant', 'Dec', 'Tea', 'Fir']
     calculate_role_score(shortlist_attributes_df, target_forward_at_key_attributes, target_forward_at_pref_attributes,
-                         'TF_at_score')
+                         'TF-At')
 
     deep_lying_forward_su_key_attributes = ['Cmp', 'Dec', 'OtB', 'Tea', 'Fir', 'Pas', 'Tec']
     deep_lying_forward_su_pref_attributes = ['Bal', 'Str', 'Ant', 'Fla', 'Vis', 'Fin']
     calculate_role_score(shortlist_attributes_df, deep_lying_forward_su_key_attributes,
                          deep_lying_forward_su_pref_attributes,
-                         'DLF_su_score')
+                         'DLF-Su')
 
     deep_lying_forward_at_key_attributes = ['Cmp', 'Dec', 'OtB', 'Tea', 'Fir', 'Pas', 'Tec']
     deep_lying_forward_at_pref_attributes = ['Bal', 'Str', 'Ant', 'Fla', 'Vis', 'Dri', 'Fin']
     calculate_role_score(shortlist_attributes_df, deep_lying_forward_at_key_attributes,
                          deep_lying_forward_at_pref_attributes,
-                         'DLF_at_score')
+                         'DLF-At')
 
     pressing_forward_de_key_attributes = ['Acc', 'Pac', 'Sta', 'Agg', 'Ant', 'Bra', 'Dec', 'Tea', 'Wor']
     pressing_forward_de_pref_attributes = ['Agi', 'Bal', 'Str', 'Cmp', 'Cnt', 'Fir']
     calculate_role_score(shortlist_attributes_df, pressing_forward_de_key_attributes,
                          pressing_forward_de_pref_attributes,
-                         'PF_de_score')
+                         'PF-De')
 
     pressing_forward_su_key_attributes = ['Acc', 'Pac', 'Sta', 'Agg', 'Ant', 'Bra', 'Dec', 'Tea', 'Wor']
     pressing_forward_su_pref_attributes = ['Agi', 'Bal', 'Str', 'Cmp', 'Cnt', 'OtB', 'Fir', 'Pas']
     calculate_role_score(shortlist_attributes_df, pressing_forward_su_key_attributes,
                          pressing_forward_su_pref_attributes,
-                         'PF_su_score')
+                         'PF-Su')
 
     pressing_forward_at_key_attributes = ['Acc', 'Pac', 'Sta', 'Agg', 'Ant', 'Bra', 'OtB', 'Tea', 'Wor']
     pressing_forward_at_pref_attributes = ['Agi', 'Bal', 'Str', 'Cmp', 'Cnt', 'Dec', 'Fin', 'Fir']
     calculate_role_score(shortlist_attributes_df, pressing_forward_at_key_attributes,
                          pressing_forward_at_pref_attributes,
-                         'PF_at_score')
+                         'PF-At')
 
     complete_forward_su_key_attributes = ['Acc', 'Agi', 'Str', 'Ant', 'Cmp', 'Dec', 'OtB', 'Vis', 'Dri', 'Fir', 'Hea',
                                           'Lon', 'Pas', 'Tec']
     complete_forward_su_pref_attributes = ['Bal', 'Jum', 'Pac', 'Sta', 'Tea', 'Wor', 'Fin']
     calculate_role_score(shortlist_attributes_df, complete_forward_su_key_attributes,
                          complete_forward_su_pref_attributes,
-                         'CF_su_score')
+                         'CF-Su')
 
     complete_forward_at_key_attributes = ['Acc', 'Agi', 'Str', 'Ant', 'Cmp', 'OtB', 'Dri', 'Fin', 'Fir', 'Hea', 'Tec']
     complete_forward_at_pref_attributes = ['Bal', 'Jum', 'Pac', 'Sta', 'Dec', 'Tea', 'Vis', 'Wor', 'Lon', 'Pas']
     calculate_role_score(shortlist_attributes_df, complete_forward_at_key_attributes,
                          complete_forward_at_pref_attributes,
-                         'CF_at_score')
+                         'CF-At')
 
     return shortlist_attributes_df

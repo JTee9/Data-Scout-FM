@@ -26,7 +26,7 @@ layout = html.Div([
                       dcc.Dropdown(
                           id='dataset-dropdown',
                           options=[],
-                          value='',
+                          value='Squad Attributes',
                           clearable=False,
                           optionHeight=40
                       )
@@ -291,7 +291,6 @@ def update_radar_chart(uploaded_dataframes, selected_attribute_filter, selected_
     # range value
     if 'Role Scores' in selected_attribute_filter:
         max_range = max(shortlist_attributes_values, squad_attributes_values)
-        print(max_range)
         range = [20, 90]
     else:
         range = [0, 20]
