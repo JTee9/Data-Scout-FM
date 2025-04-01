@@ -99,7 +99,7 @@ layout = html.Div([
         # Dataframe stored and updated based on filters
         dcc.Store(id='stored_df'),
         html.Div(id='graph-dropdown-container', children=[
-            dbc.Collapse(id='scatter-object-collapse', is_open=False, children=dcc.Graph(id='scatterplot-graph', style={'width': '100%', 'height': '90%'})),
+            dbc.Collapse(id='scatter-object-collapse', is_open=False, children=dcc.Graph(id='scatterplot-graph', style={'width': '100%', 'height': '400px'})),
             html.Div(id='graph-dropdowns', children=[
                 html.Label('Sample Charts (Add other filters (e.g. Age, Transfer Value) with the "Filter Data" Button)',
                            className='stats-label'),
@@ -140,7 +140,7 @@ layout = html.Div([
                         'width': '80%'
                     }
                 ),
-                dbc.Collapse(id='table-object-collapse', is_open=False, children=dcc.Graph(id='stats-data-table', style={'width': '100%', 'height': '100%'}))
+                dbc.Collapse(id='table-object-collapse', is_open=False, children=dcc.Graph(id='stats-data-table', style={'width': '100%', 'height': '600px'}))
             ]),
 
         html.Div(id='stats-radar-container', style={'width': '100%', 'height': '100%', 'display': 'none'}, children=[
@@ -172,7 +172,7 @@ layout = html.Div([
                 ], style={'width': '70%', 'display': 'flex', 'justify-content': 'space-between'}),
 
                 html.Div(children=[
-                    dbc.Collapse(id='radar-object-collapse', is_open=False, children=html.Img(id='stats-radar-chart', style={'width': '80%', 'height': '60%'})),
+                    dbc.Collapse(id='radar-object-collapse', is_open=False, children=html.Img(id='stats-radar-chart', style={'width': '80%', 'height': '500px'})),
                     html.Label('Select Radar Chart Metrics', className='stats-label'),
                     dcc.Dropdown(
                         id='radar-preset-values-dropdown',
@@ -286,7 +286,7 @@ def update_table_dropdowns(uploaded_dataframes):
                     'width': '80%'
                 }
             ),
-            dcc.Graph(id='stats-data-table', style={'width': '100%', 'height': '90%'})
+            dcc.Graph(id='stats-data-table', style={'width': '100%', 'height': '600px'})
             )
 
 

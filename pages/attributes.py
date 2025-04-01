@@ -1,6 +1,5 @@
 # Todo -------------------------------------------------------
 # 1. Fix tables in stats & attributes so that names are visible and the layout is prettier
-# 2. Utilize Role scores
 
 import dash
 from dash import html, dcc, callback, ctx
@@ -28,7 +27,10 @@ layout = html.Div([
                           options=[],
                           value='Squad Attributes',
                           clearable=False,
-                          optionHeight=40
+                          optionHeight=40,
+                          style={
+                              'width': '90%'
+                          }
                       )
                       ]),
             # Buttons to select Graph or Table
@@ -45,12 +47,12 @@ layout = html.Div([
                           clearable=False,
                           optionHeight=40,
                           style={
-                              'width': '80%'
+                              'width': '90%'
                           }
                       ),
     ]),
         # Bottom Half
-        html.Div(id='output-container', style={'width': '100%', 'height': '600px'}, children=[
+        html.Div(id='output-container', style={'width': '100%'}, children=[
             # Table
             dbc.Collapse(id='table-container', is_open=False, style={'width': '100%', 'height': '100%'}, children=[
                 html.Label('Filter Players by Position', className='attributes-label'),
@@ -64,7 +66,7 @@ layout = html.Div([
                         'width': '80%'
                     }
                 ),
-                dcc.Graph(id='data-table', style={'width': '100%', 'height': '90%'})
+                dcc.Graph(id='data-table', style={'width': '100%', 'height': '600px'})
             ]),
             # Radar
             dbc.Collapse(id='radar-container', is_open=False, style={'width': '100%', 'height': '100%'}, children=[
@@ -95,7 +97,7 @@ layout = html.Div([
                         'width': '100%',
                         'display': 'flex'
                     }),
-                dcc.Graph(id='radar-chart', style={'width': '100%', 'height': '90%'})
+                dcc.Graph(id='radar-chart', style={'width': '100%', 'height': '600px'})
             ])
         ])
     ])

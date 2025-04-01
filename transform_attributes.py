@@ -16,16 +16,6 @@ np.set_printoptions(legacy='1.25')
 
 
 def build_squad_attributes_dataframe(squad_attributes_file):
-    simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
-
-    # Configure Pandas Settings
-    pd.set_option('display.max_columns', 20)
-    pd.options.mode.chained_assignment = None
-
-    # Configure Numpy setting to show numerical values rather than np.float64()
-    np.set_printoptions(legacy='1.25')
-
-    # Create the DataFrames
     # Create squad attributes DataFrame from squad attributes view
     squad_attributes_df = squad_attributes_file.copy()
     squad_attributes_df = squad_attributes_df[0]
@@ -631,16 +621,6 @@ def build_squad_attributes_dataframe(squad_attributes_file):
 
 
 def build_shortlist_attributes_dataframe(shortlist_attributes_file):
-    simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
-
-    # Configure Pandas Settings
-    pd.set_option('display.max_columns', 20)
-    pd.options.mode.chained_assignment = None
-
-    # Configure Numpy setting to show numerical values rather than np.float64()
-    np.set_printoptions(legacy='1.25')
-
-    ## Create the DataFrames
     # Create scouting attributes DataFrame from Shortlist View
     shortlist_attributes_df = shortlist_attributes_file.copy()
     shortlist_attributes_df = shortlist_attributes_df[0]
@@ -654,7 +634,27 @@ def build_shortlist_attributes_dataframe(shortlist_attributes_file):
                    'Agi',
                    'Agg', 'Aer']:
         shortlist_attributes_df[column] = shortlist_attributes_df[column].astype(str)
-        shortlist_attributes_df.loc[shortlist_attributes_df[column].str.contains('-'), column] = ''
+
+        def process_range_column(df, attribute):
+            """Processes a column containing range strings."""
+            range_mask = shortlist_attributes_df[column].str.contains('-', na=False, regex=False)
+
+            if range_mask.any():
+                def average_range(range_str):
+
+                    try:
+                        start, end = map(float, range_str.split('-'))
+                        result = (start + end) / 2
+                        return result
+                    except ValueError as e:
+                        return np.nan
+                    except AttributeError as e:
+                        return np.nan
+
+                shortlist_attributes_df.loc[range_mask, column] = shortlist_attributes_df.loc[range_mask, column].apply(average_range)
+            return shortlist_attributes_df
+
+        shortlist_attributes_df = process_range_column(shortlist_attributes_df, column)
         shortlist_attributes_df[column] = pd.to_numeric(shortlist_attributes_df[column]).round()
 
     # Remove unnecessary columns from Scouting Attributes
@@ -1157,6 +1157,7 @@ def build_shortlist_attributes_dataframe(shortlist_attributes_file):
                          wide_target_forward_at_pref_attributes,
                          'WT-At')
 
+    # Attacking Midfielder role scores
     trequartista_key_attributes = ['Acc', 'Cmp', 'Dec', 'Fla', 'OtB', 'Vis', 'Dri', 'Fir', 'Pas', 'Tec']
     trequartista_pref_attributes = ['Agi', 'Bal', 'Ant', 'Fin']
     calculate_role_score(shortlist_attributes_df, trequartista_key_attributes, trequartista_pref_attributes,
@@ -1184,6 +1185,7 @@ def build_shortlist_attributes_dataframe(shortlist_attributes_file):
     calculate_role_score(shortlist_attributes_df, shadow_striker_key_attributes, shadow_striker_pref_attributes,
                          'SS-At')
 
+    # Striker role scores
     advanced_forward_key_attributes = ['Acc', 'Cmp', 'OtB', 'Dri', 'Fin', 'Fir', 'Tec']
     advanced_forward_pref_attributes = ['Agi', 'Bal', 'Pac', 'Sta', 'Ant', 'Dec', 'Wor', 'Pas']
     calculate_role_score(shortlist_attributes_df, advanced_forward_key_attributes, advanced_forward_pref_attributes,
