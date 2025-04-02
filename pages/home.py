@@ -12,7 +12,7 @@ layout = html.Div([
         html.H1('Welcome to Data Scout FM',
                 style={'margin-top': '40px'}
                 ),
-        html.P('Analyze player stats to identify top talent from your FM save like a professional data scout.',
+        html.P('Analyze player stats from your FM save like a professional data scout.',
                style={
                    'margin-left': '5px'
                }),

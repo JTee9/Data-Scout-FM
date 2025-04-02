@@ -217,7 +217,7 @@ def update_graph_dropdowns(uploaded_dataframes, selected_sample, current_x, curr
     stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
 
     if selected_sample != '':
-        return (html.P('Sample Charts (Add other filters (e.g. Age, Transfer Value) with the "Filter Data" Button)'),
+        return (html.Label('Sample Charts (Add other filters (e.g. Age, Transfer Value) with the "Filter Data" Button)', className='stats-label'),
                 dcc.Dropdown(
                     id='sample-chart-dropdown',
                     options=[{'label': key, 'value': key} for key in sample_charts.keys()],
@@ -225,14 +225,14 @@ def update_graph_dropdowns(uploaded_dataframes, selected_sample, current_x, curr
                     clearable=False,
                     placeholder='Select a Sample Chart'
                 ),
-                html.P('Select X Axis:'),
+                html.Label('Select X Axis:', className='stats-label'),
                 dcc.Dropdown(
                     id='x-axis-dropdown',
                     options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
                     value=sample_charts[selected_sample]['X'],
                     clearable=False
                 ),
-                html.P('Select Y Axis:'),
+                html.Label('Select Y Axis:', className='stats-label'),
                 dcc.Dropdown(
                     id='y-axis-dropdown',
                     options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
@@ -241,7 +241,7 @@ def update_graph_dropdowns(uploaded_dataframes, selected_sample, current_x, curr
                 ),
                 )
 
-    return (html.P('Sample Charts (Add other filters (e.g. Age, Transfer Value) with the "Filter Data" Button)'),
+    return (html.Label('Sample Charts (Add other filters (e.g. Age, Transfer Value) with the "Filter Data" Button)', className='stats-label'),
             dcc.Dropdown(
                 id='sample-chart-dropdown',
                 options=[{'label': key, 'value': key} for key in sample_charts.keys()],
@@ -249,14 +249,14 @@ def update_graph_dropdowns(uploaded_dataframes, selected_sample, current_x, curr
                 clearable=False,
                 placeholder='Select a Sample Chart'
             ),
-            html.P('Select X Axis:'),
+            html.Label('Select X Axis:', className='stats-label'),
             dcc.Dropdown(
                 id='x-axis-dropdown',
                 options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
                 value=current_x,
                 clearable=False
             ),
-            html.P('Select Y Axis:'),
+            html.Label('Select Y Axis:', className='stats-label'),
             dcc.Dropdown(
                 id='y-axis-dropdown',
                 options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
@@ -818,7 +818,6 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
     # Default empty figure
     empty_fig = px.scatter(x=[0], y=[0])
     empty_fig.update_layout(
-        title='No data available',
         xaxis_title='X Axis',
         yaxis_title='Y Axis'
     )
@@ -945,6 +944,7 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
         print(f"Updating plot for axis change: {selected_x} vs {selected_y}")
         try:
             def set_color(df):
+                # Change color of squad players on scatter plot
                 values = df['Club'].to_list()
                 color_list = []
                 for i in values:
@@ -977,6 +977,7 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
     elif trigger_id in 'sample-chart-dropdown' and selected_sample:
         try:
             def set_color(df):
+                # Change color of squad players on scatter plot
                 values = df['Club'].to_list()
                 color_list = []
                 for i in values:

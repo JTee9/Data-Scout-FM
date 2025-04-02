@@ -57,7 +57,7 @@ app.layout = dbc.Container([
                     dcc.Link(dbc.Button('Attributes', id='attributes-button', n_clicks=0, className='container-button', style={'margin': '5px'}), href='/attributes')
                 ],
                     style={
-                        'margin-top': '10px',
+                        'margin-top': '5px',
                         'display': 'flex',
                         'margin-left': '-6px'
                     })]
