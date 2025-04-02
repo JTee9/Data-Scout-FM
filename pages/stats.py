@@ -29,7 +29,7 @@ layout = html.Div([
     # Top Half
     html.Div(style={'text-align': 'left', 'margin-bottom': '15px'}, children=[
             html.Div(html.P('Click "Filter Data" to start filtering your Stats data. Then toggle between Graph, Table, and Radar for your desired visualization.'),
-                     style={'text-align': 'center'}),
+                     style={'text-align': 'left', 'margin-left': '7px'}),
             # Player Search Modal
             html.Div([dbc.Button('Filter Data', id='open-modal-button', n_clicks=0, className='container-button', style={'margin-left': '5px', 'margin-bottom': '5px'}),
                       dbc.Modal(

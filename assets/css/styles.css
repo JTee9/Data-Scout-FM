@@ -61,22 +61,22 @@ background-color: white;
 
 
 
-
-
-
 h1 {
 color: #0f2537;
+font-size: 70px;
+font-family: 'Sahar-Black', fantasy;
+letter-spacing: 0;
+text-transform: uppercase;
+font-style: bold;
+}
+
+h3 {
+color: #0f2537;
+font-size: 30px;
+font-family: 'Sahar-Black', fantasy;
 }
 
 /*
-h2 {
-margin-bottom: 0px;
-margin-top: 10px;
-font-family: 'Poppins';
-font-size: 14px;
-color: #ffffff;
-}
-
 h3 {
     font-size: 16px;
     line-height: 34px;
@@ -87,6 +87,7 @@ h3 {
 
 p {
 color: #0f2537;
+font-size: 20px;
 }
 
 label {
