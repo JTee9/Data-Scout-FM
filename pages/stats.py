@@ -896,45 +896,92 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
         print("Creating table view")
         try:
             # Create a Table
-            layout = Layout(
-                paper_bgcolor=px.colors.qualitative.Pastel1[8]
-            )
-            fig = go.Figure(data=[go.Table(
-                header=dict(values=list(stored_df.columns),
-                            fill_color='lavender',
-                            align='left'),
-                cells=dict(values=stored_df.transpose().values.tolist(),
-                           fill_color='white',
-                           align='left')
-            )],
-            layout=layout)
-            fig.update_layout(title='Data Table View',
-                              updatemenus=[
-                                  {
-                                      # a button for each table column
-                                      'buttons': [
-                                          {
-                                              'method': 'restyle',
-                                              'label': btn_label,
-                                              'args': [
-                                                  {
-                                                      'cells': {
-                                                          'values': stored_df.sort_values(btn_label, ascending=False).transpose().values.tolist(),
-                                                          # update the cell values with the sorted data
-                                                          # format table as before
-                                                          'fill': dict(color=px.colors.qualitative.Pastel1[8]),
-                                                          'align': 'left',
+            if selected_col != '':
+                print('Creating table with default columns.')
+                new_df = stored_df[selected_col]
+                layout = Layout(
+                    paper_bgcolor=px.colors.qualitative.Pastel1[8]
+                )
+                fig = go.Figure(data=[go.Table(
+                    header=dict(values=list(new_df.columns),
+                                fill_color='lavender',
+                                align='left'),
+                    cells=dict(values=new_df.transpose().values.tolist(),
+                               fill_color='white',
+                               align='left')
+                )],
+                layout=layout)
+                fig.update_layout(title='Data Table View',
+                                  updatemenus=[
+                                      {
+                                          # a button for each table column
+                                          'buttons': [
+                                              {
+                                                  'method': 'restyle',
+                                                  'label': btn_label,
+                                                  'args': [
+                                                      {
+                                                          'cells': {
+                                                              'values': new_df.sort_values(btn_label, ascending=False).transpose().values.tolist(),
+                                                              # update the cell values with the sorted data
+                                                              # format table as before
+                                                              'fill': dict(color=px.colors.qualitative.Pastel1[8]),
+                                                              'align': 'left',
+                                                          }
                                                       }
-                                                  }
-                                              ],
-                                          }
-                                          for btn_label in stored_df.columns
-                                      ],
-                                      'direction': 'down',
-                                  }
-                              ]
-                              )
-            return empty_fig, fig, empty_radar, stored_player_options, stored_player_options,
+                                                  ],
+                                              }
+                                              for btn_label in new_df.columns
+                                          ],
+                                          'direction': 'down',
+                                      }
+                                  ]
+                                  )
+                return empty_fig, fig, empty_radar, stored_player_options, stored_player_options,
+            else:
+                # Create a Table
+                print('Creating table without default columns.')
+                layout = Layout(
+                    paper_bgcolor=px.colors.qualitative.Pastel1[8]
+                )
+                fig = go.Figure(data=[go.Table(
+                    header=dict(values=list(stored_df.columns),
+                                fill_color='lavender',
+                                align='left'),
+                    cells=dict(values=stored_df.transpose().values.tolist(),
+                               fill_color='white',
+                               align='left')
+                )],
+                    layout=layout)
+                fig.update_layout(title='Data Table View',
+                                  updatemenus=[
+                                      {
+                                          # a button for each table column
+                                          'buttons': [
+                                              {
+                                                  'method': 'restyle',
+                                                  'label': btn_label,
+                                                  'args': [
+                                                      {
+                                                          'cells': {
+                                                              'values': stored_df.sort_values(btn_label,
+                                                                                              ascending=False).transpose().values.tolist(),
+                                                              # update the cell values with the sorted data
+                                                              # format table as before
+                                                              'fill': dict(color=px.colors.qualitative.Pastel1[8]),
+                                                              'align': 'left',
+                                                          }
+                                                      }
+                                                  ],
+                                              }
+                                              for btn_label in stored_df.columns
+                                          ],
+                                          'direction': 'down',
+                                      }
+                                  ]
+                                  )
+                return empty_fig, fig, empty_radar, stored_player_options, stored_player_options,
+
         except Exception as e:
             print(f"Error creating table: {str(e)}")
             return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options,
