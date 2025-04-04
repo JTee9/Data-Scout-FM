@@ -7,6 +7,7 @@ simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
 # Configure Pandas Settings
 pd.set_option('display.max_columns', 20)
 pd.options.mode.chained_assignment = None
+pd.options.display.float_format = '${:,.2f}'.format
 
 # Configure Numpy setting to show numerical values rather than np.float64()
 np.set_printoptions(legacy='1.25')
@@ -257,6 +258,7 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file):
             return value  # return value if it is already an integer rather than a string
 
     stats_df["Apps"] = stats_df["Apps"].apply(process_apps_column)
+    stats_df['Int Apps'] = stats_df["Int Apps"].apply(process_apps_column)
 
     # Set minimum apps threshold (Unnecessary?)
     minimum_apps = 10

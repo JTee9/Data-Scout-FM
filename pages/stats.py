@@ -1,8 +1,9 @@
 # Todo ------------------
-# 1. Long names overlap on the radar chart.
-# 2. Fix empty fig objects to make the default page look better.
+# 1. Make filter data modal UI more user-friendly. Buttons are confusing.
+# 2. Long names overlap on the radar chart.
 # 3. Fix radar reverse axis for negative stats
-# 4. Add Role scores?
+# 4. Fix decimal issue on Table
+# 5. Add Role scores?
 
 import base64
 from io import BytesIO
@@ -28,7 +29,9 @@ dash.register_page(__name__, path='/stats', title='Scout FM Stats')
 layout = html.Div([
     # Top Half
     html.Div(style={'text-align': 'left', 'margin-bottom': '15px'}, children=[
-            html.Div(html.P('Click "Filter Data" to start filtering your Stats data. Then toggle between Graph, Table, and Radar for your desired visualization.'),
+            html.Div(html.P(['Click "Filter Data" to start filtering your Stats data '
+                            'or select a Sample Filter from the dropdown.', html.Br(),
+                            'Then toggle between Graph, Table, and Radar for your desired visualization.']),
                      style={'text-align': 'left', 'margin-left': '7px'}),
             # Player Search Modal
             html.Div([dbc.Button('Filter Data', id='open-modal-button', n_clicks=0, className='container-button', style={'margin-left': '5px', 'margin-bottom': '5px'}),
@@ -39,15 +42,17 @@ layout = html.Div([
                                   html.Div(id='modal-dropdown-div', children=[]),
 
                                   html.Label('Choose logical operator for multiple conditions:'),
-                                  dcc.Dropdown(
-                                      id='logical-operator',
-                                      options=[
-                                          {'label': 'AND', 'value': 'AND'},
-                                          {'label': 'OR', 'value': 'OR'}
-                                      ],
-                                      value='AND',
-                                      clearable=False
-                                  ),
+                                  # logical operator dropdown
+                                  html.Div([
+                                      dcc.Dropdown(
+                                          id='logical-operator',
+                                          options=[
+                                              {'label': 'AND', 'value': 'AND'},
+                                              {'label': 'OR', 'value': 'OR'}
+                                          ],
+                                          value='AND',
+                                          clearable=False
+                                      )], style={'width': '15%'}),
 
                                   html.Br(),
                                   html.Div([
@@ -101,14 +106,14 @@ layout = html.Div([
         html.Div(id='graph-dropdown-container', children=[
             dbc.Collapse(id='scatter-object-collapse', is_open=False, children=dcc.Graph(id='scatterplot-graph', style={'width': '100%', 'height': '400px'})),
             html.Div(id='graph-dropdowns', children=[
-                html.Label('Sample Charts (Add other filters (e.g. Age, Transfer Value) with the "Filter Data" Button)',
+                html.Label('Sample Filters (Add other filters (e.g. Age, Transfer Value) with the "Filter Data" Button)',
                            className='stats-label'),
                 dcc.Dropdown(
                     id='sample-chart-dropdown',
                     options=[{'label': key, 'value': key} for key in sample_charts.keys()],
                     value='',
-                    clearable=False,
-                    placeholder='Select a Sample Chart'
+                    clearable=True,
+                    placeholder='Select a Sample Filter'
                 ),
                 html.Label('Select X Axis:', className='stats-label'),
                 dcc.Dropdown(
@@ -217,13 +222,13 @@ def update_graph_dropdowns(uploaded_dataframes, selected_sample, current_x, curr
     stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
 
     if selected_sample != '':
-        return (html.Label('Sample Charts (Add other filters (e.g. Age, Transfer Value) with the "Filter Data" Button)', className='stats-label'),
+        return (html.Label('Sample Filters (Add other filters (e.g. Age, Transfer Value) with the "Filter Data" Button)', className='stats-label'),
                 dcc.Dropdown(
                     id='sample-chart-dropdown',
                     options=[{'label': key, 'value': key} for key in sample_charts.keys()],
                     value=selected_sample,
-                    clearable=False,
-                    placeholder='Select a Sample Chart'
+                    clearable=True,
+                    placeholder='Select a Sample Filter'
                 ),
                 html.Label('Select X Axis:', className='stats-label'),
                 dcc.Dropdown(
@@ -241,13 +246,13 @@ def update_graph_dropdowns(uploaded_dataframes, selected_sample, current_x, curr
                 ),
                 )
 
-    return (html.Label('Sample Charts (Add other filters (e.g. Age, Transfer Value) with the "Filter Data" Button)', className='stats-label'),
+    return (html.Label('Sample Filters (Add other filters (e.g. Age, Transfer Value) with the "Filter Data" Button)', className='stats-label'),
             dcc.Dropdown(
                 id='sample-chart-dropdown',
                 options=[{'label': key, 'value': key} for key in sample_charts.keys()],
                 value='',
-                clearable=False,
-                placeholder='Select a Sample Chart'
+                clearable=True,
+                placeholder='Select a Sample Filter'
             ),
             html.Label('Select X Axis:', className='stats-label'),
             dcc.Dropdown(
@@ -512,7 +517,7 @@ def update_filter_input_container(uploaded_dataframes, selected_column):
                 ),
             ], style={'marginTop': '10px'}),
             html.Div([
-                html.Label(f'Enter {stats_label_dict[selected_column]}'),
+                html.Label(f'Enter {stats_label_dict[selected_column]}: ', style={'margin-right': '5px'}),
                 dcc.Input(
                     id={'type': 'filter-value', 'index': 0},
                     type='number',
@@ -710,9 +715,9 @@ def update_filtered_data(uploaded_dataframes, n_clicks_apply, n_clicks_clear, st
             feedback_message = f"Error applying filters: {str(e)}"
             return feedback_message, df.to_json(date_format='iso', orient='split')
 
-    # Handle Sample Chart Dropdown Changes
+    # Handle Sample Filter Dropdown Changes
     elif trigger_id in 'sample-chart-dropdown' and sample_data:
-        print('Filtering data based on Sample Chart Selection')
+        print('Filtering data based on Sample Filter Selection')
         stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
         df = stats_df
         print(f'Initialized dataframe with shape: {df.shape}')
@@ -888,7 +893,7 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
                 return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options,
         else:
             print("Invalid axis selection")
-            empty_fig.update_layout(title='Invalid axis selection')
+            empty_fig.update_layout(title='Select X and Y Axis or Select a Sample Filter')
             return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options,
 
     # Handle table button
@@ -1020,7 +1025,7 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
             print(f"Error updating plot for axis change: {str(e)}")
             return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options,
 
-    # Handle Sample Chart dropdown changes
+    # Handle Sample Filter dropdown changes
     elif trigger_id in 'sample-chart-dropdown' and selected_sample:
         try:
             def set_color(df):

@@ -22,80 +22,78 @@ layout = html.Div([
             # Dropdown Menu to select between Squad Attributes and Shortlist Attributes
             html.Div(id='dataset-selection-div', children=[
                 html.Label('Analyze Squad or Shortlisted Players?', className='attributes-label'),
-                      dcc.Dropdown(
-                          id='dataset-dropdown',
-                          options=[],
-                          value='Squad Attributes',
-                          clearable=False,
-                          optionHeight=40,
-                          style={
-                              'width': '90%'
-                          }
-                      )
-                      ]),
+                dcc.Dropdown(
+                    id='dataset-dropdown',
+                    options=[],
+                    value='Squad Attributes',
+                    clearable=False,
+                    optionHeight=40,
+                )
+            ],
+                     style={'width': '20%'}
+                     ),
             # Buttons to select Graph or Table
             html.Div([
                     dbc.Button('Table', id='table-button', n_clicks=0, className='container-button', style={'margin': '5px'}),
                     dbc.Button('Radar', id='radar-button', n_clicks=0, className='container-button', style={'margin': '5px'})
                 ]),
             # Dropdown Menu to filter visible attributes in the Table
-            html.Div([html.Label('Set Attributes to View on Table and Radar Chart', className='attributes-label'),
-                      dcc.Dropdown(
-                          id='attribute-dropdown',
-                          options=[{'label': key, 'value': key} for key in attribute_filters.keys()],
-                          value='Overall',
-                          clearable=False,
-                          optionHeight=40,
-                          style={
-                              'width': '90%'
-                          }
-                      ),
-    ]),
+            html.Div([
+                html.Label('Set Attributes to View on Table and Radar Chart', className='attributes-label'),
+                dcc.Dropdown(
+                    id='attribute-dropdown',
+                    options=[{'label': key, 'value': key} for key in attribute_filters.keys()],
+                    value='Overall',
+                    clearable=False,
+                    optionHeight=40,
+                ),
+            ],
+                style={'width': '25%'}
+            ),
         # Bottom Half
         html.Div(id='output-container', style={'width': '100%'}, children=[
             # Table
             dbc.Collapse(id='table-container', is_open=False, style={'width': '100%', 'height': '100%'}, children=[
                 html.Label('Filter Players by Position', className='attributes-label'),
-                dcc.Dropdown(
+                html.Div([dcc.Dropdown(
                     id='position-dropdown',
                     options=[{'label': key, 'value': key} for key in position_filters.keys()],
                     value='M (C)',
                     clearable=False,
                     optionHeight=40,
-                    style={
-                        'width': '80%'
-                    }
-                ),
+                )], style={'width': '10%'}),
                 dcc.Graph(id='data-table', style={'width': '100%', 'height': '600px'})
             ]),
             # Radar
             dbc.Collapse(id='radar-container', is_open=False, style={'width': '100%', 'height': '100%'}, children=[
                 html.Div(id='radar-dropdowns', children=[
-                    html.Label('Select Player from Shortlist', className='attributes-label'),
-                    dcc.Dropdown(
-                        id='shortlist-dropdown',
-                        options=[],
-                        value='',
-                        clearable=False,
-                        optionHeight=40,
-                        style={
-                            'width': '80%'
-                        }
-                    ),
-                    html.Label('Select Position Average or Player from Squad', className='attributes-label'),
-                    dcc.Dropdown(
-                        id='squad-dropdown',
-                        options=[],
-                        value='',
-                        clearable=False,
-                        optionHeight=40,
-                        style={
-                            'width': '80%'
-                        }
-                    )],
+                    # Left Dropdown
+                    html.Div([
+                        html.Label('Select Player from Shortlist', className='attributes-label'),
+                        dcc.Dropdown(
+                            id='shortlist-dropdown',
+                            options=[],
+                            value='',
+                            clearable=False,
+                            optionHeight=40,
+                        )], style={
+                        'display': 'block',
+                        'margin-right': '50px'
+                    }),
+                    # Right Dropdown
+                    html.Div([
+                        html.Label('Select Position Average or Player from Squad', className='attributes-label'),
+                        dcc.Dropdown(
+                            id='squad-dropdown',
+                            options=[],
+                            value='',
+                            clearable=False,
+                            optionHeight=40,
+                        )], style={'display': 'block'}),
+                    ],
                     style={
                         'width': '100%',
-                        'display': 'flex'
+                        'display': 'flex',
                     }),
                 dcc.Graph(id='radar-chart', style={'width': '100%', 'height': '600px'})
             ])
@@ -124,7 +122,7 @@ def pull_uploaded_attributes_dataframes(uploaded_dataframes):
                 options=[{'label': key, 'value': key} for key in att_datasets.keys()],
                 value=list(att_datasets)[0],
                 clearable=False,
-                optionHeight=40
+                optionHeight=40,
             ))
 
 
@@ -137,7 +135,8 @@ def update_radar_dropdowns(uploaded_dataframes):
     squad_attributes_df = pd.read_json(io.StringIO(uploaded_dataframes['squad_attributes']), orient='split')
     shortlist_attributes_df = pd.read_json(io.StringIO(uploaded_dataframes['shortlist_attributes']), orient='split')
 
-    return (html.Label('Select Player from Shortlist', className='attributes-label'),
+    return (html.Div([
+        html.Label('Select Player from Shortlist', className='attributes-label'),
             dcc.Dropdown(
                 id='shortlist-dropdown',
                 options=[{'label': f'{name} - {position}', 'value': name}
@@ -145,10 +144,12 @@ def update_radar_dropdowns(uploaded_dataframes):
                 value=shortlist_attributes_df.iloc[0]['Name'],
                 clearable=False,
                 optionHeight=40,
-                style={
-                    'width': '80%'
-                }
-            ),
+            )], style={
+        'display': 'block',
+        'width': '30%',
+        'margin-right': '50px'
+    }),
+            html.Div([
             html.Label('Select Player or Position Average from Squad', className='attributes-label'),
             dcc.Dropdown(
                 id='squad-dropdown',
@@ -157,10 +158,11 @@ def update_radar_dropdowns(uploaded_dataframes):
                 value=squad_attributes_df.iloc[0]['Name'],
                 clearable=False,
                 optionHeight=40,
-                style={
-                    'width': '80%'
-                }
-            ))
+            )], style={
+                'display': 'block',
+                'width': '30%',
+            })
+    )
 
 
 # Manage collapsed plots
