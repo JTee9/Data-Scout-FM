@@ -169,7 +169,7 @@ layout = html.Div([
                             style={
                                 'width': '100%'
                             }
-                        )]),
+                        )], style={'width': '50%', 'margin-right': '50px'}),
                     html.Div(children=[
                         html.Label('Select Second Player for Radar Comparison Chart', className='stats-label'),
                         dcc.Dropdown(
@@ -181,7 +181,7 @@ layout = html.Div([
                             style={
                                 'width': '100%'
                             }
-                        )])
+                        )], style={'width': '50%'})
                 ], style={'width': '70%', 'display': 'flex', 'justify-content': 'space-between'}),
 
                 html.Div(children=[
@@ -333,7 +333,7 @@ def update_radar_dropdowns(uploaded_dataframes):
             style={
                 'width': '100%'
             }
-        )], style={'width': '50%'}),
+        )], style={'width': '50%', 'margin-right': '50px'}),
         html.Div([
             html.Label('Select Second Player for Radar Comparison Chart', className='stats-label'),
             dcc.Dropdown(
