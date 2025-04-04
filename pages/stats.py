@@ -29,12 +29,14 @@ dash.register_page(__name__, path='/stats', title='Scout FM Stats')
 layout = html.Div([
     # Top Half
     html.Div(style={'text-align': 'left', 'margin-bottom': '15px'}, children=[
-            html.Div(html.P(['Click "Filter Data" to start filtering your Stats data '
-                            'or select a Sample Filter from the dropdown.', html.Br(),
-                            'Then toggle between Graph, Table, and Radar for your desired visualization.']),
-                     style={'text-align': 'left', 'margin-left': '7px'}),
+            html.Div(html.Label(['Click "Filter Data" to start filtering your Stats data '
+                                 'or select a Sample Filter from the dropdown.', html.Br(),
+                                 'Then toggle between Graph, Table, and Radar for your desired visualization.'],
+                                className='stats-label'),
+                     style={'text-align': 'left', 'margin-left': '7px'}
+                     ),
             # Player Search Modal
-            html.Div([dbc.Button('Filter Data', id='open-modal-button', n_clicks=0, className='container-button', style={'margin-left': '5px', 'margin-bottom': '5px'}),
+            html.Div([dbc.Button('Filter Data', id='open-modal-button', n_clicks=0, className='container-button', style={'margin-top': '5px', 'margin-left': '5px', 'margin-bottom': '5px'}),
                       dbc.Modal(
                           [
                               dbc.ModalHeader('Player Search Filters'),
@@ -108,27 +110,33 @@ layout = html.Div([
             html.Div(id='graph-dropdowns', children=[
                 html.Label('Sample Filters (Add other filters (e.g. Age, Transfer Value) with the "Filter Data" Button)',
                            className='stats-label'),
-                dcc.Dropdown(
-                    id='sample-chart-dropdown',
-                    options=[{'label': key, 'value': key} for key in sample_charts.keys()],
-                    value='',
-                    clearable=True,
-                    placeholder='Select a Sample Filter'
-                ),
+                # Sample Filter dropdown
+                html.Div([
+                    dcc.Dropdown(
+                        id='sample-filter-dropdown',
+                        options=[{'label': key, 'value': key} for key in sample_charts.keys()],
+                        value='',
+                        clearable=True,
+                        placeholder='Select a Sample Filter'
+                    )], style={'width': '20%'}),
                 html.Label('Select X Axis:', className='stats-label'),
-                dcc.Dropdown(
-                    id='x-axis-dropdown',
-                    options=[],
-                    value='',
-                    clearable=False
-                ),
+                # X Axis Dropdown
+                html.Div([
+                    dcc.Dropdown(
+                        id='x-axis-dropdown',
+                        options=[],
+                        value='',
+                        clearable=False
+                    )], style={'width': '35%'}),
                 html.Label('Select Y Axis:', className='stats-label'),
-                dcc.Dropdown(
-                    id='y-axis-dropdown',
-                    options=[],
-                    value='',
-                    clearable=False
-                )
+                # Y Axis Dropdown
+                html.Div([
+                    dcc.Dropdown(
+                        id='y-axis-dropdown',
+                        options=[],
+                        value='',
+                        clearable=False
+                    )], style={'width': '35%'})
             ])
         ], style={'width': '100%', 'height': '100%', 'display': 'none'}), # Initially hidden
 
@@ -142,7 +150,7 @@ layout = html.Div([
                     clearable=True,
                     optionHeight=40,
                     style={
-                        'width': '80%'
+                        'width': '100%'
                     }
                 ),
                 dbc.Collapse(id='table-object-collapse', is_open=False, children=dcc.Graph(id='stats-data-table', style={'width': '100%', 'height': '600px'}))
@@ -186,7 +194,7 @@ layout = html.Div([
                         clearable=False,
                         optionHeight=40,
                         style={
-                            'width': '70%'
+                            'width': '40%'
                         }
                     ),
                     html.Div(id='custom-radar-div', children=[
@@ -198,7 +206,7 @@ layout = html.Div([
                             multi=True,
                             clearable=True,
                             optionHeight=40,
-                            style={'width': '80%'}
+                            style={'width': '100%'}
                         )],
                              style={
                                 'display': 'none',
@@ -214,7 +222,7 @@ layout = html.Div([
 @callback(
     Output('graph-dropdowns', 'children'),
     Input('stored-uploads', 'data'),
-    Input('sample-chart-dropdown', 'value'),
+    Input('sample-filter-dropdown', 'value'),
     State('x-axis-dropdown', 'value'),
     State('y-axis-dropdown', 'value')
 )
@@ -223,51 +231,63 @@ def update_graph_dropdowns(uploaded_dataframes, selected_sample, current_x, curr
 
     if selected_sample != '':
         return (html.Label('Sample Filters (Add other filters (e.g. Age, Transfer Value) with the "Filter Data" Button)', className='stats-label'),
-                dcc.Dropdown(
-                    id='sample-chart-dropdown',
-                    options=[{'label': key, 'value': key} for key in sample_charts.keys()],
-                    value=selected_sample,
-                    clearable=True,
-                    placeholder='Select a Sample Filter'
-                ),
+                # Sample Filter dropdown
+                html.Div([
+                    dcc.Dropdown(
+                        id='sample-filter-dropdown',
+                        options=[{'label': key, 'value': key} for key in sample_charts.keys()],
+                        value=selected_sample,
+                        clearable=True,
+                        placeholder='Select a Sample Filter'
+                    )], style={'width': '20%'}),
                 html.Label('Select X Axis:', className='stats-label'),
-                dcc.Dropdown(
-                    id='x-axis-dropdown',
-                    options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
-                    value=sample_charts[selected_sample]['X'],
-                    clearable=False
-                ),
+                # X Axis Dropdown
+                html.Div([
+                    dcc.Dropdown(
+                        id='x-axis-dropdown',
+                        options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
+                        value=sample_charts[selected_sample]['X'],
+                        clearable=False
+                    )], style={'width': '35%'}),
                 html.Label('Select Y Axis:', className='stats-label'),
-                dcc.Dropdown(
-                    id='y-axis-dropdown',
-                    options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
-                    value=sample_charts[selected_sample]['Y'],
-                    clearable=False
-                ),
+                # Y Axis Dropdown
+                html.Div([
+                    dcc.Dropdown(
+                        id='y-axis-dropdown',
+                        options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
+                        value=sample_charts[selected_sample]['Y'],
+                        clearable=False
+                    )], style={'width': '35%'}),
                 )
 
     return (html.Label('Sample Filters (Add other filters (e.g. Age, Transfer Value) with the "Filter Data" Button)', className='stats-label'),
-            dcc.Dropdown(
-                id='sample-chart-dropdown',
-                options=[{'label': key, 'value': key} for key in sample_charts.keys()],
-                value='',
-                clearable=True,
-                placeholder='Select a Sample Filter'
-            ),
+            # Sample Filter Dropdown
+            html.Div([
+                dcc.Dropdown(
+                    id='sample-filter-dropdown',
+                    options=[{'label': key, 'value': key} for key in sample_charts.keys()],
+                    value='',
+                    clearable=True,
+                    placeholder='Select a Sample Filter'
+                )], style={'width': '20%'}),
             html.Label('Select X Axis:', className='stats-label'),
-            dcc.Dropdown(
-                id='x-axis-dropdown',
-                options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
-                value=current_x,
-                clearable=False
-            ),
+            # X Axis Dropdown
+            html.Div([
+                dcc.Dropdown(
+                    id='x-axis-dropdown',
+                    options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
+                    value=current_x,
+                    clearable=False
+                )], style={'width': '35%'}),
             html.Label('Select Y Axis:', className='stats-label'),
-            dcc.Dropdown(
-                id='y-axis-dropdown',
-                options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
-                value=current_y,
-                clearable=False
-            ),
+            # Y Axis Dropdown
+            html.Div([
+                dcc.Dropdown(
+                    id='y-axis-dropdown',
+                    options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
+                    value=current_y,
+                    clearable=False
+                )], style={'width': '35%'}),
             )
 
 
@@ -279,7 +299,7 @@ def update_graph_dropdowns(uploaded_dataframes, selected_sample, current_x, curr
 def update_table_dropdowns(uploaded_dataframes):
     stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
 
-    return (html.P('Select Columns to Include in Table'),
+    return (html.Label('Select Columns to Include in Table', className='stats-label'),
             dcc.Dropdown(
                 id='stats-table-dropdown',
                 options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
@@ -288,7 +308,7 @@ def update_table_dropdowns(uploaded_dataframes):
                 clearable=True,
                 optionHeight=40,
                 style={
-                    'width': '80%'
+                    'width': '100%'
                 }
             ),
             dcc.Graph(id='stats-data-table', style={'width': '100%', 'height': '600px'})
@@ -302,7 +322,7 @@ def update_radar_dropdowns(uploaded_dataframes):
     stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
 
     return (html.Div([
-        html.P('Select First Player for Radar Comparison Chart'),
+        html.Label('Select First Player for Radar Comparison Chart', className='stats-label'),
         dcc.Dropdown(
             id='player-dropdown',
             options=[{'label': f'{name} - {position} - {club}', 'value': name}
@@ -313,9 +333,9 @@ def update_radar_dropdowns(uploaded_dataframes):
             style={
                 'width': '100%'
             }
-        )]),
+        )], style={'width': '50%'}),
         html.Div([
-            html.P('Select Second Player for Radar Comparison Chart'),
+            html.Label('Select Second Player for Radar Comparison Chart', className='stats-label'),
             dcc.Dropdown(
                 id='player-dropdown1',
                 options=[{'label': f'{name} - {position} - {club}', 'value': name}
@@ -326,7 +346,7 @@ def update_radar_dropdowns(uploaded_dataframes):
                 style={
                     'width': '100%'
                 }
-            )])
+            )], style={'width': '50%'})
             )
 
 # Pulling datasets from stored_uploads for custom radar dropdown
@@ -569,7 +589,7 @@ def update_filter_input_container(uploaded_dataframes, selected_column):
         Input('apply-filter-button', 'n_clicks'),
         Input('clear-filter-button', 'n_clicks'),
         Input('stored_df', 'data'),
-        Input('sample-chart-dropdown', 'value')
+        Input('sample-filter-dropdown', 'value')
     ],
     [
         State({'type': 'filter-column', 'index': ALL}, 'value'),
@@ -716,7 +736,7 @@ def update_filtered_data(uploaded_dataframes, n_clicks_apply, n_clicks_clear, st
             return feedback_message, df.to_json(date_format='iso', orient='split')
 
     # Handle Sample Filter Dropdown Changes
-    elif trigger_id in 'sample-chart-dropdown' and sample_data:
+    elif trigger_id in 'sample-filter-dropdown' and sample_data:
         print('Filtering data based on Sample Filter Selection')
         stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
         df = stats_df
@@ -794,7 +814,6 @@ def toggle_containers(table_clicks, graph_clicks, radar_clicks):
         Output('stats-radar-chart', 'src'),
         Output('player-dropdown', 'options'),
         Output('player-dropdown1', 'options'),
-        # Output('sample-chart-dropdown', 'value')
     ],
     [
         Input('stored-uploads', 'data'),
@@ -808,7 +827,7 @@ def toggle_containers(table_clicks, graph_clicks, radar_clicks):
         Input('player-dropdown1', 'value'),
         Input('radar-preset-values-dropdown', 'value'),
         Input('custom-radar-values-dropdown', 'value'),
-        Input('sample-chart-dropdown', 'value'),
+        Input('sample-filter-dropdown', 'value'),
         Input('stored_df', 'data')
     ],
     prevent_initial_call=True
@@ -1026,7 +1045,7 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
             return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options,
 
     # Handle Sample Filter dropdown changes
-    elif trigger_id in 'sample-chart-dropdown' and selected_sample:
+    elif trigger_id in 'sample-filter-dropdown' and selected_sample:
         try:
             def set_color(df):
                 # Change color of squad players on scatter plot

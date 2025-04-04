@@ -168,7 +168,7 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file):
                    'Pens Faced', 'Pens', 'NP-xG/90', 'NP-xG', 'Mins', 'Starts',
                    'Gls/90', 'Conc', 'Gls', 'Won', 'G. Mis', 'Lost',
                    'D', 'Gwin', 'Fls', 'FA', 'xG/90', 'xG-OP', 'xA/90', 'xA', 'Con/90',
-                   'Cln/90', 'Clean Sheets', 'Av Rat', 'Ast', 'Hdrs A']:
+                   'Cln/90', 'Clean Sheets', 'Av Rat', 'Ast', 'Hdrs A', 'Int Ast', 'Int Conc', 'Int Av Rat']:
         stats_df[column] = stats_df[column].apply(str).str.replace('-', '0').astype(float).round(2)
 
     # Create position filters dict
