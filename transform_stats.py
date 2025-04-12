@@ -1,224 +1,171 @@
 import pandas as pd
 import numpy as np
 from warnings import simplefilter
+from config import international_position_filters
 
 simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
 
 # Configure Pandas Settings
-pd.set_option('display.max_columns', 20)
+# pd.set_option('display.max_columns', 20)
 pd.options.mode.chained_assignment = None
-pd.options.display.float_format = '${:,.2f}'.format
 
 # Configure Numpy setting to show numerical values rather than np.float64()
 np.set_printoptions(legacy='1.25')
 
 
-def build_stats_dataframe(squad_stats_file, player_search_stats_file):
-
-    simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
-
-    # Configure Pandas Settings
-    pd.set_option('display.max_columns', 20)
-    pd.options.mode.chained_assignment = None
-
-    # Configure Numpy setting to show numerical values rather than np.float64()
-    np.set_printoptions(legacy='1.25')
-
-    ## Create the DataFrames
-    # Create squad stats DataFrame from squad stats view
+def build_stats_dataframe(squad_stats_file, player_search_stats_file, language_preference):
+    # Create the DataFrames
     squad_stats_df = squad_stats_file.copy()
+    print('Pulling squad stats data into build stats dataframes function')
     squad_stats_df = squad_stats_df[0]
+    # Remove zero width spaces
+    squad_stats_df.columns = squad_stats_df.columns.str.replace('\u200b', '')
+    print('Complete: Pulling squad stats data into build stats dataframes function')
 
-    # Create scouting stats DataFrame from Player Search View
     player_search_stats_df = player_search_stats_file.copy()
+    print('Pulling player search stats data into build stats dataframes function')
     player_search_stats_df = player_search_stats_df[0]
+    # Remove zero width spaces
+    player_search_stats_df.columns = player_search_stats_df.columns.str.replace('\u200b', '')
 
-    # Add squad_stats_df into player_search_stats_df
+    # Combine squad & player search stats dataframes
     stats_df = pd.concat([player_search_stats_df, squad_stats_df])
-
-    # Clean the dataframes ------------------------------
+    print(f'Complete: stats_df combined dataframe created with shape: {stats_df.shape}')
 
     # Remove unnecessary columns
-    stats_df = stats_df.drop(columns=['Inf', 'Rec'])
+    def drop_columns_by_number(df, column_numbers):
+        columns_to_drop = [df.columns[i] for i in column_numbers]
+        return df.drop(columns=columns_to_drop)
 
-    for column in ['Transfer Value', 'Wage', 'Distance']:
+    stats_df = drop_columns_by_number(stats_df, [1, 2])
+
+    # Group columns based on processing type
+    value_cols = [5, 6, 47]  # Columns that need currency/unit removal and numeric conversion
+    percentage_cols = [69, 20, 94, 37, 59, 76, 95, 52, 29, 32, 100, 116]  # Columns that need percentage processing
+    numeric_cols = [1, 67, 66, 68, 17, 19, 18, 21, 82, 81, 16, 91, 92, 93,
+                    39, 38, 61, 60, 63, 62, 64, 65, 34, 33, 36, 35, 54, 53,
+                    56, 55, 58, 57, 103, 87, 71, 70, 41, 40, 78, 86, 85, 44,
+                    73, 72, 77, 11, 22, 97, 96, 25, 46, 45, 49, 48, 50, 84,
+                    83, 14, 15, 80, 79, 13, 75, 106, 23, 90, 110, 112, 111,
+                    109, 109, 107, 108, 121, 32, 31, 98, 99, 30, 28, 27, 119,
+                    10, 101, 9, 113, 120, 115, 114, 116, 104, 105, 24, 26,
+                    43, 42, 102, 89, 88, 8, 12, 74] # Columns with straightforward numeric values
+
+    # Clean the value columns.
+    # Currencies supported: Euros, CNY, US$, Arg Pesos, Aus$, Can$, Chi Pesos,
+    for col_num in value_cols:
         # Remove currency symbols
-        stats_df[column] = stats_df[column].str.replace('€', '')
-        stats_df[column] = stats_df[column].str.replace('$', '')
-        stats_df[column] = stats_df[column].str.replace('£', '')
-        stats_df[column] = stats_df[column].str.replace('¥', '')
-        stats_df[column] = stats_df[column].str.replace('₩', '')
-        stats_df[column] = stats_df[column].str.replace('₺', '')
-        stats_df[column] = stats_df[column].str.replace('₽', '')
-        stats_df[column] = stats_df[column].str.replace('AED', '')
-        stats_df[column] = stats_df[column].str.replace('BGN', '')
-        stats_df[column] = stats_df[column].str.replace('Br', '')
-        stats_df[column] = stats_df[column].str.replace('Bt', '')
-        stats_df[column] = stats_df[column].str.replace('CHF', '')
-        stats_df[column] = stats_df[column].str.replace('CNY', '')
-        stats_df[column] = stats_df[column].str.replace('CRC', '')
-        stats_df[column] = stats_df[column].str.replace('Din', '')
-        stats_df[column] = stats_df[column].str.replace('DKK', '')
-        stats_df[column] = stats_df[column].str.replace('Ft', '')
-        stats_df[column] = stats_df[column].str.replace('HK', '')
-        stats_df[column] = stats_df[column].str.replace('hrn', '')
-        stats_df[column] = stats_df[column].str.replace('INR', '')
-        stats_df[column] = stats_df[column].str.replace('ISK', '')
-        stats_df[column] = stats_df[column].str.replace('Kc', '')
-        stats_df[column] = stats_df[column].str.replace('KM', '')
-        stats_df[column] = stats_df[column].str.replace('Kn', '')
-        stats_df[column] = stats_df[column].str.replace('Kr', '')
-        stats_df[column] = stats_df[column].str.replace('kr', '')
-        stats_df[column] = stats_df[column].str.replace('KWD', '')
-        stats_df[column] = stats_df[column].str.replace('KZT', '')
-        stats_df[column] = stats_df[column].str.replace('Lek', '')
-        stats_df[column] = stats_df[column].str.replace('MKD Den', '')
-        stats_df[column] = stats_df[column].str.replace('NIS', '')
-        stats_df[column] = stats_df[column].str.replace('PHP', '')
-        stats_df[column] = stats_df[column].str.replace('QAR', '')
-        stats_df[column] = stats_df[column].str.replace('R', '')
-        stats_df[column] = stats_df[column].str.replace('RM', '')
-        stats_df[column] = stats_df[column].str.replace('RON', '')
-        stats_df[column] = stats_df[column].str.replace('RP.', '')
-        stats_df[column] = stats_df[column].str.replace('S', '')
-        stats_df[column] = stats_df[column].str.replace('SAR', '')
-        stats_df[column] = stats_df[column].str.replace('TWD', '')
-        stats_df[column] = stats_df[column].str.replace('VND', '')
-        stats_df[column] = stats_df[column].str.replace('zl', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('€', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('$', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('£', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('¥', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('₩', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('₺', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('₽', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('AED', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('BGN', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('Br', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('Bt', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('CHF', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('CNY', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('CRC', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('Din', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('DKK', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('Ft', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('HK', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('hrn', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('INR', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('ISK', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('Kc', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('KM', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('Kn', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('Kr', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('kr', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('KWD', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('KZT', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('Lek', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('MKD Den', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('NIS', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('PHP', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('QAR', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('R', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('RM', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('RON', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('RP.', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('S', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('SAR', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('TWD', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('VND', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('zl', '')
 
-        stats_df[column] = stats_df[column].str.replace('p/a', '')
-        stats_df[column] = stats_df[column].str.replace('p/m', '')
-        stats_df[column] = stats_df[column].str.replace('p/w', '')
-        stats_df[column] = stats_df[column].str.replace(',', '')
-        stats_df[column] = stats_df[column].str.replace('km', '')
-        stats_df[column] = stats_df[column].str.replace('Unknown', '')
-        stats_df[column] = stats_df[column].str.replace('Not for Sale', '')
-
-        # Handle values with both '.' and 'K'
-        mask_k = stats_df[column].str.contains(r'\.(?=.*K)', na=False, regex=True)
-        stats_df.loc[mask_k, column] = stats_df.loc[mask_k, column].str.replace(r'\.', '', regex=True)
-        stats_df.loc[mask_k, column] = stats_df.loc[mask_k, column].str.replace('K', '00', regex=False)
-        # Handle values with both '.' and 'M'
-        mask_m = stats_df[column].str.contains(r'\.(?=.*M)', na=False, regex=True)
-        stats_df.loc[mask_m, column] = stats_df.loc[mask_m, column].str.replace(r'\.', '', regex=True)
-        stats_df.loc[mask_m, column] = stats_df.loc[mask_m, column].str.replace('M', '00000', regex=False)
-        # Handle values with only 'K'
-        mask_only_k = stats_df[column].str.contains(r'K', na=False, regex=False) & (~mask_k)
-        stats_df.loc[mask_only_k, column] = stats_df.loc[mask_only_k, column].str.replace('K', '000', regex=False)
-        # Handle values with only 'M'
-        mask_only_m = stats_df[column].str.contains(r'M', na=False, regex=False) & (~mask_m)
-        stats_df.loc[mask_only_m, column] = stats_df.loc[mask_only_m, column].str.replace('M', '000000', regex=False)
-        # Handle values with both '.' and 'B'
-        mask_b = stats_df[column].str.contains(r'\.(?=.*B)', na=False, regex=True)
-        stats_df.loc[mask_b, column] = stats_df.loc[mask_b, column].str.replace(r'\.', '', regex=True)
-        stats_df.loc[mask_b, column] = stats_df.loc[mask_b, column].str.replace('B', '00000000', regex=False)
-        # Handle values with only 'B'
-        mask_only_b = stats_df[column].str.contains(r'B', na=False, regex=False) & (~mask_b)
-        stats_df.loc[mask_only_b, column] = stats_df.loc[mask_only_b, column].str.replace('B', '000000000', regex=False)
-        # Remove any remaining '.'
-        stats_df[column] = stats_df[column].str.replace('.', '')
-
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('p/a', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('p/m', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('p/w', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('/年', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('/月', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('/週', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('yıllık', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('aylık', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('haftallık', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace(',', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('km', '')
+        # stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('Unknown', '')
+        # stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('Not for Sale', '')
         # Handle transfer value ranges
+        range_mask = stats_df.iloc[:, col_num].str.contains('-', na=False, regex=False)
+        if range_mask.any():  # only do this if there are actually ranges.
+            def average_range(range_str):
+                try:
+                    start, end = map(int, range_str.split('-'))
+                    return (start + end) / 2
+                except ValueError:
+                    return np.nan  # return nan if there is a problem.
 
-        def process_range_column(stats_df, column):
-            """Processes a column containing range strings."""
-            stats_df[column] = stats_df[column].astype(str).str.strip()
-            range_mask = stats_df[column].str.contains('-', na=False, regex=False)
+            print('Applying average_range function to stats_df to remove transfer values with ranges.')
+            print(f'stats_df.loc[range_mask, stats_df.columns[col_num]]: {stats_df.loc[range_mask, stats_df.columns[col_num]]}')
+            stats_df.loc[range_mask, stats_df.columns[col_num]] = stats_df.loc[range_mask, stats_df.columns[col_num]].apply(average_range)
+            print('Complete: Applying average_range function to stats_df to remove transfer values with ranges.')
+        # //Need to solve for other currencies & languages
+        # Handle values with both '.' and 'K'
+        mask_k = stats_df.iloc[:, col_num].str.contains(r'\.(?=.*K)', na=False, regex=True)
+        stats_df.loc[mask_k, stats_df.columns[col_num]] = stats_df.loc[mask_k, stats_df.columns[col_num]].str.replace(r'\.', '', regex=True)
+        stats_df.loc[mask_k, stats_df.columns[col_num]] = stats_df.loc[mask_k, stats_df.columns[col_num]].str.replace('K', '00', regex=False)
+        # Handle values with both '.' and 'M'
+        mask_m = stats_df.iloc[:, col_num].str.contains(r'\.(?=.*M)', na=False, regex=True)
+        stats_df.loc[mask_m, stats_df.columns[col_num]] = stats_df.loc[mask_m, stats_df.columns[col_num]].str.replace(r'\.', '', regex=True)
+        stats_df.loc[mask_m, stats_df.columns[col_num]] = stats_df.loc[mask_m, stats_df.columns[col_num]].str.replace('M', '00000', regex=False)
+        # Handle values with only 'K'
+        mask_only_k = stats_df.iloc[:, col_num].str.contains(r'K', na=False, regex=False) & (~mask_k)
+        stats_df.loc[mask_only_k, stats_df.columns[col_num]] = stats_df.loc[mask_only_k, stats_df.columns[col_num]].str.replace('K', '000', regex=False)
+        # Handle values with only 'M'
+        mask_only_m = stats_df.iloc[:, col_num].str.contains(r'M', na=False, regex=False) & (~mask_m)
+        stats_df.loc[mask_only_m, stats_df.columns[col_num]] = stats_df.loc[mask_only_m, stats_df.columns[col_num]].str.replace('M', '000000', regex=False)
+        # Handle values with both '.' and 'B'
+        mask_b = stats_df.iloc[:, col_num].str.contains(r'\.(?=.*B)', na=False, regex=True)
+        stats_df.loc[mask_b, stats_df.columns[col_num]] = stats_df.loc[mask_b, stats_df.columns[col_num]].str.replace(r'\.', '', regex=True)
+        stats_df.loc[mask_b, stats_df.columns[col_num]] = stats_df.loc[mask_b, stats_df.columns[col_num]].str.replace('B', '00000000', regex=False)
+        # Handle values with only 'B'
+        mask_only_b = stats_df.iloc[:, col_num].str.contains(r'B', na=False, regex=False) & (~mask_b)
+        stats_df.loc[mask_only_b, stats_df.columns[col_num]] = stats_df.loc[mask_only_b, stats_df.columns[col_num]].str.replace('B', '000000000', regex=False)
+        # Remove any remaining '.'
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('.', '')
 
-            if range_mask.any():
-                def average_range(range_str):
+        stats_df.iloc[:, col_num] = pd.to_numeric(stats_df.iloc[:, col_num], errors='coerce')
 
-                    try:
-                        start, end = map(float, range_str.split('-'))
-                        result = (start + end) / 2
-                        return result
-                    except ValueError as e:
-                        return np.nan
-                    except AttributeError as e:
-                        return np.nan
+    for col_num in percentage_cols:
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('-', '0')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('%', '').astype(float, errors='ignore')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].multiply(.01)
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].round(2)
 
-                stats_df.loc[range_mask, column] = stats_df.loc[range_mask, column].apply(average_range)
-            return stats_df
-
-        stats_df = process_range_column(stats_df, 'Transfer Value')
-
-        stats_df[column] = pd.to_numeric(stats_df[column], errors='coerce')
-
-    for column in ['Tck R', 'Shot %', 'Sv %', 'Pas %',
-                   'OP-Cr %', 'Hdr %', 'xSv %', 'Cr C/A',
-                   'Conv %', 'Pen/R', 'Pens Saved Ratio', 'Gwin']:
-        stats_df[column] = stats_df[column].str.replace('-', '0')
-        stats_df[column] = stats_df[column].str.replace('%', '').astype(float, errors='ignore')
-        stats_df[column] = stats_df[column].multiply(.01)
-        stats_df[column] = stats_df[column].round(2)
-
-    for column in ['Age', 'Tck/90', 'Tck C', 'Tck A', 'Shot/90', 'ShT/90', 'ShT',
-                   'Shots Outside Box/90', 'Shts Blckd/90', 'Shts Blckd', 'Shots',
-                   'Svt', 'Svp', 'Svh', 'Pr passes/90', 'Pr Passes', 'Pres C/90',
-                   'Pres C', 'Pres A/90', 'Pres A', 'Poss Won/90', 'Poss Lost/90',
-                   'Ps C/90', 'Ps C', 'Ps A/90', 'Pas A', 'OP-KP/90', 'OP-KP',
-                   'OP-Crs C/90', 'OP-Crs C', 'OP-Crs A/90', 'OP-Crs A', 'Off',
-                   'Gl Mst', 'K Tck/90', 'K Tck', 'K Ps/90', 'K Pas', 'K Hdrs/90',
-                   'Int/90', 'Itc', 'Sprints/90', 'Hdrs W/90', 'Hdrs', 'Hdrs L/90',
-                   'Goals Outside Box', 'FK Shots', 'xGP/90', 'xGP', 'xG/shot',
-                   'Drb/90', 'Drb', 'Cr C/90', 'Cr C', 'Cr A', 'Crs A/90',
-                   'Clr/90', 'Clear', 'CCC', 'Ch C/90', 'Blk/90', 'Blk', 'Asts/90',
-                   'Aer A/90', 'Yel', 'xG', 'Saves/90', 'Tgls/90', 'Tcon/90', 'Tcon',
-                   'Tgls', 'Red', 'Pts/Gm', 'PoM', 'Pen/R', 'Pens S', 'Pens Saved',
-                   'Pens Faced', 'Pens', 'NP-xG/90', 'NP-xG', 'Mins', 'Starts',
-                   'Gls/90', 'Conc', 'Gls', 'Won', 'G. Mis', 'Lost',
-                   'D', 'Gwin', 'Fls', 'FA', 'xG/90', 'xG-OP', 'xA/90', 'xA', 'Con/90',
-                   'Cln/90', 'Clean Sheets', 'Av Rat', 'Ast', 'Hdrs A', 'Int Ast', 'Int Conc', 'Int Av Rat']:
-        stats_df[column] = stats_df[column].apply(str).str.replace('-', '0').astype(float).round(2)
-
-    # Create position filters dict
-    position_filters = {
-        'GK': ['GK'],
-        'D (C)': ['D (C)', 'D (RC)', 'D (LC)', 'D (RLC)'],
-        'D (R)': ['D (R)', 'D (RL)', 'D (RC)', 'D (RLC)', 'D/WB (R)', 'D/WB (RL)',
-                  'D/WB/M (R)', 'D/WB/M (RL)', 'D/WB/M/AM (R)', 'D/WB/M/AM (RL)',
-                  'D/WB/M/AM (RC)', 'D/WB/M/AM (RLC)', 'D/M (R)', 'D/M (RL)'],
-        'D (L)': ['D (L)', 'D (RL)', 'D (LC)', 'D (RLC)', 'D/WB (L)', 'D/WB (RL)',
-                  'D/WB/M (L)', 'D/WB/M (RL)', 'D/WB/M/AM (L)', 'D/WB/M/AM (RL)', 'D/M (L)', 'D/M (RL)'],
-        'WB (R)': ['D/WB (R)', 'D/WB (RL)', 'D/WB/M (R)', 'D/WB/M (RL)', 'D/WB/M (RC)',
-                   'D/WB/M (RLC)', 'D/WB/M/AM (R)', 'D/WB/M/AM (RL)', 'D/WB/M/AM (RC)',
-                   'D/WB/M/AM (RLC)', 'WB (R)', 'WB (RL)', 'WB/M (R)', 'WB/M (RL)',
-                   'WB/M (RC)', 'WB/M (RLC)', 'WB/M/AM (R)', 'WB/M/AM (RL)'],
-        'WB (L)': ['D/WB (L)', 'D/WB (RL)', 'D/WB/M (L)', 'D/WB/M (RL)', 'D/WB/M (LC)',
-                   'D/WB/M (RLC)', 'D/WB/M/AM (L)', 'D/WB/M/AM (RL)', 'D/WB/M/AM (LC)',
-                   'D/WB/M/AM (RLC)', 'WB (L)', 'WB (RL)', 'WB/M (L)', 'WB/M (RL)',
-                   'WB/M (LC)', 'WB/M (RLC)', 'WB/M/AM (L)', 'WB/M/AM (RL)'],
-        'M (R)': ['D/WB/M (R)', 'D/WB/M (RL)', 'D/WB/M (RC)', 'D/WB/M (RLC)', 'D/WB/M/AM (R)',
-                  'D/WB/M/AM (RL)', 'D/WB/M/AM (RC)', 'D/WB/M/AM (RLC)', 'WB/M (R)', 'WB/M (RL)',
-                  'WB/M (RC)', 'WB/M (RLC)', 'WB/M/AM (R)', 'WB/M/AM (RL)', 'WB/M/AM (RC)',
-                  'WB/M/AM (RLC)', 'M (R)', 'M (RL)', 'M (RC)', 'M (RLC)', 'M/AM (R)', 'M/AM (RL)',
-                  'M/AM (RC)', 'M/AM (RLC)'],
-        'M (L)': ['D/WB/M (L)', 'D/WB/M (RL)', 'D/WB/M (LC)', 'D/WB/M (RLC)', 'D/WB/M/AM (L)',
-                  'D/WB/M/AM (RL)', 'D/WB/M/AM (LC)', 'D/WB/M/AM (RLC)', 'WB/M (L)', 'WB/M (RL)',
-                  'WB/M (LC)', 'WB/M (RLC)', 'WB/M/AM (L)', 'WB/M/AM (RL)', 'WB/M/AM (LC)',
-                  'WB/M/AM (RLC)', 'M (L)', 'M (RL)', 'M (LC)', 'M (RLC)', 'M/AM (L)', 'M/AM (RL)',
-                  'M/AM (LC)', 'M/AM (RLC)'],
-        'DM': ['DM'],
-        'M (C)': ['M (C)', 'M (RC)', 'M (LC)', 'M (RLC)', 'M/AM (C)', 'M/AM (RC)', 'M/AM (LC)', 'M/AM (RLC)'],
-        'AM (C)': ['M (RLC)', 'M/AM (C)', 'M/AM (RC)', 'M/AM (LC)', 'M/AM (RLC)',
-                   'AM (C)', 'AM (RC)', 'AM (LC)', 'AM (RLC)'],
-        'AM (R)': ['D/WB/M/AM (R)', 'D/WB/M/AM (RL)', 'D/WB/M/AM (RC)', 'D/WB/M/AM (RLC)',
-                   'WB/M/AM (R)', 'WB/M/AM (RL)', 'WB/M/AM (RC)', 'WB/M/AM (RLC)',
-                   'M/AM (R)', 'M/AM (RL)', 'M/AM (RC)', 'M/AM (RLC)',
-                   'AM (R)', 'AM (RL)', 'AM (RC)', 'AM (RLC)'],
-        'AM (L)': ['D/WB/M/AM (L)', 'D/WB/M/AM (RL)', 'D/WB/M/AM (LC)', 'D/WB/M/AM (RLC)',
-                   'WB/M/AM (L)', 'WB/M/AM (RL)', 'WB/M/AM (LC)', 'WB/M/AM (RLC)',
-                   'M/AM (L)', 'M/AM (RL)', 'M/AM (LC)', 'M/AM (RLC)',
-                   'AM (L)', 'AM (RL)', 'AM (LC)', 'AM (RLC)'],
-        'ST': ['ST (C)']
-    }
+    for col_num in numeric_cols:
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].apply(str).str.replace('-', '0')
+        stats_df.iloc[:, col_num] = pd.to_numeric(stats_df.iloc[:, col_num], errors='coerce')
+        stats_df.iloc[:, col_num].astype(float).round(2)
 
     # Create position tag columns -------------------------------
     # Function to check and tag positions correctly
     def check_position_tags(position, position_filter):
-        if not isinstance(position, str):
-            return False  # Return False for non-string values
-
         # Split the position string by commas and strip any leading/trailing whitespace
         position_parts = [p.strip() for p in position.split(',')]
 
@@ -232,39 +179,33 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file):
         return False
 
     # Loop over each position tag and its corresponding filter
-    for position_tag, position_filter in position_filters.items():
+    print('Creating position tags in stats df.')
+    print(f'international_position_filters[language_preference].items(): {international_position_filters[language_preference].items()}')
+    for position_tag, position_filter in international_position_filters[language_preference].items():
         # Create a new column in the dataframe for the position tag
-        stats_df[position_tag] = stats_df['Position'].apply(
+        stats_df[position_tag] = stats_df.iloc[:, 2].apply(
             lambda pos: check_position_tags(pos, position_filter)
         )
+    print('Complete: Creating position tags in stats df.')
 
-    # Fix 'Apps' parenthesis issue. *Substitute appearances will be counted as 1 full appearance.
-    # This number will be used to set a minimum Apps # to exclude players with no stats or inflated stats in low # of Apps.
+    # Create new column to fix 'Apps' parenthesis issue. Substitute appearances will be counted as 1 full appearance.
+    # This number will be used to set a minimum 'total_apps' to exclude players with inflated stats in low # of Apps.
 
-    def process_apps_column(value):
-        if isinstance(value, str):
-            if '(' in value:
-                # Case with parentheses
-                extracted = pd.Series(value).str.extract(r"(\d+)\s*\(?(\d*)\)?")
-                return extracted.fillna(0).astype(int).sum(axis=1).iloc[0]
-            else:
-                # Case without parentheses
-                extracted = pd.Series(value).str.extract(r"(\d+)")
-                if not extracted.empty:
-                    return extracted.fillna(0).astype(int).sum(axis=1).iloc[0]
-                else:
-                    return 0  # return 0 if no value is found
-        else:
-            return value  # return value if it is already an integer rather than a string
-
-    stats_df["Apps"] = stats_df["Apps"].apply(process_apps_column)
-    stats_df['Int Apps'] = stats_df["Int Apps"].apply(process_apps_column)
+    stats_df.iloc[:, 117] = (
+        stats_df.iloc[:, 117]
+        .str.extractall(r"(\d+)")
+        .astype(int)
+        .groupby(level=0)
+        .sum()
+    )
 
     # Set minimum apps threshold (Unnecessary?)
     minimum_apps = 10
-    stats_df = stats_df[stats_df['Apps'] >= minimum_apps]
+    stats_df = stats_df[stats_df.iloc[:, 117] >= minimum_apps]
 
     # Drop outliers with 0 Av Rat
-    stats_df = stats_df[stats_df['Av Rat'] > 1]
+    stats_df = stats_df[stats_df.iloc[:, 8] > 1]
+
+    print('Complete: stats_df')
 
     return stats_df

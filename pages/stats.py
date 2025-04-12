@@ -3,9 +3,9 @@
 # 2. Long names overlap on the radar chart.
 # 3. Fix radar reverse axis for negative stats
 # 4. Fix decimal issue on Table
-# 5. Add Role scores?
 
 import base64
+import io
 from io import BytesIO
 import dash
 from dash import html, dcc, callback, ctx
@@ -18,9 +18,8 @@ from plotly.graph_objs import *
 from soccerplots.radar_chart import Radar
 import matplotlib
 matplotlib.use('agg')
-import io
-from config import position_filters, negative_stat_categories, stats_label_dict, preset_radar_values, sample_charts
-
+from config import (international_position_filters, negative_stat_categories, stats_label_dict,
+                    preset_radar_values_by_index, sample_filters_by_index)
 
 # Register Page
 dash.register_page(__name__, path='/stats', title='Scout FM Stats')
@@ -29,97 +28,117 @@ dash.register_page(__name__, path='/stats', title='Scout FM Stats')
 layout = html.Div([
     # Top Half
     html.Div(style={'text-align': 'left', 'margin-bottom': '15px'}, children=[
-            html.Div(html.Label(['Click "Filter Data" to start filtering your Stats data '
-                                 'or select a Sample Filter from the dropdown.', html.Br(),
-                                 'Then toggle between Graph, Table, and Radar for your desired visualization.'],
-                                className='stats-label'),
-                     style={'text-align': 'left', 'margin-left': '7px'}
-                     ),
-            # Player Search Modal
-            html.Div([dbc.Button('Filter Data', id='open-modal-button', n_clicks=0, className='container-button', style={'margin-top': '5px', 'margin-left': '5px', 'margin-bottom': '5px'}),
-                      dbc.Modal(
-                          [
-                              dbc.ModalHeader('Player Search Filters'),
-                              dbc.ModalBody([
-                                  html.Div(id='modal-dropdown-div', children=[]),
+        # Top Label
+        html.Div(
+            html.Label(
+                'Click "Filter Data" to add conditions for your Stats data '
+                'or select a Sample Filter from the dropdown.',
+                className='stats-label'),
+            style={'text-align': 'left', 'margin-left': '7px'}
+        ),
+        # Player Search Modal
+        html.Div([
+            dbc.Button('Filter Data', id='open-modal-button', n_clicks=0, className='container-button',
+                       style={'margin-top': '5px', 'margin-left': '5px', 'margin-bottom': '5px'}),
+            dbc.Modal(
+                [
+                    dbc.ModalHeader('Player Search Filters'),
+                    dbc.ModalBody([
+                        # Filter dropdown to be populated after files uploaded.
+                        html.Div(id='modal-dropdown-div', children=[]),
+                        html.Label('Choose logical operator for multiple conditions:'),
+                        # logical operator dropdown
+                        html.Div([
+                            dcc.Dropdown(
+                                id='logical-operator',
+                                options=[
+                                    {'label': 'AND', 'value': 'AND'},
+                                    {'label': 'OR', 'value': 'OR'}
+                                ],
+                                value='AND',
+                                clearable=False
+                            )], style={'width': '15%'}),
+                        html.Br(),
+                        # Buttons
+                        html.Div([
+                            # Buttons on the Left
+                            html.Div([
+                                # Button to add more filter conditions
+                                dbc.Button("Add Condition", id="add-condition", className='modal_conditions_button',
+                                           n_clicks=0),
+                                html.Br(),
+                                html.Br(),
 
-                                  html.Label('Choose logical operator for multiple conditions:'),
-                                  # logical operator dropdown
-                                  html.Div([
-                                      dcc.Dropdown(
-                                          id='logical-operator',
-                                          options=[
-                                              {'label': 'AND', 'value': 'AND'},
-                                              {'label': 'OR', 'value': 'OR'}
-                                          ],
-                                          value='AND',
-                                          clearable=False
-                                      )], style={'width': '15%'}),
+                                # Button to reset dropdowns
+                                dbc.Button('Reset Dropdowns', id='reset-dropdowns-button',
+                                           className='modal_conditions_button', n_clicks=0),
+                                html.Br(),
+                                html.Br(),
+                            ], style={'display': 'block'}),
+                            # Buttons on the Right
+                            html.Div([
+                                # Button to apply filters
+                                dbc.Button('Apply Filter', id='apply-filter-button',
+                                           className='modal_conditions_button', n_clicks=0),
+                                html.Br(),
+                                html.Br(),
+                                # Button to clear filters
+                                dbc.Button('Clear Filter', id='clear-filter-button',
+                                           className='modal_conditions_button', n_clicks=0),
+                                html.Br(),
+                            ], style={'display': 'block'}),
+                        ], style={'display': 'flex', 'justify-content': 'space-between'}),
 
-                                  html.Br(),
-                                  html.Div([
-                                      html.Div([
-                                          # Button to add more filter conditions
-                                          dbc.Button("Add Condition", id="add-condition", className='modal_conditions_button', n_clicks=0),
-                                          html.Br(),
-                                          html.Br(),
+                        # Confirmation message after applying filters
+                        html.Div(id='apply-feedback', children="")
+                    ]),
+                    # Button to close the modal
+                    dbc.ModalFooter(
+                        dbc.Button('Close', id='close-modal-button', className='modal_conditions_button', n_clicks=0)
+                    ),
+                ],
+                id='filter-modal',
+                className='filter_modal',
+                is_open=False,
+            ),
+        ]),
 
-                                          # Button to reset dropdowns
-                                          dbc.Button('Reset Dropdowns', id='reset-dropdowns-button', className='modal_conditions_button', n_clicks=0),
-                                          html.Br(),
-                                          html.Br(),
-                                      ], style={'display': 'block'}),
+        # Sample Filter dropdown
+        html.Label('Sample Filters - Add other filters (e.g. Age, Transfer Value) '
+                   'with the "Filter Data" Button',
+                   className='stats-label', style={'margin-left': '7px'}),
+        html.Div([
+            dcc.Dropdown(
+                id='sample-filter-dropdown',
+                options=[{'label': key, 'value': key} for key in sample_filters_by_index.keys()],
+                value='',
+                clearable=True,
+                placeholder='Select a Sample Filter'
+            )], style={'width': '20%', 'margin-left': '5px'}),
 
-                                      html.Div([
-                                          # Button to apply filters
-                                          dbc.Button('Apply Filter', id='apply-filter-button', className='modal_conditions_button', n_clicks=0),
-                                          html.Br(),
-                                          html.Br(),
-                                          # Button to clear filters
-                                          dbc.Button('Clear Filter', id='clear-filter-button', className='modal_conditions_button', n_clicks=0),
-                                          html.Br(),
-                                      ], style={'display': 'block'}),
-                                  ], style={'display': 'flex', 'justify-content': 'space-between'}),
-
-                                  # Confirmation message after applying filters
-                                  html.Div(id='apply-feedback', children="")
-                              ]),
-                              dbc.ModalFooter(
-                                  dbc.Button('Close', id='close-modal-button', className='modal_conditions_button', n_clicks=0)
-                              ),
-                          ],
-                          id='filter-modal',
-                          className='filter_modal',
-                          is_open=False,
-                      ),]),
-
-                      # Dropdown for Graph or Table selection
-            html.Div([
-                dbc.Button("Graph", id="stats-graph-button", n_clicks=0, className='container-button', style={'margin': '5px'}),
-                dbc.Button("Table", id="stats-table-button", n_clicks=0, className='container-button', style={'margin': '5px'}),
-                dbc.Button("Radar", id="stats-radar-button", n_clicks=0, className='container-button', style={'margin': '5px'}),
-            ]),
-]),
+        # Buttons for Graph, Table, or Radar selection
+        html.Label('Toggle between Graph, Table, and Radar for your desired visualization.',
+                   className='stats-label', style={'text-align': 'left', 'margin-left': '7px'}),
+        html.Div([
+            dbc.Button("Graph", id="stats-graph-button", n_clicks=0, className='container-button',
+                       style={'margin': '5px'}),
+            dbc.Button("Table", id="stats-table-button", n_clicks=0, className='container-button',
+                       style={'margin': '5px'}),
+            dbc.Button("Radar", id="stats-radar-button", n_clicks=0, className='container-button',
+                       style={'margin': '5px'}),
+        ]),
+    ]),
     # Bottom Half
-    # Output container for the selected plotly object
+    # Output container for the selected chart
     html.Div([
         # Dataframe stored and updated based on filters
         dcc.Store(id='stored_df'),
+        # Graph
         html.Div(id='graph-dropdown-container', children=[
-            dbc.Collapse(id='scatter-object-collapse', is_open=False, children=dcc.Graph(id='scatterplot-graph', style={'width': '100%', 'height': '400px'})),
+            dbc.Collapse(id='scatter-object-collapse', is_open=False,
+                         children=dcc.Graph(id='scatterplot-graph', style={'width': '100%', 'height': '500px'})),
             html.Div(id='graph-dropdowns', children=[
-                html.Label('Sample Filters (Add other filters (e.g. Age, Transfer Value) with the "Filter Data" Button)',
-                           className='stats-label'),
-                # Sample Filter dropdown
-                html.Div([
-                    dcc.Dropdown(
-                        id='sample-filter-dropdown',
-                        options=[{'label': key, 'value': key} for key in sample_charts.keys()],
-                        value='',
-                        clearable=True,
-                        placeholder='Select a Sample Filter'
-                    )], style={'width': '20%'}),
-                html.Label('Select X Axis:', className='stats-label'),
+                html.Label('Select X Axis:', className='stats-label', style={'margin-left': '7px'}),
                 # X Axis Dropdown
                 html.Div([
                     dcc.Dropdown(
@@ -127,8 +146,8 @@ layout = html.Div([
                         options=[],
                         value='',
                         clearable=False
-                    )], style={'width': '35%'}),
-                html.Label('Select Y Axis:', className='stats-label'),
+                    )], style={'width': '35%', 'margin-left': '5px'}),
+                html.Label('Select Y Axis:', className='stats-label', style={'margin-left': '7px'}),
                 # Y Axis Dropdown
                 html.Div([
                     dcc.Dropdown(
@@ -136,84 +155,86 @@ layout = html.Div([
                         options=[],
                         value='',
                         clearable=False
-                    )], style={'width': '35%'})
+                    )], style={'width': '35%', 'margin-left': '5px'})
             ])
-        ], style={'width': '100%', 'height': '100%', 'display': 'none'}), # Initially hidden
+        ], style={'width': '100%', 'height': '100%', 'display': 'none'}),  # Initially hidden
 
         html.Div(id='stats-table-container', style={'width': '100%', 'height': '100%', 'display': 'none'}, children=[
-                html.Label('Select Columns to Include in Table', className='stats-label'),
-                dcc.Dropdown(
-                    id='stats-table-dropdown',
-                    options=[],
-                    value='',
-                    multi=True,
-                    clearable=True,
-                    optionHeight=40,
-                    style={
-                        'width': '100%'
-                    }
-                ),
-                dbc.Collapse(id='table-object-collapse', is_open=False, children=dcc.Graph(id='stats-data-table', style={'width': '100%', 'height': '600px'}))
-            ]),
+            html.Label('Select Columns to Include in Table', className='stats-label'),
+            dcc.Dropdown(
+                id='stats-table-dropdown',
+                options=[],
+                value='',
+                multi=True,
+                clearable=True,
+                optionHeight=40,
+                style={
+                    'width': '100%'
+                }
+            ),
+            dbc.Collapse(id='table-object-collapse', is_open=False,
+                         children=dcc.Graph(id='stats-data-table', style={'width': '100%', 'height': '600px'}))
+        ]),
 
         html.Div(id='stats-radar-container', style={'width': '100%', 'height': '100%', 'display': 'none'}, children=[
-                html.Div(id='stats-radar-dropdowns', children=[
-                    html.Div(children=[
-                        html.Label('Select First Player for Radar Comparison Chart', className='stats-label'),
-                        dcc.Dropdown(
-                            id='player-dropdown',
-                            options=[],
-                            value='',
-                            clearable=False,
-                            optionHeight=40,
-                            style={
-                                'width': '100%'
-                            }
-                        )], style={'width': '50%', 'margin-right': '50px'}),
-                    html.Div(children=[
-                        html.Label('Select Second Player for Radar Comparison Chart', className='stats-label'),
-                        dcc.Dropdown(
-                            id='player-dropdown1',
-                            options=[],
-                            value='',
-                            clearable=False,
-                            optionHeight=40,
-                            style={
-                                'width': '100%'
-                            }
-                        )], style={'width': '50%'})
-                ], style={'width': '70%', 'display': 'flex', 'justify-content': 'space-between'}),
-
+            html.Div(id='stats-radar-dropdowns', children=[
                 html.Div(children=[
-                    dbc.Collapse(id='radar-object-collapse', is_open=False, children=html.Img(id='stats-radar-chart', style={'width': '80%', 'height': '500px'})),
-                    html.Label('Select Radar Chart Metrics', className='stats-label'),
+                    html.Label('Select First Player for Radar Comparison Chart', className='stats-label'),
                     dcc.Dropdown(
-                        id='radar-preset-values-dropdown',
-                        options=[{'label': key, 'value': key} for key in preset_radar_values.keys()],
-                        value=list(preset_radar_values)[0],
+                        id='player-dropdown',
+                        options=[],
+                        value='',
                         clearable=False,
                         optionHeight=40,
                         style={
-                            'width': '40%'
+                            'width': '100%'
                         }
-                    ),
-                    html.Div(id='custom-radar-div', children=[
-                        html.Label('Select Metrics to Include in Custom Radar Chart', className='stats-label'),
-                        dcc.Dropdown(
-                            id='custom-radar-values-dropdown',
-                            options=[],
-                            value=[],
-                            multi=True,
-                            clearable=True,
-                            optionHeight=40,
-                            style={'width': '100%'}
-                        )],
-                             style={
-                                'display': 'none',
-                             })
-                    ], style={'display': 'block', 'justify-content': 'space-around'})
-            ])
+                    )], style={'width': '50%', 'margin-right': '50px'}),
+                html.Div(children=[
+                    html.Label('Select Second Player for Radar Comparison Chart', className='stats-label'),
+                    dcc.Dropdown(
+                        id='player-dropdown1',
+                        options=[],
+                        value='',
+                        clearable=False,
+                        optionHeight=40,
+                        style={
+                            'width': '100%'
+                        }
+                    )], style={'width': '50%'})
+            ], style={'width': '70%', 'display': 'flex', 'justify-content': 'space-between'}),
+
+            html.Div(children=[
+                dbc.Collapse(id='radar-object-collapse', is_open=False,
+                             children=html.Img(id='stats-radar-chart', style={'width': '80%', 'height': '500px'})),
+                html.Label('Select Radar Chart Metrics', className='stats-label'),
+                dcc.Dropdown(
+                    id='radar-preset-values-dropdown',
+                    options=[{'label': key, 'value': key} for key in preset_radar_values_by_index.keys()],
+                    value=list(preset_radar_values_by_index)[0],
+                    clearable=False,
+                    optionHeight=40,
+                    style={
+                        'width': '40%'
+                    }
+                ),
+                html.Div(id='custom-radar-div', children=[
+                    html.Label('Select Metrics to Include in Custom Radar Chart', className='stats-label'),
+                    dcc.Dropdown(
+                        id='custom-radar-values-dropdown',
+                        options=[],
+                        value=[],
+                        multi=True,
+                        clearable=True,
+                        optionHeight=40,
+                        style={'width': '100%'}
+                    )],
+                         style={
+                             'display': 'none',
+                         })
+            ], style={'display': 'block', 'justify-content': 'space-around'})
         ])
+    ])
 ])
 
 
@@ -228,67 +249,97 @@ layout = html.Div([
 )
 def update_graph_dropdowns(uploaded_dataframes, selected_sample, current_x, current_y):
     stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
+    language_preference = uploaded_dataframes['language_preference']
+    sample_x_index = sample_filters_by_index[selected_sample]['X']
+    sample_y_index = sample_filters_by_index[selected_sample]['Y']
+    sample_x_value = stats_df.columns[sample_x_index]
+    sample_y_value = stats_df.columns[sample_y_index]
 
     if selected_sample != '':
-        return (html.Label('Sample Filters (Add other filters (e.g. Age, Transfer Value) with the "Filter Data" Button)', className='stats-label'),
-                # Sample Filter dropdown
-                html.Div([
-                    dcc.Dropdown(
-                        id='sample-filter-dropdown',
-                        options=[{'label': key, 'value': key} for key in sample_charts.keys()],
-                        value=selected_sample,
-                        clearable=True,
-                        placeholder='Select a Sample Filter'
-                    )], style={'width': '20%'}),
-                html.Label('Select X Axis:', className='stats-label'),
+        if language_preference == 'English':
+            return (
+                html.Label('Select X Axis:', className='stats-label', style={'margin-left': '7px'}),
                 # X Axis Dropdown
                 html.Div([
                     dcc.Dropdown(
                         id='x-axis-dropdown',
                         options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
-                        value=sample_charts[selected_sample]['X'],
+                        value=sample_x_value,
                         clearable=False
-                    )], style={'width': '35%'}),
-                html.Label('Select Y Axis:', className='stats-label'),
+                    )], style={'width': '35%', 'margin-left': '5px'}),
+                html.Label('Select Y Axis:', className='stats-label', style={'margin-left': '7px'}),
                 # Y Axis Dropdown
                 html.Div([
                     dcc.Dropdown(
                         id='y-axis-dropdown',
                         options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
-                        value=sample_charts[selected_sample]['Y'],
+                        value=sample_y_value,
                         clearable=False
-                    )], style={'width': '35%'}),
-                )
-
-    return (html.Label('Sample Filters (Add other filters (e.g. Age, Transfer Value) with the "Filter Data" Button)', className='stats-label'),
-            # Sample Filter Dropdown
-            html.Div([
-                dcc.Dropdown(
-                    id='sample-filter-dropdown',
-                    options=[{'label': key, 'value': key} for key in sample_charts.keys()],
-                    value='',
-                    clearable=True,
-                    placeholder='Select a Sample Filter'
-                )], style={'width': '20%'}),
-            html.Label('Select X Axis:', className='stats-label'),
+                    )], style={'width': '35%', 'margin-left': '5px'}),
+            )
+        return (
+            html.Label('Select X Axis:', className='stats-label', style={'margin-left': '7px'}),
             # X Axis Dropdown
             html.Div([
                 dcc.Dropdown(
                     id='x-axis-dropdown',
-                    options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
-                    value=current_x,
+                    options=[{'label': col, 'value': col} for col in stats_df.columns[:-14]],
+                    value=sample_x_value,
                     clearable=False
-                )], style={'width': '35%'}),
-            html.Label('Select Y Axis:', className='stats-label'),
+                )], style={'width': '35%', 'margin-left': '5px'}),
+            html.Label('Select Y Axis:', className='stats-label', style={'margin-left': '7px'}),
             # Y Axis Dropdown
             html.Div([
                 dcc.Dropdown(
                     id='y-axis-dropdown',
-                    options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
+                    options=[{'label': col, 'value': col} for col in stats_df.columns[:-14]],
+                    value=sample_y_value,
+                    clearable=False
+                )], style={'width': '35%', 'margin-left': '5px'}),
+        )
+
+    else:
+        if language_preference == 'English':
+            return (
+                html.Label('Select X Axis:', className='stats-label', style={'margin-left': '7px'}),
+                # X Axis Dropdown
+                html.Div([
+                    dcc.Dropdown(
+                        id='x-axis-dropdown',
+                        options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
+                        value=current_x,
+                        clearable=False
+                    )], style={'width': '35%', 'margin-left': '5px'}),
+                html.Label('Select Y Axis:', className='stats-label', style={'margin-left': '7px'}),
+                # Y Axis Dropdown
+                html.Div([
+                    dcc.Dropdown(
+                        id='y-axis-dropdown',
+                        options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
+                        value=current_y,
+                        clearable=False
+                    )], style={'width': '35%', 'margin-left': '5px'}),
+            )
+        return (
+            html.Label('Select X Axis:', className='stats-label', style={'margin-left': '7px'}),
+            # X Axis Dropdown
+            html.Div([
+                dcc.Dropdown(
+                    id='x-axis-dropdown',
+                    options=[{'label': col, 'value': col} for col in stats_df.columns[:-14]],
+                    value=current_x,
+                    clearable=False
+                )], style={'width': '35%', 'margin-left': '5px'}),
+            html.Label('Select Y Axis:', className='stats-label', style={'margin-left': '7px'}),
+            # Y Axis Dropdown
+            html.Div([
+                dcc.Dropdown(
+                    id='y-axis-dropdown',
+                    options=[{'label': col, 'value': col} for col in stats_df.columns[:-14]],
                     value=current_y,
                     clearable=False
-                )], style={'width': '35%'}),
-            )
+                )], style={'width': '35%', 'margin-left': '5px'}),
+        )
 
 
 # Pulling datasets from stored_uploads for table dropdown
@@ -296,14 +347,30 @@ def update_graph_dropdowns(uploaded_dataframes, selected_sample, current_x, curr
     Output('stats-table-container', 'children'),
     Input('stored-uploads', 'data')
 )
-def update_table_dropdowns(uploaded_dataframes):
-    stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
+def update_table_dropdowns(uploaded_data):
+    stats_df = pd.read_json(io.StringIO(uploaded_data['stats']), orient='split')
+    language_preference = uploaded_data['language_preference']
 
+    if language_preference == 'English':
+        return (html.Label('Select Columns to Include in Table', className='stats-label'),
+                dcc.Dropdown(
+                    id='stats-table-dropdown',
+                    options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
+                    value=['Name', 'Age', 'Position', 'Club'],
+                    multi=True,
+                    clearable=True,
+                    optionHeight=40,
+                    style={
+                        'width': '100%'
+                    }
+                ),
+                dcc.Graph(id='stats-data-table', style={'width': '100%', 'height': '600px'})
+                )
     return (html.Label('Select Columns to Include in Table', className='stats-label'),
             dcc.Dropdown(
                 id='stats-table-dropdown',
-                options=[{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]],
-                value=['Name', 'Age', 'Position', 'Club'],
+                options=[{'label': col, 'value': col} for col in stats_df.columns[:-14]],
+                value=[stats_df.columns[0], stats_df.columns[1], stats_df.columns[2], stats_df.columns[3]],
                 multi=True,
                 clearable=True,
                 optionHeight=40,
@@ -326,7 +393,7 @@ def update_radar_dropdowns(uploaded_dataframes):
         dcc.Dropdown(
             id='player-dropdown',
             options=[{'label': f'{name} - {position} - {club}', 'value': name}
-                     for name, position, club in zip(stats_df.Name, stats_df.Position, stats_df.Club)],
+                     for name, position, club in zip(stats_df.iloc[:, 0], stats_df.iloc[:, 2], stats_df.iloc[:, 3])],
             value='',
             clearable=False,
             optionHeight=40,
@@ -334,28 +401,32 @@ def update_radar_dropdowns(uploaded_dataframes):
                 'width': '100%'
             }
         )], style={'width': '50%', 'margin-right': '50px'}),
-        html.Div([
-            html.Label('Select Second Player for Radar Comparison Chart', className='stats-label'),
-            dcc.Dropdown(
-                id='player-dropdown1',
-                options=[{'label': f'{name} - {position} - {club}', 'value': name}
-                         for name, position, club in zip(stats_df.Name, stats_df.Position, stats_df.Club)],
-                value='',
-                clearable=False,
-                optionHeight=40,
-                style={
-                    'width': '100%'
-                }
-            )], style={'width': '50%'})
-            )
+            html.Div([
+                html.Label('Select Second Player for Radar Comparison Chart', className='stats-label'),
+                dcc.Dropdown(
+                    id='player-dropdown1',
+                    options=[{'label': f'{name} - {position} - {club}', 'value': name}
+                             for name, position, club in zip(stats_df.iloc[:, 0], stats_df.iloc[:, 2], stats_df.iloc[:, 3])],
+                    value='',
+                    clearable=False,
+                    optionHeight=40,
+                    style={
+                        'width': '100%'
+                    }
+                )], style={'width': '50%'})
+    )
+
 
 # Pulling datasets from stored_uploads for custom radar dropdown
 @callback(Output('custom-radar-values-dropdown', 'options'),
           Input('stored-uploads', 'data'))
 def update_custom_radar_dropdown(uploaded_dataframes):
     stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
+    language_preference = uploaded_dataframes['language_preference']
 
-    return [{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]]
+    if language_preference == 'English':
+        return [{'label': stats_label_dict[col], 'value': col} for col in stats_df.columns[:-14]]
+    return [{'label': col, 'value': col} for col in stats_df.columns[:-14]]
 
 
 # Combined callback for modal filter UI
@@ -371,19 +442,34 @@ def update_custom_radar_dropdown(uploaded_dataframes):
 )
 def update_filter_ui(uploaded_dataframes, add_clicks, clear_clicks, reset_clicks, existing_children):
     stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
+    language_preference = uploaded_dataframes['language_preference']
 
     df = stats_df
     triggered_id = ctx.triggered[0]['prop_id'].split('.')[0] if ctx.triggered else None
-    
+
     # Initial load
     if triggered_id is None or not existing_children:
         # Create initial filter UI with first dropdown
+        if language_preference == 'English':
+            return [
+                html.Div([
+                    html.Label('Category'),
+                    dcc.Dropdown(
+                        id={'type': 'filter-column', 'index': 0},
+                        options=[{'label': stats_label_dict[col], 'value': col} for col in df.columns[:-14]],
+                        value='',
+                        placeholder='Select Category',
+                        clearable=True
+                    ),
+                    html.Div(id={'type': 'filter-input-container', 'index': 0}, children=[])
+                ], style={'marginBottom': '15px', 'padding': '10px', 'border': '1px solid #ddd', 'borderRadius': '5px'})
+            ]
         return [
             html.Div([
                 html.Label('Category'),
                 dcc.Dropdown(
                     id={'type': 'filter-column', 'index': 0},
-                    options=[{'label': stats_label_dict[col], 'value': col} for col in df.columns[:-14]],
+                    options=[{'label': col, 'value': col} for col in df.columns[:-14]],
                     value='',
                     placeholder='Select Category',
                     clearable=True
@@ -395,17 +481,30 @@ def update_filter_ui(uploaded_dataframes, add_clicks, clear_clicks, reset_clicks
     # Add condition button clicked
     elif triggered_id == 'add-condition' and add_clicks > 0:
         # Create a new filter condition UI
-        new_condition = html.Div([
-            html.Label('Category'),
-            dcc.Dropdown(
-                id={'type': 'filter-column', 'index': add_clicks},
-                options=[{'label': stats_label_dict[col], 'value': col} for col in df.columns[:-14]],
-                value='',
-                placeholder='Select Category',
-                clearable=True
-            ),
-            html.Div(id={'type': 'filter-input-container', 'index': add_clicks}, children=[])
-        ], style={'marginBottom': '15px', 'padding': '10px', 'border': '1px solid #ddd', 'borderRadius': '5px'})
+        if language_preference == 'English':
+            new_condition = html.Div([
+                html.Label('Category'),
+                dcc.Dropdown(
+                    id={'type': 'filter-column', 'index': add_clicks},
+                    options=[{'label': stats_label_dict[col], 'value': col} for col in df.columns[:-14]],
+                    value='',
+                    placeholder='Select Category',
+                    clearable=True
+                ),
+                html.Div(id={'type': 'filter-input-container', 'index': add_clicks}, children=[])
+            ], style={'marginBottom': '15px', 'padding': '10px', 'border': '1px solid #ddd', 'borderRadius': '5px'})
+        else:
+            new_condition = html.Div([
+                html.Label('Category'),
+                dcc.Dropdown(
+                    id={'type': 'filter-column', 'index': add_clicks},
+                    options=[{'label': col, 'value': col} for col in df.columns[:-14]],
+                    value='',
+                    placeholder='Select Category',
+                    clearable=True
+                ),
+                html.Div(id={'type': 'filter-input-container', 'index': add_clicks}, children=[])
+            ], style={'marginBottom': '15px', 'padding': '10px', 'border': '1px solid #ddd', 'borderRadius': '5px'})
 
         # Add to existing children
         updated_children = existing_children + [new_condition]
@@ -414,12 +513,26 @@ def update_filter_ui(uploaded_dataframes, add_clicks, clear_clicks, reset_clicks
     # Clear Filter button clicked
     elif triggered_id == 'clear-filter-button' and clear_clicks > 0:
         # Reset condition filter dropdowns
+        if language_preference == 'English':
+            return [
+                html.Div([
+                    html.Label('Category'),
+                    dcc.Dropdown(
+                        id={'type': 'filter-column', 'index': 0},
+                        options=[{'label': stats_label_dict[col], 'value': col} for col in df.columns[:-14]],
+                        value='',
+                        placeholder='Select Category',
+                        clearable=True
+                    ),
+                    html.Div(id={'type': 'filter-input-container', 'index': 0}, children=[])
+                ], style={'marginBottom': '15px', 'padding': '10px', 'border': '1px solid #ddd', 'borderRadius': '5px'})
+            ]
         return [
             html.Div([
                 html.Label('Category'),
                 dcc.Dropdown(
                     id={'type': 'filter-column', 'index': 0},
-                    options=[{'label': stats_label_dict[col], 'value': col} for col in df.columns[:-14]],
+                    options=[{'label': col, 'value': col} for col in df.columns[:-14]],
                     value='',
                     placeholder='Select Category',
                     clearable=True
@@ -431,12 +544,26 @@ def update_filter_ui(uploaded_dataframes, add_clicks, clear_clicks, reset_clicks
     # Close modal button clicked
     elif triggered_id == 'reset-dropdowns-button' and reset_clicks > 0:
         # Reset condition filter dropdowns
+        if language_preference == 'English':
+            return [
+                html.Div([
+                    html.Label('Category'),
+                    dcc.Dropdown(
+                        id={'type': 'filter-column', 'index': 0},
+                        options=[{'label': stats_label_dict[col], 'value': col} for col in df.columns[:-14]],
+                        value='',
+                        placeholder='Select Category',
+                        clearable=True
+                    ),
+                    html.Div(id={'type': 'filter-input-container', 'index': 0}, children=[])
+                ], style={'marginBottom': '15px', 'padding': '10px', 'border': '1px solid #ddd', 'borderRadius': '5px'})
+            ]
         return [
             html.Div([
                 html.Label('Category'),
                 dcc.Dropdown(
                     id={'type': 'filter-column', 'index': 0},
-                    options=[{'label': stats_label_dict[col], 'value': col} for col in df.columns[:-14]],
+                    options=[{'label': col, 'value': col} for col in df.columns[:-14]],
                     value='',
                     placeholder='Select Category',
                     clearable=True
@@ -462,12 +589,17 @@ def update_filter_input_container(uploaded_dataframes, selected_column):
         return []
 
     # Get the dataframe
-    stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
-    df = stats_df
+    df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
+    language_preference = uploaded_dataframes['language_preference']
+
+    categorical_column_numbers = [0, 4, 3, 7]  # 'Name', 'Division', 'Club', 'Transfer Status'
+    categorical_columns = df.columns[categorical_column_numbers]
+    numeric_column_numbers = [1, 5, 6, 117, 118, 122] # 'Age', 'Transfer Value', 'Wage', 'Apps', 'Starts', 'Int Apps'
+    numeric_columns = df.columns[numeric_column_numbers]
 
     # Categorical columns (simple equals/not equals)
-    if selected_column in ['Name', 'Division', 'Club', 'Transfer Status']:
-        unique_values = df[selected_column].unique().tolist()
+    if selected_column in categorical_columns:
+        unique_values = df.iloc[:, selected_column].unique().tolist()
         return [
             html.Div([
                 html.Label('Condition'),
@@ -493,8 +625,8 @@ def update_filter_input_container(uploaded_dataframes, selected_column):
         ]
 
     # Position column (special handling)
-    elif selected_column == 'Position':
-        position_values = position_filters.keys()
+    elif selected_column == df.columns[2]:
+        position_values = international_position_filters[language_preference]
         return [
             html.Div([
                 html.Label('Condition'),
@@ -509,18 +641,45 @@ def update_filter_input_container(uploaded_dataframes, selected_column):
                 ),
             ], style={'marginTop': '10px'}),
             html.Div([
-                html.Label('Select Position'),
+                html.Label(f'Select {df.columns[2]}'),
                 dcc.Dropdown(
                     id={'type': 'filter-value', 'index': 0},
-                    options=[{'label': key, 'value': key} for key in position_values],
-                    value=list(position_values)[0] if position_values else '',
+                    options=[{'label': key, 'value': key} for key in position_values.keys()],
+                    value=list(position_values.keys())[0] if position_values else '',
                     clearable=False
                 )
             ], style={'marginTop': '10px'})
         ]
 
     # Numeric columns (can use >, <, =, !=)
-    elif selected_column in ['Age', 'Apps', 'Wage', 'Transfer Value']:
+    elif selected_column in numeric_columns:
+        if language_preference == 'English':
+            return [
+                html.Div([
+                    html.Label('Condition'),
+                    dcc.Dropdown(
+                        id={'type': 'filter-condition', 'index': 0},
+                        options=[
+                            {'label': 'is', 'value': '='},
+                            {'label': 'is greater than', 'value': '>'},
+                            {'label': 'is less than', 'value': '<'},
+                            {'label': 'is not', 'value': '!='}
+                        ],
+                        value='=',
+                        clearable=False
+                    ),
+                ], style={'marginTop': '10px'}),
+                html.Div([
+                    html.Label(f'Enter {stats_label_dict[selected_column]}: ', style={'margin-right': '5px'}),
+                    dcc.Input(
+                        id={'type': 'filter-value', 'index': 0},
+                        type='number',
+                        placeholder=f'Enter {stats_label_dict[selected_column]}',
+                        debounce=True
+                    )
+                ], style={'marginTop': '10px'})
+            ]
+
         return [
             html.Div([
                 html.Label('Condition'),
@@ -537,11 +696,11 @@ def update_filter_input_container(uploaded_dataframes, selected_column):
                 ),
             ], style={'marginTop': '10px'}),
             html.Div([
-                html.Label(f'Enter {stats_label_dict[selected_column]}: ', style={'margin-right': '5px'}),
+                html.Label(f'Enter {selected_column}: ', style={'margin-right': '5px'}),
                 dcc.Input(
                     id={'type': 'filter-value', 'index': 0},
                     type='number',
-                    placeholder=f'Enter {stats_label_dict[selected_column]}',
+                    placeholder=f'Enter {selected_column}',
                     debounce=True
                 )
             ], style={'marginTop': '10px'})
@@ -549,6 +708,34 @@ def update_filter_input_container(uploaded_dataframes, selected_column):
 
     # Stat columns (use percentile filtering)
     else:
+        if language_preference == 'English':
+            return [
+                html.Div([
+                    html.Label('Condition'),
+                    dcc.Dropdown(
+                        id={'type': 'filter-condition', 'index': 0},
+                        options=[
+                            {'label': 'is', 'value': '='},
+                            {'label': 'is not', 'value': '!='}
+                        ],
+                        value='=',
+                        clearable=False
+                    ),
+                ], style={'marginTop': '10px'}),
+                html.Div([
+                    html.Label(f'Choose Percentile for {stats_label_dict[selected_column]}'),
+                    dcc.Dropdown(
+                        id={'type': 'filter-value', 'index': 0},
+                        options=[
+                            {'label': 'Top 10%', 'value': 'top10'},
+                            {'label': 'Top 25%', 'value': 'top25'},
+                            {'label': 'Top 50%', 'value': 'top50'},
+                        ],
+                        value='top25',
+                        clearable=False
+                    )
+                ], style={'marginTop': '10px'})
+            ]
         return [
             html.Div([
                 html.Label('Condition'),
@@ -563,7 +750,7 @@ def update_filter_input_container(uploaded_dataframes, selected_column):
                 ),
             ], style={'marginTop': '10px'}),
             html.Div([
-                html.Label(f'Choose Percentile for {stats_label_dict[selected_column]}'),
+                html.Label(f'Choose Percentile for {selected_column}'),
                 dcc.Dropdown(
                     id={'type': 'filter-value', 'index': 0},
                     options=[
@@ -609,6 +796,8 @@ def update_filtered_data(uploaded_dataframes, n_clicks_apply, n_clicks_clear, st
             return value
 
     # Initialize the dataframe
+    language_preference = uploaded_dataframes['language_preference']
+
     if stored_data:
         df = pd.read_json(io.StringIO(stored_data), orient='split')
     else:
@@ -627,6 +816,12 @@ def update_filtered_data(uploaded_dataframes, n_clicks_apply, n_clicks_clear, st
     else:
         trigger_id = ctx.triggered[0]['prop_id'].split('.')[0]
         print(f"Triggered by: {trigger_id}")
+
+    # Pull column names with column index numbers
+    categorical_column_numbers = [0, 4, 3, 7]  # 'Name', 'Division', 'Club', 'Transfer Status'
+    categorical_columns = df.columns[categorical_column_numbers]
+    numeric_column_numbers = [1, 5, 6, 117, 118, 122] # 'Age', 'Transfer Value', 'Wage', 'Apps', 'Starts', 'Int Apps'
+    numeric_columns = df.columns[numeric_column_numbers]
 
     # Clear Filters Button
     if trigger_id == 'clear-filter-button' and n_clicks_clear > 0:
@@ -651,21 +846,21 @@ def update_filtered_data(uploaded_dataframes, n_clicks_apply, n_clicks_clear, st
             value = converted_values[i]
 
             # Handle Categorical columns
-            if col in ['Name', 'Division', 'Club', 'Transfer Status']:
+            if col in categorical_columns:
                 if condition == '=':
                     filter_conditions_list.append(df[col] == value)
                 elif condition == '!=':
                     filter_conditions_list.append(df[col] != value)
 
             # Handle Positions
-            elif col == 'Position':
+            elif col == df.columns[2]:
                 if condition == '=':
                     filter_conditions_list.append(df[value] == True)
                 elif condition == '!=':
                     filter_conditions_list.append(df[value] == False)
 
             # Handle numeric columns
-            elif col in ['Age', 'Wage', 'Apps', 'Starts', 'Transfer Value']:
+            elif col in numeric_columns:
                 try:
                     value = float(value)
                     if condition == '=':
@@ -738,33 +933,28 @@ def update_filtered_data(uploaded_dataframes, n_clicks_apply, n_clicks_clear, st
     # Handle Sample Filter Dropdown Changes
     elif trigger_id in 'sample-filter-dropdown' and sample_data:
         print('Filtering data based on Sample Filter Selection')
-        stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
-        df = stats_df
+        df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
         print(f'Initialized dataframe with shape: {df.shape}')
         try:
-            print(f'sample chart items: {sample_charts[sample_data].items()}')
-            for category, criteria in sample_charts[sample_data].items():
-                print(f'criteria: {criteria}')
+            for category, criteria in sample_filters_by_index[sample_data].items():
                 # Handle position filters
                 if 'Position' in category:
                     if isinstance(criteria, list):
                         def filter_dataframe_true_values(df, columns):
-                            mask = df[columns].any(axis=1)
+                            mask = df.iloc[:, columns].any(axis=1)
                             return df[mask]
 
                         filtered_df = filter_dataframe_true_values(df, criteria)
                     else:
-                        filtered_df = df[df[criteria] == True]
+                        filtered_df = df[df.iloc[:, criteria] == True]
                 # Handle top10 quantile filters
                 if 'top10' in category:
-                    filtered_df.reset_index(drop=True, inplace=True)
-                    top10_filter = pd.Series([False] * len(filtered_df))  # Initialize with False
+                    top10_filter = pd.Series([False] * len(filtered_df), index=filtered_df.index)  # Initialize with False
                     for col in criteria:
-                        percentile_90 = filtered_df[col].quantile(0.90)
-                        top10_filter = top10_filter | (filtered_df[col] >= percentile_90)  # OR operation
+                        percentile_90 = filtered_df.iloc[:, col].quantile(0.90)
+                        top10_filter = top10_filter | (filtered_df.iloc[:, col] >= percentile_90)  # OR operation
                     sample_df = filtered_df[top10_filter]
             filtered_count = len(sample_df)
-            print(f'filtered count: {filtered_count}')
             feedback_message = f"{filtered_count} record(s) match the criteria."
             return feedback_message, sample_df.to_json(date_format='iso', orient='split')
         except Exception as e:
@@ -804,8 +994,6 @@ def toggle_containers(table_clicks, graph_clicks, radar_clicks):
                 {'width': '100%', 'height': '100%', 'display': 'none'})
 
 
-
-
 # Visualization Callback
 @callback(
     [
@@ -832,12 +1020,14 @@ def toggle_containers(table_clicks, graph_clicks, radar_clicks):
     ],
     prevent_initial_call=True
 )
-def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_clicks, selected_x, selected_y, selected_col,
-                         selected_player, selected_player1, selected_radar_preset, selected_metrics, selected_sample, stored_data):
-
+def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_clicks, selected_x, selected_y,
+                         selected_col,
+                         selected_player, selected_player1, selected_radar_preset, selected_metrics, selected_sample,
+                         stored_data):
     # Get dataframes
     stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
     squad_attributes_df = pd.read_json(io.StringIO(uploaded_dataframes['squad_attributes']), orient='split')
+    language_preference = uploaded_dataframes['language_preference']
 
     # Default empty figure
     empty_fig = px.scatter(x=[0], y=[0])
@@ -848,7 +1038,7 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
     empty_table = {}
     empty_radar = ''
     default_player_options = [{'label': f'{name} - {position}', 'value': name}
-                              for name, position in zip(stats_df.Name, stats_df.Position)]
+                              for name, position in zip(stats_df.iloc[:, 0], stats_df.iloc[:, 2])]
     empty_sample_dropdown = ''
 
     # Check for valid data
@@ -876,7 +1066,7 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
         print(f"Triggered by: {trigger_id}")
 
     stored_player_options = [{'label': f'{name} - {position}', 'value': name}
-                             for name, position in zip(stored_df.Name, stored_df.Position)]
+                             for name, position in zip(stats_df.iloc[:, 0], stats_df.iloc[:, 2])]
 
     # Handle graph button
     if 'graph-button' in trigger_id and graph_clicks > 0:
@@ -884,25 +1074,35 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
             print(f"Creating scatter plot with {selected_x} vs {selected_y}")
             try:
                 def set_color(df):
-                    values = df['Club'].to_list()
+                    values = df.iloc[:, 3].to_list()
                     color_list = []
                     for i in values:
-                        if i == squad_attributes_df.loc[0]['Club']:
+                        if i == squad_attributes_df.iloc[0, 3]:
                             color_list.append('red')
                         else:
                             color_list.append('blue')
                     return color_list
-                fig = px.scatter(stored_df, x=selected_x, y=selected_y,
-                                 title=f"{stats_label_dict[selected_x]} vs {stats_label_dict[selected_y]}",
-                                 hover_data=['Name', 'Club', 'Age'])
-                fig.update_traces(marker=dict(color=set_color(stored_df)))
+
+                player_name = stored_df.columns[0]
+                player_club = stored_df.columns[3]
+                player_age = stored_df.columns[1]
+                if language_preference == 'English':
+                    fig = px.scatter(stored_df, x=selected_x, y=selected_y,
+                                     title=f"{stats_label_dict[selected_x]} vs {stats_label_dict[selected_y]}",
+                                     hover_data=[player_name, player_club, player_age])
+                    fig.update_traces(marker=dict(color=set_color(stored_df)))
+                else:
+                    fig = px.scatter(stored_df, x=selected_x, y=selected_y,
+                                     title=f"{selected_x} vs {selected_y}",
+                                     hover_data=[player_name, player_club, player_age])
+                    fig.update_traces(marker=dict(color=set_color(stored_df)))
                 # Check and reverse x-axis
-                if selected_x in negative_stat_categories:
+                if stored_df.get_loc(selected_x) in negative_stat_categories:
                     fig.update_layout(xaxis=dict(autorange="reversed"))
                 else:
                     fig.update_layout(xaxis=dict(autorange=True))
                 # Check and reverse y-axis
-                if selected_y in negative_stat_categories:
+                if stored_df.get_loc(selected_y) in negative_stat_categories:
                     fig.update_layout(yaxis=dict(autorange="reversed"))
                 else:
                     fig.update_layout(yaxis=dict(autorange=True))
@@ -934,7 +1134,7 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
                                fill_color='white',
                                align='left')
                 )],
-                layout=layout)
+                    layout=layout)
                 fig.update_layout(title='Data Table View',
                                   updatemenus=[
                                       {
@@ -946,7 +1146,8 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
                                                   'args': [
                                                       {
                                                           'cells': {
-                                                              'values': new_df.sort_values(btn_label, ascending=False).transpose().values.tolist(),
+                                                              'values': new_df.sort_values(btn_label,
+                                                                                           ascending=False).transpose().values.tolist(),
                                                               # update the cell values with the sorted data
                                                               # format table as before
                                                               'fill': dict(color=px.colors.qualitative.Pastel1[8]),
@@ -1016,26 +1217,40 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
         try:
             def set_color(df):
                 # Change color of squad players on scatter plot
-                values = df['Club'].to_list()
+                values = df.iloc[:, 3].to_list()
                 color_list = []
                 for i in values:
-                    if i == squad_attributes_df.loc[0]['Club']:
+                    if i == squad_attributes_df.iloc[0, 3]:
                         color_list.append('red')
                     else:
                         color_list.append('blue')
                 return color_list
-            fig = px.scatter(stored_df, x=selected_x, y=selected_y,
-                             title=f"{stats_label_dict[selected_x]} vs {stats_label_dict[selected_y]}",
-                             hover_data=['Name', 'Club', 'Age'] if all(
-                                 col in stored_df.columns for col in ['Name', 'Club', 'Age']) else None)
-            fig.update_traces(marker=dict(color=set_color(stored_df)))
+
+            player_name = stored_df.columns[0]
+            player_club = stored_df.columns[3]
+            player_age = stored_df.columns[1]
+            if language_preference == 'English':
+                fig = px.scatter(stored_df, x=selected_x, y=selected_y,
+                                 title=f"{stats_label_dict[selected_x]} vs {stats_label_dict[selected_y]}",
+                                 hover_data=[player_name, player_club, player_age] if all(
+                                     col in stored_df.columns for col in [player_name, player_club, player_age]) else None)
+                fig.update_traces(marker=dict(color=set_color(stored_df)))
+            else:
+                fig = px.scatter(stored_df, x=selected_x, y=selected_y,
+                                 title=f"{selected_x} vs {selected_y}",
+                                 hover_data=[player_name, player_club, player_age] if all(
+                                     col in stored_df.columns for col in
+                                     [player_name, player_club, player_age]) else None)
+                fig.update_traces(marker=dict(color=set_color(stored_df)))
+
+
             # Check and reverse x-axis
-            if selected_x in negative_stat_categories:
+            if stored_df.get_loc(selected_x) in negative_stat_categories:
                 fig.update_layout(xaxis=dict(autorange="reversed"))
             else:
                 fig.update_layout(xaxis=dict(autorange=True))
             # Check and reverse y-axis
-            if selected_y in negative_stat_categories:
+            if stored_df.get_loc(selected_y) in negative_stat_categories:
                 fig.update_layout(yaxis=dict(autorange="reversed"))
             else:
                 fig.update_layout(yaxis=dict(autorange=True))
@@ -1049,27 +1264,34 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
         try:
             def set_color(df):
                 # Change color of squad players on scatter plot
-                values = df['Club'].to_list()
+                values = df.iloc[:, 3].to_list()
                 color_list = []
                 for i in values:
-                    if i == squad_attributes_df.loc[0]['Club']:
+                    if i == squad_attributes_df.iloc[0, 3]:
                         color_list.append('red')
                     else:
                         color_list.append('blue')
                 return color_list
 
-            fig = px.scatter(stored_df, x=sample_charts[selected_sample]['X'], y=sample_charts[selected_sample]['Y'],
+            player_name = stored_df.columns[0]
+            player_club = stored_df.columns[3]
+            player_age = stored_df.columns[1]
+            sample_x_index = sample_filters_by_index[selected_sample]['X']
+            sample_y_index = sample_filters_by_index[selected_sample]['Y']
+            sample_x_value = stats_df.columns[sample_x_index]
+            sample_y_value = stats_df.columns[sample_y_index]
+            fig = px.scatter(stored_df, x=sample_x_value, y=sample_y_value,
                              title=f'{selected_sample}',
-                             hover_data=['Name', 'Club', 'Age'] if all(
-                                 col in stored_df.columns for col in ['Name', 'Club', 'Age']) else None)
+                             hover_data=[player_name, player_club, player_age] if all(
+                                 col in stored_df.columns for col in [player_name, player_club, player_age]) else None)
             fig.update_traces(marker=dict(color=set_color(stored_df)))
             # Check and reverse x-axis
-            if sample_charts[selected_sample]['X'] in negative_stat_categories:
+            if sample_x_index in negative_stat_categories:
                 fig.update_layout(xaxis=dict(autorange='reversed'))
             else:
                 fig.update_layout(xaxis=dict(autorange=True))
             # Check and reverse y-axis
-            if sample_charts[selected_sample]['Y'] in negative_stat_categories:
+            if sample_y_index in negative_stat_categories:
                 fig.update_layout(yaxis=dict(autorange='reversed'))
             else:
                 fig.update_layout(yaxis=dict(autorange=True))
@@ -1092,7 +1314,7 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
                            fill_color='white',
                            align='left')
             )],
-            layout = layout)
+                layout=layout)
             fig.update_layout(title='Data Table View',
                               updatemenus=[
                                   {
@@ -1120,10 +1342,10 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
                                   }
                               ]
                               )
-            return empty_fig, fig, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
+            return empty_fig, fig, empty_radar, stored_player_options, stored_player_options,  # empty_sample_dropdown
         except Exception as e:
             print(f"Error updating table for dropdown change: {str(e)}")
-            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
+            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options,  # empty_sample_dropdown
 
     # Handle Radar Button
     elif 'radar-button' in trigger_id and radar_clicks > 0:
@@ -1133,13 +1355,14 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
                 # Reset stored_df index
                 stored_df.reset_index(inplace=True, drop=True)
 
-                ## player index
-                player_index = stored_df.index[stored_df['Name'] == selected_player][0]
-                player1_index = stored_df.index[stored_df['Name'] == selected_player1][0]
+                ## player index. Pulling the df index number for the selected player names
+                player_index = stored_df.index[stored_df.iloc[:, 0] == selected_player][0]
+                player1_index = stored_df.index[stored_df.iloc[:, 0] == selected_player1][0]
 
                 ## parameter names
                 if selected_metrics == []:
-                    params = preset_radar_values[selected_radar_preset]
+                    param_columns = preset_radar_values_by_index[selected_radar_preset]
+                    params = stored_df.columns[param_columns]
                 else:
                     params = selected_metrics
 
@@ -1158,20 +1381,21 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
 
                 ## title
                 title = dict(
-                    title_name=stored_df.iloc[player_index]['Name'],
+                    title_name=stored_df.iloc[player_index, 0],
                     title_color='#FF69B4',
-                    subtitle_name=stored_df.iloc[player_index]['Club'],
+                    subtitle_name=stored_df.iloc[player_index, 3],
                     subtitle_color='#FF69B4',
-                    title_name_2=stored_df.iloc[player1_index]['Name'],
+                    title_name_2=stored_df.iloc[player1_index, 0],
                     title_color_2='#344D94',
-                    subtitle_name_2=stored_df.iloc[player1_index]['Club'],
+                    subtitle_name_2=stored_df.iloc[player1_index, 3],
                     subtitle_color_2='#7FFF00',
                     title_fontsize=25,
                     subtitle_fontsize=20,
                 )
 
                 ## instantiate object
-                radar = Radar(fontfamily='Arial', background_color='#483d8b', patch_color="#28252C", label_color="#F0FFF0", range_color="#F0FFF0", label_fontsize=16, range_fontsize=9)
+                radar = Radar(fontfamily='Arial', background_color='#483d8b', patch_color="#28252C",
+                              label_color="#F0FFF0", range_color="#F0FFF0", label_fontsize=16, range_fontsize=9)
 
                 ## plot radar -- compare
                 fig, ax = radar.plot_radar(ranges=ranges, params=params, values=values,
@@ -1185,15 +1409,15 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
                 fig_data = base64.b64encode(buf.getbuffer()).decode("ascii")
                 fig_bar_matplotlib = f'data:image/png;base64,{fig_data}'
 
-                return empty_fig, empty_table, fig_bar_matplotlib, stored_player_options, stored_player_options, #empty_sample_dropdown
+                return empty_fig, empty_table, fig_bar_matplotlib, stored_player_options, stored_player_options,  # empty_sample_dropdown
 
 
             except Exception as e:
                 print(f"Error creating radar plot: {str(e)}")
-                return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
+                return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options,  # empty_sample_dropdown
         else:
             print("Invalid player selection")
-            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
+            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options,  # empty_sample_dropdown
 
     # Handle radar player dropdown changes
     elif trigger_id in ['player-dropdown', 'player-dropdown1'] and selected_player and selected_player1:
@@ -1202,13 +1426,14 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
             # Reset stored_df index
             stored_df.reset_index(inplace=True, drop=True)
 
-            ## player index
-            player_index = stored_df.index[stored_df['Name'] == selected_player][0]
-            player1_index = stored_df.index[stored_df['Name'] == selected_player1][0]
+            ## player index. Pulling the df index number for the selected player names
+            player_index = stored_df.index[stored_df.iloc[:, 0] == selected_player][0]
+            player1_index = stored_df.index[stored_df.iloc[:, 0] == selected_player1][0]
 
             ## parameter names
             if selected_metrics == []:
-                params = preset_radar_values[selected_radar_preset]
+                param_columns = preset_radar_values_by_index[selected_radar_preset]
+                params = stored_df.columns[param_columns]
             else:
                 params = selected_metrics
 
@@ -1227,20 +1452,21 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
 
             ## title
             title = dict(
-                title_name=stored_df.iloc[player_index]['Name'],
+                title_name=stored_df.iloc[player_index, 0],
                 title_color='#FF69B4',
-                subtitle_name=stored_df.iloc[player_index]['Club'],
+                subtitle_name=stored_df.iloc[player_index, 3],
                 subtitle_color='#FF69B4',
-                title_name_2=stored_df.iloc[player1_index]['Name'],
+                title_name_2=stored_df.iloc[player1_index, 0],
                 title_color_2='#7FFF00',
-                subtitle_name_2=stored_df.iloc[player1_index]['Club'],
+                subtitle_name_2=stored_df.iloc[player1_index, 3],
                 subtitle_color_2='#7FFF00',
                 title_fontsize=25,
                 subtitle_fontsize=20,
             )
 
             ## instantiate object
-            radar = Radar(fontfamily='Arial', background_color='#483d8b', patch_color="#28252C", label_color="#F0FFF0", range_color="#F0FFF0", label_fontsize=16, range_fontsize=9)
+            radar = Radar(fontfamily='Arial', background_color='#483d8b', patch_color="#28252C", label_color="#F0FFF0",
+                          range_color="#F0FFF0", label_fontsize=16, range_fontsize=9)
 
             ## plot radar -- compare
             fig, ax = radar.plot_radar(ranges=ranges, params=params, values=values,
@@ -1254,12 +1480,12 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
             fig_data = base64.b64encode(buf.getbuffer()).decode("ascii")
             fig_bar_matplotlib = f'data:image/png;base64,{fig_data}'
 
-            return empty_fig, empty_table, fig_bar_matplotlib, stored_player_options, stored_player_options, #empty_sample_dropdown
+            return empty_fig, empty_table, fig_bar_matplotlib, stored_player_options, stored_player_options,  # empty_sample_dropdown
 
 
         except Exception as e:
             print(f"Error updating plot for axis change: {str(e)}")
-            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
+            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options,  # empty_sample_dropdown
 
     # Handle Radar Chart Preset Metrics Dropdown Changes
     elif trigger_id in 'radar-preset-values-dropdown' and selected_radar_preset:
@@ -1268,13 +1494,14 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
             # Reset stored_df index
             stored_df.reset_index(inplace=True, drop=True)
 
-            ## player index
-            player_index = stored_df.index[stored_df['Name'] == selected_player][0]
-            player1_index = stored_df.index[stored_df['Name'] == selected_player1][0]
+            ## player index. Pulling the df index number for the selected player names
+            player_index = stored_df.index[stored_df.iloc[:, 0] == selected_player][0]
+            player1_index = stored_df.index[stored_df.iloc[:, 0] == selected_player1][0]
 
             ## parameter names
             if selected_metrics == []:
-                params = preset_radar_values[selected_radar_preset]
+                param_columns = preset_radar_values_by_index[selected_radar_preset]
+                params = stored_df.columns[param_columns]
             else:
                 params = selected_metrics
 
@@ -1293,20 +1520,21 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
 
             ## title
             title = dict(
-                title_name=stored_df.iloc[player_index]['Name'],
+                title_name=stored_df.iloc[player_index, 0],
                 title_color='#FF69B4',
-                subtitle_name=stored_df.iloc[player_index]['Club'],
+                subtitle_name=stored_df.iloc[player_index, 3],
                 subtitle_color='#FF69B4',
-                title_name_2=stored_df.iloc[player1_index]['Name'],
+                title_name_2=stored_df.iloc[player1_index, 0],
                 title_color_2='#7FFF00',
-                subtitle_name_2=stored_df.iloc[player1_index]['Club'],
+                subtitle_name_2=stored_df.iloc[player1_index, 3],
                 subtitle_color_2='#7FFF00',
                 title_fontsize=25,
                 subtitle_fontsize=20,
             )
 
             ## instantiate object
-            radar = Radar(fontfamily='Arial', background_color='#483d8b', patch_color="#28252C", label_color="#F0FFF0", range_color="#F0FFF0", label_fontsize=16, range_fontsize=9)
+            radar = Radar(fontfamily='Arial', background_color='#483d8b', patch_color="#28252C", label_color="#F0FFF0",
+                          range_color="#F0FFF0", label_fontsize=16, range_fontsize=9)
 
             ## plot radar -- compare
             fig, ax = radar.plot_radar(ranges=ranges, params=params, values=values,
@@ -1320,12 +1548,12 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
             fig_data = base64.b64encode(buf.getbuffer()).decode("ascii")
             fig_bar_matplotlib = f'data:image/png;base64,{fig_data}'
 
-            return empty_fig, empty_table, fig_bar_matplotlib, stored_player_options, stored_player_options, #empty_sample_dropdown
+            return empty_fig, empty_table, fig_bar_matplotlib, stored_player_options, stored_player_options,  # empty_sample_dropdown
 
 
         except Exception as e:
             print(f"Error updating plot for radar preset change: {str(e)}")
-            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
+            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options,  # empty_sample_dropdown
 
     # Handle Custom Radar Metrics Dropdown Change
     elif trigger_id in 'custom-radar-values-dropdown' and selected_metrics:
@@ -1334,13 +1562,14 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
             # Reset stored_df index
             stored_df.reset_index(inplace=True, drop=True)
 
-            ## player index
-            player_index = stored_df.index[stored_df['Name'] == selected_player][0]
-            player1_index = stored_df.index[stored_df['Name'] == selected_player1][0]
+            ## player index. Pulling the df index number for the selected player names
+            player_index = stored_df.index[stored_df.iloc[:, 0] == selected_player][0]
+            player1_index = stored_df.index[stored_df.iloc[:, 0] == selected_player1][0]
 
             ## parameter names
             if selected_metrics == []:
-                params = preset_radar_values[selected_radar_preset]
+                param_columns = preset_radar_values_by_index[selected_radar_preset]
+                params = stored_df.columns[param_columns]
             else:
                 params = selected_metrics
 
@@ -1359,20 +1588,21 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
 
             ## title
             title = dict(
-                title_name=stored_df.iloc[player_index]['Name'],
+                title_name=stored_df.iloc[player_index, 0],
                 title_color='#FF69B4',
-                subtitle_name=stored_df.iloc[player_index]['Club'],
-                subtitle_color = '#FF69B4',
-                title_name_2 = stored_df.iloc[player1_index]['Name'],
-                title_color_2 = '#7FFF00',
-                subtitle_name_2 = stored_df.iloc[player1_index]['Club'],
-                subtitle_color_2 = '#7FFF00',
-                title_fontsize = 25,
-                subtitle_fontsize = 20,
+                subtitle_name=stored_df.iloc[player_index, 3],
+                subtitle_color='#FF69B4',
+                title_name_2=stored_df.iloc[player1_index, 0],
+                title_color_2='#7FFF00',
+                subtitle_name_2=stored_df.iloc[player1_index, 3],
+                subtitle_color_2='#7FFF00',
+                title_fontsize=25,
+                subtitle_fontsize=20,
             )
 
             ## instantiate object
-            radar = Radar(fontfamily='Arial', background_color='#483d8b', patch_color="#28252C", label_color="#F0FFF0", range_color="#F0FFF0", label_fontsize=16, range_fontsize=9)
+            radar = Radar(fontfamily='Arial', background_color='#483d8b', patch_color="#28252C", label_color="#F0FFF0",
+                          range_color="#F0FFF0", label_fontsize=16, range_fontsize=9)
 
             ## plot radar -- compare
             fig, ax = radar.plot_radar(ranges=ranges, params=params, values=values,
@@ -1386,15 +1616,14 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
             fig_data = base64.b64encode(buf.getbuffer()).decode("ascii")
             fig_bar_matplotlib = f'data:image/png;base64,{fig_data}'
 
-            return empty_fig, empty_table, fig_bar_matplotlib, stored_player_options, stored_player_options, #empty_sample_dropdown
-
+            return empty_fig, empty_table, fig_bar_matplotlib, stored_player_options, stored_player_options,  # empty_sample_dropdown
 
         except Exception as e:
             print(f"Error updating plot for custom radar change: {str(e)}")
-            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
+            return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options,  # empty_sample_dropdown
 
     # Default return
-    return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options, #empty_sample_dropdown
+    return empty_fig, empty_table, empty_radar, stored_player_options, stored_player_options,  # empty_sample_dropdown
 
 
 # Handle the collapsed scatter plot

@@ -7,13 +7,12 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 from transform_attributes import build_shortlist_attributes_dataframe, build_squad_attributes_dataframe
 from transform_stats import build_stats_dataframe
+from config import language_dict
 import base64
 import io
 from warnings import simplefilter
 
-
 simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
-
 
 # Create app
 app = Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.SUPERHERO], title='Data Scout FM')
@@ -23,14 +22,6 @@ app.layout = dbc.Container([
     # Left Side
     html.Div(
         id='main-content', className='left-container', children=[
-            # html.Div(style={'text-align': 'left', 'margin-top': '30px', 'margin-left': '10px'}, children=[
-            #     html.H2([
-            #         html.Span('Welcome to'),
-            #         html.Br(),
-            #         html.Span('Data Scout FM')
-            #     ]),
-            # ]),
-
             dbc.Button(id='home-button', className='home-button', href='/', children=[
                     html.Img(
                         src='assets/Img/data-scout-fm-logo.png',
@@ -115,33 +106,53 @@ app.layout = dbc.Container([
     State('upload-data', 'filename'),
 )
 def update_output(list_of_contents, list_of_names):
+    # If no files are uploaded
     if list_of_contents is None and list_of_names is None:
         return html.Label('No files uploaded'), {}
 
+    # If upload-data input is not empty, check to see if the four required files are present and build the dataframes.
     try:
         filename_list = []
         data_list = {}
         stats_dataframes = []
+
         for content, filename in zip(list_of_contents, list_of_names):
             filename_list.append(filename)  # add filename to filename_list.
             content_type, content_string = content.split(',')
             decoded = base64.b64decode(content_string)
-            if 'squad_attributes' in filename:
-                squad_att_data = pd.read_html(io.StringIO(decoded.decode('utf-8')))
-                data_list['squad_attributes'] = build_squad_attributes_dataframe(squad_att_data).to_json(date_format='iso', orient='split')
-            elif 'shortlist_attributes' in filename:
-                scouting_att_data = pd.read_html(io.StringIO(decoded.decode('utf-8')))
-                shortlist_attributes_df = build_shortlist_attributes_dataframe(scouting_att_data).to_json(date_format='iso', orient='split')
-                data_list['shortlist_attributes'] = shortlist_attributes_df
-            elif 'squad_stats' in filename:
+
+            if 'squad_stats' in filename:
+                print(f"Processing file: {filename}")
                 squad_stats_data = pd.read_html(io.StringIO(decoded.decode('utf-8')))
                 stats_dataframes.append(squad_stats_data)
+                language_check_data = squad_stats_data
+                language_check_data[0].columns = language_check_data[0].columns.str.replace('\u200b', '')
+            elif 'squad_attributes' in filename:
+                print(f"Processing file: {filename}")
+                squad_att_data = pd.read_html(io.StringIO(decoded.decode('utf-8')))
+            elif 'shortlist_attributes' in filename:
+                print(f"Processing file: {filename}")
+                scouting_att_data = pd.read_html(io.StringIO(decoded.decode('utf-8')))
             elif 'player_search_stats' in filename:
+                print(f"Processing file: {filename}")
                 player_search_stats_data = pd.read_html(io.StringIO(decoded.decode('utf-8')))
                 stats_dataframes.append(player_search_stats_data)
 
-
-        data_list['stats'] = build_stats_dataframe(squad_stats_data, player_search_stats_data).to_json(date_format='iso', orient='split')
+        # Check user's language preference from squad_stats file 'Wage' column
+        print(f'Number of files uploaded: {len(filename_list)}')
+        language_key = str(language_check_data[0].columns[6])
+        language_preference = str(language_dict[language_key])
+        print(f'Language Key: {language_key}')
+        print(f'Language Preference: {language_preference}')
+        # Add created dataframes and language key to dcc.Store
+        data_list['language_preference'] = language_preference
+        print('Initiating build squad attributes df...')
+        data_list['squad_attributes'] = build_squad_attributes_dataframe(squad_att_data, language_preference).to_json(date_format='iso', orient='split')
+        print('Initiating build shortlist attributes df...')
+        data_list['shortlist_attributes'] = build_shortlist_attributes_dataframe(scouting_att_data, language_preference).to_json(date_format='iso', orient='split')
+        print('Initiating build stats df...')
+        data_list['stats'] = build_stats_dataframe(squad_stats_data, player_search_stats_data, language_preference).to_json(date_format='iso', orient='split')
+        # Show user how many of the required files were successfully uploaded
         children = f'{len(filename_list)}/4 files uploaded'
         return children, data_list
     except Exception as inner_e:
