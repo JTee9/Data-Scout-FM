@@ -1,3 +1,6 @@
+# Todo -----------------------------------
+# Expand stats_label_dict to include other languages
+
 # Variables to share across app pages
 
 # Dictionary to check user's language preference with language_key('Wage' in the user's language)
@@ -1555,5 +1558,3 @@ sample_filters_by_index = {
         #'Saves/90'
     }
 }
-
-

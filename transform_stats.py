@@ -1,3 +1,6 @@
+# Todo -------------------
+# 1. Review value #s in each language to calculate them correctly (e.g. 万、億)
+
 import pandas as pd
 import numpy as np
 from warnings import simplefilter
@@ -41,6 +44,7 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file, language_p
 
     # Group columns based on processing type
     value_cols = [5, 6, 47]  # Columns that need currency/unit removal and numeric conversion
+    # Transfer Value, Wage, Distance
     percentage_cols = [69, 20, 94, 37, 59, 76, 95, 52, 29, 32, 100, 116]  # Columns that need percentage processing
     numeric_cols = [1, 67, 66, 68, 17, 19, 18, 21, 82, 81, 16, 91, 92, 93,
                     39, 38, 61, 60, 63, 62, 64, 65, 34, 33, 36, 35, 54, 53,
@@ -52,7 +56,6 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file, language_p
                     43, 42, 102, 89, 88, 8, 12, 74] # Columns with straightforward numeric values
 
     # Clean the value columns.
-    # Currencies supported: Euros, CNY, US$, Arg Pesos, Aus$, Can$, Chi Pesos,
     for col_num in value_cols:
         # Remove currency symbols
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('€', '')
@@ -98,19 +101,83 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file, language_p
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('VND', '')
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('zl', '')
 
+        # Annual/Monthly/Weekly
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('p/a', '')
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('p/m', '')
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('p/w', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('p/s', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('p/v', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('万/周', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('万/月', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('万/年', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('亿/年', '')
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('/年', '')
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('/月', '')
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('/週', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('/周', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('연봉', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('월급', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('주급', '')
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('yıllık', '')
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('aylık', '')
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('haftallık', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('/år', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('måned', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('uge', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('J.', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('M.', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('W.', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('p/jr', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('p/å', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('p/u', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('mies.', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('tyg.', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('rocznie', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('α/ε', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('α/μ', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('α/βδ', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('в нед.', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('в мес', '')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('в год', '')
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace(',', '')
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('km', '')
-        # stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('Unknown', '')
-        # stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('Not for Sale', '')
+
+        # values in thousands
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('tys.', 'K')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('m', 'K')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('t', 'K')
+        if language_preference == 'Turkish':
+            stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('B', 'K')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('χ', 'K')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('тыс.', 'K')
+
+        # values in millions
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('mio', 'M')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('mio.', 'M')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('Mio', 'M')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('mln.', 'M')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('mill', 'M')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('mn', 'M')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('εκ.', 'M')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('млн', 'M')
+
+        # values in billions
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('mia.', 'B')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('Mrd.', 'B')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('Mld', 'B')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('mld', 'B')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('MM', 'B')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('md', 'B')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('MR', 'B')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('δισ.', 'B')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('млрд', 'B')
+
+        # Other values
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('亿', '億')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('억', '億')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('만', '万')
+
+
         # Handle transfer value ranges
         range_mask = stats_df.iloc[:, col_num].str.contains('-', na=False, regex=False)
         if range_mask.any():  # only do this if there are actually ranges.
@@ -125,28 +192,77 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file, language_p
             print(f'stats_df.loc[range_mask, stats_df.columns[col_num]]: {stats_df.loc[range_mask, stats_df.columns[col_num]]}')
             stats_df.loc[range_mask, stats_df.columns[col_num]] = stats_df.loc[range_mask, stats_df.columns[col_num]].apply(average_range)
             print('Complete: Applying average_range function to stats_df to remove transfer values with ranges.')
-        # //Need to solve for other currencies & languages
+
         # Handle values with both '.' and 'K'
         mask_k = stats_df.iloc[:, col_num].str.contains(r'\.(?=.*K)', na=False, regex=True)
-        stats_df.loc[mask_k, stats_df.columns[col_num]] = stats_df.loc[mask_k, stats_df.columns[col_num]].str.replace(r'\.', '', regex=True)
-        stats_df.loc[mask_k, stats_df.columns[col_num]] = stats_df.loc[mask_k, stats_df.columns[col_num]].str.replace('K', '00', regex=False)
+        stats_df.loc[mask_k, stats_df.columns[col_num]] = stats_df.loc[mask_k, stats_df.columns[col_num]].str.replace(
+            r'\.', '', regex=True)
+        stats_df.loc[mask_k, stats_df.columns[col_num]] = stats_df.loc[mask_k, stats_df.columns[col_num]].str.replace(
+            'K', '00', regex=False)
         # Handle values with both '.' and 'M'
         mask_m = stats_df.iloc[:, col_num].str.contains(r'\.(?=.*M)', na=False, regex=True)
-        stats_df.loc[mask_m, stats_df.columns[col_num]] = stats_df.loc[mask_m, stats_df.columns[col_num]].str.replace(r'\.', '', regex=True)
-        stats_df.loc[mask_m, stats_df.columns[col_num]] = stats_df.loc[mask_m, stats_df.columns[col_num]].str.replace('M', '00000', regex=False)
-        # Handle values with only 'K'
-        mask_only_k = stats_df.iloc[:, col_num].str.contains(r'K', na=False, regex=False) & (~mask_k)
-        stats_df.loc[mask_only_k, stats_df.columns[col_num]] = stats_df.loc[mask_only_k, stats_df.columns[col_num]].str.replace('K', '000', regex=False)
-        # Handle values with only 'M'
-        mask_only_m = stats_df.iloc[:, col_num].str.contains(r'M', na=False, regex=False) & (~mask_m)
-        stats_df.loc[mask_only_m, stats_df.columns[col_num]] = stats_df.loc[mask_only_m, stats_df.columns[col_num]].str.replace('M', '000000', regex=False)
+        stats_df.loc[mask_m, stats_df.columns[col_num]] = stats_df.loc[mask_m, stats_df.columns[col_num]].str.replace(
+            r'\.', '', regex=True)
+        stats_df.loc[mask_m, stats_df.columns[col_num]] = stats_df.loc[mask_m, stats_df.columns[col_num]].str.replace(
+            'M', '00000', regex=False)
         # Handle values with both '.' and 'B'
         mask_b = stats_df.iloc[:, col_num].str.contains(r'\.(?=.*B)', na=False, regex=True)
-        stats_df.loc[mask_b, stats_df.columns[col_num]] = stats_df.loc[mask_b, stats_df.columns[col_num]].str.replace(r'\.', '', regex=True)
-        stats_df.loc[mask_b, stats_df.columns[col_num]] = stats_df.loc[mask_b, stats_df.columns[col_num]].str.replace('B', '00000000', regex=False)
+        stats_df.loc[mask_b, stats_df.columns[col_num]] = stats_df.loc[mask_b, stats_df.columns[col_num]].str.replace(
+            r'\.', '', regex=True)
+        stats_df.loc[mask_b, stats_df.columns[col_num]] = stats_df.loc[mask_b, stats_df.columns[col_num]].str.replace(
+            'B', '00000000', regex=False)
+        # Handle values with both '.' and '千'
+        mask_sen = stats_df.iloc[:, col_num].str.contains(r'\.(?=.*千)', na=False, regex=True)
+        stats_df.loc[mask_sen, stats_df.columns[col_num]] = stats_df.loc[
+            mask_sen, stats_df.columns[col_num]].str.replace(
+            r'\.', '', regex=True)
+        stats_df.loc[mask_sen, stats_df.columns[col_num]] = stats_df.loc[
+            mask_sen, stats_df.columns[col_num]].str.replace(
+            '千', '00', regex=False)
+        # Handle values with both '.' and '万'
+        mask_man = stats_df.iloc[:, col_num].str.contains(r'\.(?=.*万)', na=False, regex=True)
+        stats_df.loc[mask_man, stats_df.columns[col_num]] = stats_df.loc[mask_man, stats_df.columns[col_num]].str.replace(
+            r'\.', '', regex=True)
+        stats_df.loc[mask_man, stats_df.columns[col_num]] = stats_df.loc[mask_man, stats_df.columns[col_num]].str.replace(
+            '万', '000', regex=False)
+        # Handle values with both '.' and '億'
+        mask_oku = stats_df.iloc[:, col_num].str.contains(r'\.(?=.*億)', na=False, regex=True)
+        stats_df.loc[mask_oku, stats_df.columns[col_num]] = stats_df.loc[
+            mask_oku, stats_df.columns[col_num]].str.replace(
+            r'\.', '', regex=True)
+        stats_df.loc[mask_oku, stats_df.columns[col_num]] = stats_df.loc[
+            mask_oku, stats_df.columns[col_num]].str.replace(
+            '億', '0000000', regex=False)
+
+        # Handle values with only 'K'
+        mask_only_k = stats_df.iloc[:, col_num].str.contains(r'K', na=False, regex=False) & (~mask_k)
+        stats_df.loc[mask_only_k, stats_df.columns[col_num]] = stats_df.loc[mask_only_k, stats_df.columns[col_num]].str.replace(
+            'K', '000', regex=False)
+        # Handle values with only 'M'
+        mask_only_m = stats_df.iloc[:, col_num].str.contains(r'M', na=False, regex=False) & (~mask_m)
+        stats_df.loc[mask_only_m, stats_df.columns[col_num]] = stats_df.loc[mask_only_m, stats_df.columns[col_num]].str.replace(
+            'M', '000000', regex=False)
         # Handle values with only 'B'
         mask_only_b = stats_df.iloc[:, col_num].str.contains(r'B', na=False, regex=False) & (~mask_b)
-        stats_df.loc[mask_only_b, stats_df.columns[col_num]] = stats_df.loc[mask_only_b, stats_df.columns[col_num]].str.replace('B', '000000000', regex=False)
+        stats_df.loc[mask_only_b, stats_df.columns[col_num]] = stats_df.loc[mask_only_b, stats_df.columns[col_num]].str.replace(
+            'B', '000000000', regex=False)
+        # Handle values with only '千'
+        mask_only_sen = stats_df.iloc[:, col_num].str.contains(r'千', na=False, regex=False) & (~mask_sen)
+        stats_df.loc[mask_only_sen, stats_df.columns[col_num]] = stats_df.loc[
+            mask_only_sen, stats_df.columns[col_num]].str.replace(
+            '千', '000', regex=False)
+        # Handle values with only '万'
+        mask_only_man = stats_df.iloc[:, col_num].str.contains(r'万', na=False, regex=False) & (~mask_man)
+        stats_df.loc[mask_only_man, stats_df.columns[col_num]] = stats_df.loc[
+            mask_only_man, stats_df.columns[col_num]].str.replace(
+            '万', '0000', regex=False)
+        # Handle values with only '億'
+        mask_only_oku = stats_df.iloc[:, col_num].str.contains(r'億', na=False, regex=False) & (~mask_oku)
+        stats_df.loc[mask_only_oku, stats_df.columns[col_num]] = stats_df.loc[
+            mask_only_oku, stats_df.columns[col_num]].str.replace(
+            '億', '00000000', regex=False)
+
+
         # Remove any remaining '.'
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('.', '')
 
