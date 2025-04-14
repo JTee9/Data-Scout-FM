@@ -1,6 +1,3 @@
-# Todo -------------------
-# 1. Review value #s in each language to calculate them correctly (e.g. 万、億)
-
 import pandas as pd
 import numpy as np
 from warnings import simplefilter
@@ -177,7 +174,6 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file, language_p
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('억', '億')
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('만', '万')
 
-
         # Handle transfer value ranges
         range_mask = stats_df.iloc[:, col_num].str.contains('-', na=False, regex=False)
         if range_mask.any():  # only do this if there are actually ranges.
@@ -295,14 +291,11 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file, language_p
         return False
 
     # Loop over each position tag and its corresponding filter
-    print('Creating position tags in stats df.')
-    print(f'international_position_filters[language_preference].items(): {international_position_filters[language_preference].items()}')
     for position_tag, position_filter in international_position_filters[language_preference].items():
         # Create a new column in the dataframe for the position tag
         stats_df[position_tag] = stats_df.iloc[:, 2].apply(
             lambda pos: check_position_tags(pos, position_filter)
         )
-    print('Complete: Creating position tags in stats df.')
 
     # Create new column to fix 'Apps' parenthesis issue. Substitute appearances will be counted as 1 full appearance.
     # This number will be used to set a minimum 'total_apps' to exclude players with inflated stats in low # of Apps.
