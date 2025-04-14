@@ -174,21 +174,6 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file, language_p
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('억', '億')
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('만', '万')
 
-        # Handle transfer value ranges
-        range_mask = stats_df.iloc[:, col_num].str.contains('-', na=False, regex=False)
-        if range_mask.any():  # only do this if there are actually ranges.
-            def average_range(range_str):
-                try:
-                    start, end = map(int, range_str.split('-'))
-                    return (start + end) / 2
-                except ValueError:
-                    return np.nan  # return nan if there is a problem.
-
-            print('Applying average_range function to stats_df to remove transfer values with ranges.')
-            print(f'stats_df.loc[range_mask, stats_df.columns[col_num]]: {stats_df.loc[range_mask, stats_df.columns[col_num]]}')
-            stats_df.loc[range_mask, stats_df.columns[col_num]] = stats_df.loc[range_mask, stats_df.columns[col_num]].apply(average_range)
-            print('Complete: Applying average_range function to stats_df to remove transfer values with ranges.')
-
         # Handle values with both '.' and 'K'
         mask_k = stats_df.iloc[:, col_num].str.contains(r'\.(?=.*K)', na=False, regex=True)
         stats_df.loc[mask_k, stats_df.columns[col_num]] = stats_df.loc[mask_k, stats_df.columns[col_num]].str.replace(
@@ -258,9 +243,25 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file, language_p
             mask_only_oku, stats_df.columns[col_num]].str.replace(
             '億', '00000000', regex=False)
 
-
         # Remove any remaining '.'
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('.', '')
+
+        # Handle transfer value ranges
+        range_mask = stats_df.iloc[:, col_num].str.contains('-', na=False, regex=False)
+        if range_mask.any():  # only do this if there are actually ranges.
+            def average_range(range_str):
+                try:
+                    start, end = map(int, range_str.split('-'))
+                    return (start + end) / 2
+                except ValueError:
+                    return np.nan  # return nan if there is a problem.
+
+            print('Applying average_range function to stats_df to remove transfer values with ranges.')
+            print(
+                f'stats_df.loc[range_mask, stats_df.columns[col_num]]: {stats_df.loc[range_mask, stats_df.columns[col_num]]}')
+            stats_df.loc[range_mask, stats_df.columns[col_num]] = stats_df.loc[
+                range_mask, stats_df.columns[col_num]].apply(average_range)
+            print('Complete: Applying average_range function to stats_df to remove transfer values with ranges.')
 
         stats_df.iloc[:, col_num] = pd.to_numeric(stats_df.iloc[:, col_num], errors='coerce')
 
@@ -274,6 +275,13 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file, language_p
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].apply(str).str.replace('-', '0')
         stats_df.iloc[:, col_num] = pd.to_numeric(stats_df.iloc[:, col_num], errors='coerce')
         stats_df.iloc[:, col_num].astype(float).round(2)
+
+    # # Create Distance/90 column (need to rearrange column order before adding this)
+    # distance_col = stats_df.iloc[:, 47]
+    # minutes_col = stats_df.iloc[:, 119]
+    # dist_per_90 = str(stats_df.columns[47] + '/90')
+    # stats_df[dist_per_90] = distance_col / minutes_col * 90
+    # print(stats_df[dist_per_90])
 
     # Create position tag columns -------------------------------
     # Function to check and tag positions correctly
@@ -291,11 +299,13 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file, language_p
         return False
 
     # Loop over each position tag and its corresponding filter
+    print('Initiating check_position_tag function')
     for position_tag, position_filter in international_position_filters[language_preference].items():
         # Create a new column in the dataframe for the position tag
         stats_df[position_tag] = stats_df.iloc[:, 2].apply(
             lambda pos: check_position_tags(pos, position_filter)
         )
+    print(stats_df.tail(14))
 
     # Create new column to fix 'Apps' parenthesis issue. Substitute appearances will be counted as 1 full appearance.
     # This number will be used to set a minimum 'total_apps' to exclude players with inflated stats in low # of Apps.

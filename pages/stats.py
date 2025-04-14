@@ -926,6 +926,7 @@ def update_filtered_data(uploaded_dataframes, n_clicks_apply, n_clicks_clear, st
         df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
         print(f'Initialized dataframe with shape: {df.shape}')
         try:
+            print(f'sample_filters_by_index[sample_data].items(): {sample_filters_by_index[sample_data].items()}')
             for category, criteria in sample_filters_by_index[sample_data].items():
                 # Handle position filters
                 if 'Position' in category:
@@ -935,6 +936,7 @@ def update_filtered_data(uploaded_dataframes, n_clicks_apply, n_clicks_clear, st
                             return df[mask]
 
                         filtered_df = filter_dataframe_true_values(df, criteria)
+                        print(f'filtered_df: {filtered_df.shape}')
                     else:
                         filtered_df = df[df.iloc[:, criteria] == True]
                 # Handle top10 quantile filters
@@ -942,8 +944,10 @@ def update_filtered_data(uploaded_dataframes, n_clicks_apply, n_clicks_clear, st
                     top10_filter = pd.Series([False] * len(filtered_df), index=filtered_df.index)  # Initialize with False
                     for col in criteria:
                         percentile_90 = filtered_df.iloc[:, col].quantile(0.90)
+                        print(f'percentile_90 for {col}: {percentile_90}')
                         top10_filter = top10_filter | (filtered_df.iloc[:, col] >= percentile_90)  # OR operation
                     sample_df = filtered_df[top10_filter]
+                    print(f'sample_df: {sample_df.shape}')
             filtered_count = len(sample_df)
             feedback_message = f"{filtered_count} record(s) match the criteria."
             return feedback_message, sample_df.to_json(date_format='iso', orient='split')
