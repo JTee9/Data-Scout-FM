@@ -1371,6 +1371,16 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
 
                 values = [player_values, player1_values]
 
+                # Dynamically select radar chart font family to display characters in the user's language correctly
+                if language_preference == 'Chinese':
+                    font_family = 'SimSun'
+                elif language_preference == 'Japanese':
+                    font_family = 'MS Gothic'
+                elif language_preference == 'Korean':
+                    font_family = 'Malgun Gothic'
+                else:
+                    font_family = 'Arial'
+
                 ## title
                 title = dict(
                     title_name=stored_df.iloc[player_index, 0],
@@ -1386,7 +1396,7 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
                 )
 
                 ## instantiate object
-                radar = Radar(fontfamily='Arial', background_color='#483d8b', patch_color="#28252C",
+                radar = Radar(fontfamily=font_family, background_color='#483d8b', patch_color="#28252C",
                               label_color="#F0FFF0", range_color="#F0FFF0", label_fontsize=16, range_fontsize=9)
 
                 ## plot radar -- compare
@@ -1441,6 +1451,16 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
 
             values = [player_values, player1_values]
 
+            # Dynamically select radar chart font family to display characters in the user's language correctly
+            if language_preference == 'Chinese':
+                font_family = 'SimSun'
+            elif language_preference == 'Japanese':
+                font_family = 'MS Gothic'
+            elif language_preference == 'Korean':
+                font_family =  'Malgun Gothic'
+            else:
+                font_family =  'Arial'
+
             ## title
             title = dict(
                 title_name=stored_df.iloc[player_index, 0],
@@ -1456,7 +1476,7 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
             )
 
             ## instantiate object
-            radar = Radar(fontfamily='Arial', background_color='#483d8b', patch_color="#28252C", label_color="#F0FFF0",
+            radar = Radar(fontfamily=font_family, background_color='#483d8b', patch_color="#28252C", label_color="#F0FFF0",
                           range_color="#F0FFF0", label_fontsize=16, range_fontsize=9)
 
             ## plot radar -- compare
@@ -1508,6 +1528,16 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
 
             values = [player_values, player1_values]
 
+            # Dynamically select radar chart font family to display characters in the user's language correctly
+            if language_preference == 'Chinese':
+                font_family = 'SimSun'
+            elif language_preference == 'Japanese':
+                font_family = 'MS Gothic'
+            elif language_preference == 'Korean':
+                font_family =  'Malgun Gothic'
+            else:
+                font_family =  'Arial'
+
             ## title
             title = dict(
                 title_name=stored_df.iloc[player_index, 0],
@@ -1523,7 +1553,7 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
             )
 
             ## instantiate object
-            radar = Radar(fontfamily='Arial', background_color='#483d8b', patch_color="#28252C", label_color="#F0FFF0",
+            radar = Radar(fontfamily=font_family, background_color='#483d8b', patch_color="#28252C", label_color="#F0FFF0",
                           range_color="#F0FFF0", label_fontsize=16, range_fontsize=9)
 
             ## plot radar -- compare
@@ -1576,6 +1606,16 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
 
             values = [player_values, player1_values]
 
+            # Dynamically select radar chart font family to display characters in the user's language correctly
+            if language_preference == 'Chinese':
+                font_family = 'SimSun'
+            elif language_preference == 'Japanese':
+                font_family = 'MS Gothic'
+            elif language_preference == 'Korean':
+                font_family =  'Malgun Gothic'
+            else:
+                font_family =  'Arial'
+
             ## title
             title = dict(
                 title_name=stored_df.iloc[player_index, 0],
@@ -1591,7 +1631,7 @@ def update_visualization(uploaded_dataframes, graph_clicks, table_clicks, radar_
             )
 
             ## instantiate object
-            radar = Radar(fontfamily='Arial', background_color='#483d8b', patch_color="#28252C", label_color="#F0FFF0",
+            radar = Radar(fontfamily=font_family, background_color='#483d8b', patch_color="#28252C", label_color="#F0FFF0",
                           range_color="#F0FFF0", label_fontsize=16, range_fontsize=9)
 
             ## plot radar -- compare
