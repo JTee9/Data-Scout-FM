@@ -1715,7 +1715,7 @@ preset_radar_values_by_index = {
 # Sample charts for quick access to interesting data in the user's FM file
 sample_filters_by_index = {
     'Top Strikers': {
-        'Position': 139,
+        'Position': 141,
         #'ST'
         'top10': [8, 9, 10, 24, 28, 19],
         #['Av Rat', 'Gls', 'Gls/90', 'xG/90', 'NP-xG/90', 'ShT/90'],
@@ -1727,7 +1727,7 @@ sample_filters_by_index = {
         #'Av Rat'
     },
     'Top Wingers': {
-        'Position': [132, 133, 137, 138],
+        'Position': [134, 135, 139, 140],
         #'AM (R)', 'AM (L)'
         'top10': [8, 9, 10, 24, 12, 13, 43, 46, 15, 41, 49, 54, 56],
         #'Av Rat', 'Gls', 'Gls/90', 'xG/90', 'Ast', 'Asts/90', 'xA/90', 'Drb/90', 'Ch C/90', 'K Ps/90', 'Cr C/90', 'OP-KP/90', 'OP-Crs C/90'
@@ -1738,7 +1738,7 @@ sample_filters_by_index = {
         #'Poss Lost/90'
     },
     'Top Attacking Midfielders': {
-        'Position': 136,
+        'Position': 138,
         #'AM (C)',
         'top10': [8, 9, 10, 11, 24, 12, 13, 43, 14, 15, 41, 54],
         #'Av Rat', 'Gls', 'Gls/90', 'Goals Outside Box', 'xG/90', 'Ast', 'Asts/90', 'xA/90', 'CCC', 'Ch C/90', 'K Ps/90', 'OP-KP/90'
@@ -1749,7 +1749,7 @@ sample_filters_by_index = {
         #'Poss Lost/90'
     },
     'Top Central Midfielders': {
-        'Position': 135,
+        'Position': 137,
         #'M (C)',
         'top10': [8, 12, 13, 43, 14, 15, 41, 54, 64, 34, 37],
         #'Av Rat', 'Ast', 'Asts/90', 'xA/90', 'CCC', 'Ch C/90', 'K Ps/90', 'OP-KP/90', 'Poss Won/90', 'Ps C/90', 'Pas %'
@@ -1761,7 +1761,7 @@ sample_filters_by_index = {
         #'ShT/90'
     },
     'Top Defensive Midfielders': {
-        'Position': 134,
+        'Position': 136,
         #'DM',
         'top10': [8, 41, 54, 64, 61, 67, 86, 34, 37],
         #'Av Rat', 'K Ps/90', 'OP-KP/90', 'Poss Won/90', 'Pres C/90', 'Tck/90', 'Int/90', 'Ps C/90', 'Pas %'
@@ -1773,7 +1773,7 @@ sample_filters_by_index = {
         #'Pr passes/90'
     },
     'Top Wing-Backs': {
-        'Position': [130, 131],
+        'Position': [132, 133],
         #'WB (R)', 'WB (L)'
         'top10': [8, 12, 13, 43, 46, 14, 15, 41, 49, 54, 56, 64, 67, 86],
         #'Av Rat', 'Ast', 'Asts/90', 'xA/90', 'Drb/90', 'CCC', 'Ch C/90', 'K Ps/90', 'Cr C/90', 'OP-KP/90', 'OP-Crs C/90', 'Poss Won/90', 'Tck/90', 'Int/90'
@@ -1784,7 +1784,7 @@ sample_filters_by_index = {
         #'Cr C/90'
     },
     'Top Full-Backs': {
-        'Position': [128, 129],
+        'Position': [130, 131],
         #'D (R)', 'D (L)'
         'top10': [8, 49, 54, 56, 64, 67, 71, 86, 80],
         #'Av Rat', 'Cr C/90', 'OP-KP/90', 'OP-Crs C/90', 'Poss Won/90', 'Tck/90', 'K Tck/90', 'Int/90', 'Blk/90'
@@ -1795,7 +1795,7 @@ sample_filters_by_index = {
         #'Sprints/90'
     },
     'Top Central Defenders': {
-        'Position': 127,
+        'Position': 129,
         #'D (C)',
         'top10': [8, 67, 71, 86, 82, 73, 78],
         #'Av Rat', 'Tck/90', 'K Tck/90', 'Int/90', 'Shts Blckd/90', 'Hdrs W/90', 'K Hdrs/90'
@@ -1807,7 +1807,7 @@ sample_filters_by_index = {
         #'Hdr %'
     },
     'Top Goalkeepers': {
-        'Position': 126,
+        'Position': 128,
         #'GK',
         'top10': [8, 88, 89, 90, 94],
         #'Av Rat', 'Clean Sheets', 'Cln/90', 'Saves/90', 'Sv %'
