@@ -587,8 +587,11 @@ def update_filter_input_container(uploaded_dataframes, selected_column):
 
     # Categorical columns (simple equals/not equals)
     if selected_column in categorical_columns:
-        unique_values = df.iloc[:, selected_column].unique().tolist()
-        return [
+        unique_values = df[selected_column].unique().tolist()
+        # Alphabetically sort the list of unique values in the selected category
+        unique_values.sort(key=str.lower)
+        if language_preference in international_stats_label_dict.keys():
+            return [
             html.Div([
                 html.Label('Condition'),
                 dcc.Dropdown(
@@ -602,7 +605,7 @@ def update_filter_input_container(uploaded_dataframes, selected_column):
                 ),
             ], style={'marginTop': '10px'}),
             html.Div([
-                html.Label(f'Select {selected_column}'),
+                html.Label(f'Select {international_stats_label_dict[language_preference][selected_column]}'),
                 dcc.Dropdown(
                     id={'type': 'filter-value', 'index': 0},
                     options=[{'label': str(val), 'value': str(val)} for val in unique_values],
@@ -611,6 +614,30 @@ def update_filter_input_container(uploaded_dataframes, selected_column):
                 )
             ], style={'marginTop': '10px'})
         ]
+        else:
+            return [
+                html.Div([
+                    html.Label('Condition'),
+                    dcc.Dropdown(
+                        id={'type': 'filter-condition', 'index': 0},
+                        options=[
+                            {'label': 'is', 'value': '='},
+                            {'label': 'is not', 'value': '!='}
+                        ],
+                        value='=',
+                        clearable=False
+                    ),
+                ], style={'marginTop': '10px'}),
+                html.Div([
+                    html.Label(f'Select {selected_column}'),
+                    dcc.Dropdown(
+                        id={'type': 'filter-value', 'index': 0},
+                        options=[{'label': str(val), 'value': str(val)} for val in unique_values],
+                        value=str(unique_values[0]) if len(unique_values) > 0 else '',
+                        clearable=False
+                    )
+                ], style={'marginTop': '10px'})
+            ]
 
     # Position column (special handling)
     elif selected_column == df.columns[2]:
