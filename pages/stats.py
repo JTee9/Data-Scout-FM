@@ -378,7 +378,7 @@ def update_table_dropdowns(uploaded_data):
                         'width': '100%'
                     }
                 ),
-                dcc.Graph(id='stats-data-table', style={'width': '100%', 'height': '600px'})
+                dcc.Graph(id='stats-data-table', style={'width': '100%', 'height': '550px'})
                 )
     else:
         return (html.Label('Select Columns to Include in Table', className='stats-label'),
@@ -393,7 +393,7 @@ def update_table_dropdowns(uploaded_data):
                         'width': '100%'
                     }
                 ),
-                dcc.Graph(id='stats-data-table', style={'width': '100%', 'height': '600px'})
+                dcc.Graph(id='stats-data-table', style={'width': '100%', 'height': '550px'})
                 )
 
 
