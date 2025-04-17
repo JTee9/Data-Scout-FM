@@ -1619,7 +1619,7 @@ international_stats_label_dict = {
         'Int Ast': 'International Assists (current season)',
         'Int Conc': 'International Goals Conceded (current season)',
         'Int Av Rat': 'International Average Rating (current season)',
-        'Media Description': 'Media Description'
+        'Media Description': 'Media Description', 'Home-Grown Status': 'Home-Grown Status'
     },
     'English (US)': {
         'Name': 'Name', 'Age': 'Age', 'Position': 'Position', 'Club': 'Club', 'Division': 'Division',
@@ -1685,7 +1685,7 @@ international_stats_label_dict = {
         'Int Ast': 'International Assists (current season)',
         'Int Conc': 'International Goals Conceded (current season)',
         'Int Av Rat': 'International Average Rating (current season)',
-        'Media Description': 'Media Description'
+        'Media Description': 'Media Description', 'Home-Grown Status': 'Home-Grown Status'
     }
 }
 
@@ -1819,7 +1819,7 @@ sample_filters_by_index = {
         #'Saves/90'
     },
     'Top Youngsters': {
-        'Age': 19,
+        'Age': 18,
         # 'Age', 'Int Apps'
         'top10': [122, 117, 9, 10, 12, 13, 14, 15, 54, 41, 46, 49, 37, 64, 86, 71, 78, 89, 90],
         # 'Int Apps', 'Apps', 'Gls', 'Gls/90', 'Ast', 'Asts/90', 'CCC', 'Ch C/90', 'OP-KP/90', 'K Ps/90', 'Drb/90',

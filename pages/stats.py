@@ -580,7 +580,7 @@ def update_filter_input_container(uploaded_dataframes, selected_column):
     df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
     language_preference = uploaded_dataframes['language_preference']
 
-    categorical_column_numbers = [0, 4, 3, 7, 126]  # 'Name', 'Division', 'Club', 'Transfer Status', 'Media Description'
+    categorical_column_numbers = [0, 4, 3, 7, 126, 127]  # 'Name', 'Division', 'Club', 'Transfer Status', 'Media Description'
     categorical_columns = df.columns[categorical_column_numbers]
     numeric_column_numbers = [1, 5, 6, 117, 118, 122] # 'Age', 'Transfer Value', 'Wage', 'Apps', 'Starts', 'Int Apps'
     numeric_columns = df.columns[numeric_column_numbers]
@@ -835,7 +835,7 @@ def update_filtered_data(uploaded_dataframes, n_clicks_apply, n_clicks_clear, st
         print(f"Triggered by: {trigger_id}")
 
     # Pull column names with column index numbers
-    categorical_column_numbers = [0, 4, 3, 7, 126]  # 'Name', 'Division', 'Club', 'Transfer Status', 'Media Description'
+    categorical_column_numbers = [0, 4, 3, 7, 126, 127]  # 'Name', 'Division', 'Club', 'Transfer Status', 'Media Description', 'Home-Grown Status'
     categorical_columns = df.columns[categorical_column_numbers]
     numeric_column_numbers = [1, 5, 6, 117, 118, 122] # 'Age', 'Transfer Value', 'Wage', 'Apps', 'Starts', 'Int Apps'
     numeric_columns = df.columns[numeric_column_numbers]

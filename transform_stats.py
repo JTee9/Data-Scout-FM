@@ -274,7 +274,6 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file, language_p
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].apply(str).str.replace('-', '0')
         stats_df.iloc[:, col_num] = pd.to_numeric(stats_df.iloc[:, col_num], errors='coerce')
         stats_df.iloc[:, col_num].astype(float).round(2)
-
     # # Create Distance/90 column (need to rearrange column order before adding this)
     # distance_col = stats_df.iloc[:, 47]
     # minutes_col = stats_df.iloc[:, 119]
@@ -298,16 +297,14 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file, language_p
         return False
 
     # Loop over each position tag and its corresponding filter
-    # print('Initiating check_position_tag function')
     for position_tag, position_filter in international_position_filters[language_preference].items():
         # Create a new column in the dataframe for the position tag
         stats_df[position_tag] = stats_df.iloc[:, 2].apply(
             lambda pos: check_position_tags(pos, position_filter)
         )
-    # print(stats_df.tail(14))
 
-    # Create new column to fix 'Apps' parenthesis issue. Substitute appearances will be counted as 1 full appearance.
-    # This number will be used to set a minimum 'total_apps' to exclude players with inflated stats in low # of Apps.
+    # Configure 'Apps' columns to solve parenthesis issue. Substitute appearances will be counted as 1 full appearance.
+    # This number will be used to set a minimum total apps to exclude players with inflated stats in low # of Apps.
 
     stats_df.iloc[:, 117] = (
         stats_df.iloc[:, 117]
@@ -324,7 +321,6 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file, language_p
     # Drop outliers with 0 Av Rat
     stats_df = stats_df[stats_df.iloc[:, 8] > 1]
 
-    # print(stats_df.iloc[: -14])
     print('Complete: stats_df')
 
     return stats_df
