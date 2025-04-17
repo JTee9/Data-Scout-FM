@@ -580,7 +580,7 @@ def update_filter_input_container(uploaded_dataframes, selected_column):
     df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
     language_preference = uploaded_dataframes['language_preference']
 
-    categorical_column_numbers = [0, 4, 3, 7]  # 'Name', 'Division', 'Club', 'Transfer Status'
+    categorical_column_numbers = [0, 4, 3, 7, 126]  # 'Name', 'Division', 'Club', 'Transfer Status', 'Media Description'
     categorical_columns = df.columns[categorical_column_numbers]
     numeric_column_numbers = [1, 5, 6, 117, 118, 122] # 'Age', 'Transfer Value', 'Wage', 'Apps', 'Starts', 'Int Apps'
     numeric_columns = df.columns[numeric_column_numbers]
@@ -808,7 +808,7 @@ def update_filtered_data(uploaded_dataframes, n_clicks_apply, n_clicks_clear, st
         print(f"Triggered by: {trigger_id}")
 
     # Pull column names with column index numbers
-    categorical_column_numbers = [0, 4, 3, 7]  # 'Name', 'Division', 'Club', 'Transfer Status'
+    categorical_column_numbers = [0, 4, 3, 7, 126]  # 'Name', 'Division', 'Club', 'Transfer Status', 'Media Description'
     categorical_columns = df.columns[categorical_column_numbers]
     numeric_column_numbers = [1, 5, 6, 117, 118, 122] # 'Age', 'Transfer Value', 'Wage', 'Apps', 'Starts', 'Int Apps'
     numeric_columns = df.columns[numeric_column_numbers]
@@ -925,6 +925,8 @@ def update_filtered_data(uploaded_dataframes, n_clicks_apply, n_clicks_clear, st
         print('Filtering data based on Sample Filter Selection')
         df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')
         print(f'Initialized dataframe with shape: {df.shape}')
+        combined_filter = pd.Series([True] * len(df),
+                                    index=df.index)  # Initialize with all True to start with AND logic
         try:
             print(f'sample_filters_by_index[sample_data].items(): {sample_filters_by_index[sample_data].items()}')
             for category, criteria in sample_filters_by_index[sample_data].items():
@@ -939,14 +941,39 @@ def update_filtered_data(uploaded_dataframes, n_clicks_apply, n_clicks_clear, st
                         print(f'filtered_df: {filtered_df.shape}')
                     else:
                         filtered_df = df[df.iloc[:, criteria] == True]
+                # Handle Age filter
+                if 'Age' in category:
+                    age_column = df.columns[1]
+                    if 'Position' in category:
+                        filtered_df = filtered_df[filtered_df.iloc[:, 1] <= criteria]
+                    else:
+                        filtered_df = df[df[age_column] <= criteria]
                 # Handle top10 quantile filters
                 if 'top10' in category:
                     top10_filter = pd.Series([False] * len(filtered_df), index=filtered_df.index)  # Initialize with False
                     for col in criteria:
-                        percentile_90 = filtered_df.iloc[:, col].quantile(0.90)
-                        print(f'percentile_90 for {col}: {percentile_90}')
-                        top10_filter = top10_filter | (filtered_df.iloc[:, col] >= percentile_90)  # OR operation
-                    sample_df = filtered_df[top10_filter]
+                        try:
+                            percentile_90 = filtered_df.iloc[:, col].quantile(0.90)
+                            print(f'percentile_90 for {col}: {percentile_90}')
+                            top10_filter = top10_filter | (filtered_df.iloc[:, col] >= percentile_90)  # OR operation
+                        except Exception as e:
+                            print(f'Could not apply top10 filter: {e}')
+                    combined_filter = top10_filter
+                if 'Media Description' in category:
+                    media_description_filter = pd.Series([False] * len(filtered_df), index=filtered_df.index)  # Initialize with False
+                    for description in criteria:
+                        try:
+                            media_description_filter = media_description_filter | filtered_df.iloc[:, 126].astype(
+                                str).str.contains(description, case=False, na=False)
+                        except Exception as e:
+                            print(
+                                f"Could not apply 'media_description_filter' for keyword '{description}': {e}")
+                    if 'top10' in sample_filters_by_index[sample_data]:  # Check if top10 filter was also applied
+                        combined_filter = combined_filter | media_description_filter
+                    else:
+                        combined_filter = media_description_filter
+                if 'top10' in category or 'media_description_filter' in category:
+                    sample_df = filtered_df[combined_filter]
                     print(f'sample_df: {sample_df.shape}')
             filtered_count = len(sample_df)
             feedback_message = f"{filtered_count} record(s) match the criteria."

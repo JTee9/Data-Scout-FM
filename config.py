@@ -1618,7 +1618,8 @@ international_stats_label_dict = {
         'Int Apps': 'International Appearances (current season)',
         'Int Ast': 'International Assists (current season)',
         'Int Conc': 'International Goals Conceded (current season)',
-        'Int Av Rat': 'International Average Rating (current season)'
+        'Int Av Rat': 'International Average Rating (current season)',
+        'Media Description': 'Media Description'
     },
     'English (US)': {
         'Name': 'Name', 'Age': 'Age', 'Position': 'Position', 'Club': 'Club', 'Division': 'Division',
@@ -1683,7 +1684,8 @@ international_stats_label_dict = {
         'Int Apps': 'International Appearances (current season)',
         'Int Ast': 'International Assists (current season)',
         'Int Conc': 'International Goals Conceded (current season)',
-        'Int Av Rat': 'International Average Rating (current season)'
+        'Int Av Rat': 'International Average Rating (current season)',
+        'Media Description': 'Media Description'
     }
 }
 
@@ -1717,6 +1719,8 @@ sample_filters_by_index = {
         #'ST'
         'top10': [8, 9, 10, 24, 28, 19],
         #['Av Rat', 'Gls', 'Gls/90', 'xG/90', 'NP-xG/90', 'ShT/90'],
+        'Media Description': ['Wonderkid', 'World class', 'Elite', 'Legendary', 'Explosive', 'Powerful', 'Rangy',
+                              'Towering', 'Strong', 'Pacy', 'goalscorer'],
         'X': 9,
         #'Gls'
         'Y': 8,
@@ -1727,6 +1731,7 @@ sample_filters_by_index = {
         #'AM (R)', 'AM (L)'
         'top10': [8, 9, 10, 24, 12, 13, 43, 46, 15, 41, 49, 54, 56],
         #'Av Rat', 'Gls', 'Gls/90', 'xG/90', 'Ast', 'Asts/90', 'xA/90', 'Drb/90', 'Ch C/90', 'K Ps/90', 'Cr C/90', 'OP-KP/90', 'OP-Crs C/90'
+        'Media Description': ['Wonderkid', 'World class', 'Elite', 'Legendary', 'Explosive', 'Confident', 'Dynamic'],
         'X': 44,
         #'Sprints/90',
         'Y': 65,
@@ -1737,6 +1742,7 @@ sample_filters_by_index = {
         #'AM (C)',
         'top10': [8, 9, 10, 11, 24, 12, 13, 43, 14, 15, 41, 54],
         #'Av Rat', 'Gls', 'Gls/90', 'Goals Outside Box', 'xG/90', 'Ast', 'Asts/90', 'xA/90', 'CCC', 'Ch C/90', 'K Ps/90', 'OP-KP/90'
+        'Media Description': ['Wonderkid', 'World class', 'Elite', 'Legendary', 'entertainer', 'orchestrator'],
         'X': 15,
         #'Ch C/90',
         'Y': 65,
@@ -1747,6 +1753,8 @@ sample_filters_by_index = {
         #'M (C)',
         'top10': [8, 12, 13, 43, 14, 15, 41, 54, 64, 34, 37],
         #'Av Rat', 'Ast', 'Asts/90', 'xA/90', 'CCC', 'Ch C/90', 'K Ps/90', 'OP-KP/90', 'Poss Won/90', 'Ps C/90', 'Pas %'
+        'Media Description': ['Wonderkid', 'World class', 'Elite', 'Legendary', 'Industrious', 'orchestrator',
+                              'Tireless', 'Tenacious', 'Strong'],
         'X': 47,
         #'Distance',
         'Y': 19
@@ -1757,6 +1765,8 @@ sample_filters_by_index = {
         #'DM',
         'top10': [8, 41, 54, 64, 61, 67, 86, 34, 37],
         #'Av Rat', 'K Ps/90', 'OP-KP/90', 'Poss Won/90', 'Pres C/90', 'Tck/90', 'Int/90', 'Ps C/90', 'Pas %'
+        'Media Description': ['Wonderkid', 'World class', 'Elite', 'Legendary', 'Industrious', 'orchestrator',
+                              'Tireless', 'Tenacious', 'Strong'],
         'X': 64,
         #'Poss Won/90',
         'Y': 39
@@ -1767,6 +1777,7 @@ sample_filters_by_index = {
         #'WB (R)', 'WB (L)'
         'top10': [8, 12, 13, 43, 46, 14, 15, 41, 49, 54, 56, 64, 67, 86],
         #'Av Rat', 'Ast', 'Asts/90', 'xA/90', 'Drb/90', 'CCC', 'Ch C/90', 'K Ps/90', 'Cr C/90', 'OP-KP/90', 'OP-Crs C/90', 'Poss Won/90', 'Tck/90', 'Int/90'
+        'Media Description': ['Wonderkid', 'World class', 'Elite', 'Legendary', 'Explosive'],
         'X': 44,
         #'Sprints/90',
         'Y': 49,
@@ -1777,6 +1788,7 @@ sample_filters_by_index = {
         #'D (R)', 'D (L)'
         'top10': [8, 49, 54, 56, 64, 67, 71, 86, 80],
         #'Av Rat', 'Cr C/90', 'OP-KP/90', 'OP-Crs C/90', 'Poss Won/90', 'Tck/90', 'K Tck/90', 'Int/90', 'Blk/90'
+        'Media Description': ['Wonderkid', 'World class', 'Elite', 'Legendary', 'Explosive'],
         'X': 47,
         #'Distance',
         'Y': 44
@@ -1787,6 +1799,8 @@ sample_filters_by_index = {
         #'D (C)',
         'top10': [8, 67, 71, 86, 82, 73, 78],
         #'Av Rat', 'Tck/90', 'K Tck/90', 'Int/90', 'Shts Blckd/90', 'Hdrs W/90', 'K Hdrs/90'
+        'Media Description': ['Wonderkid', 'World class', 'Elite', 'Legendary', 'Commanding', 'Powerful', 'Solid',
+                              'Strong'],
         'X': 47,
         #'Distance',
         'Y': 76
@@ -1797,9 +1811,23 @@ sample_filters_by_index = {
         #'GK',
         'top10': [8, 88, 89, 90, 94],
         #'Av Rat', 'Clean Sheets', 'Cln/90', 'Saves/90', 'Sv %'
+        'Media Description': ['Wonderkid', 'World class', 'Elite', 'Legendary', 'Capable', 'Commanding', 'Fearless',
+                              'Instinctive', 'Playmaking'],
         'X': 88,
         #'Clean Sheets',
         'Y': 90
         #'Saves/90'
-    }
+    },
+    'Top Youngsters': {
+        'Age': 19,
+        # 'Age', 'Int Apps'
+        'top10': [122, 117, 9, 10, 12, 13, 14, 15, 54, 41, 46, 49, 37, 64, 86, 71, 78, 89, 90],
+        # 'Int Apps', 'Apps', 'Gls', 'Gls/90', 'Ast', 'Asts/90', 'CCC', 'Ch C/90', 'OP-KP/90', 'K Ps/90', 'Drb/90',
+        # 'Cr C/90', 'Pas %', 'Poss Won/90', 'Int/90', 'K Tck/90', 'K Hdrs/90', 'Cln/90', 'Saves/90'
+        'Media Description': ['Wonderkid', 'Promising'],
+        'X': 8,
+        #'Apps',
+        'Y': 117
+        #'Av Rat'
+    },
 }
