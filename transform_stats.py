@@ -150,6 +150,7 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file, language_p
             stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('B', 'K')
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('χ', 'K')
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('тыс.', 'K')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('千', 'K')
 
         # values in millions
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('mio', 'M')
@@ -177,74 +178,190 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file, language_p
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('억', '億')
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('만', '万')
 
-        # Handle values with both '.' and 'K'
-        mask_k = stats_df.iloc[:, col_num].str.contains(r'\.(?=.*K)', na=False, regex=True)
-        stats_df.loc[mask_k, stats_df.columns[col_num]] = stats_df.loc[mask_k, stats_df.columns[col_num]].str.replace(
-            r'\.', '', regex=True)
-        stats_df.loc[mask_k, stats_df.columns[col_num]] = stats_df.loc[mask_k, stats_df.columns[col_num]].str.replace(
-            'K', '00', regex=False)
-        # Handle values with both '.' and 'M'
-        mask_m = stats_df.iloc[:, col_num].str.contains(r'\.(?=.*M)', na=False, regex=True)
-        stats_df.loc[mask_m, stats_df.columns[col_num]] = stats_df.loc[mask_m, stats_df.columns[col_num]].str.replace(
-            r'\.', '', regex=True)
-        stats_df.loc[mask_m, stats_df.columns[col_num]] = stats_df.loc[mask_m, stats_df.columns[col_num]].str.replace(
-            'M', '00000', regex=False)
-        # Handle values with both '.' and 'B'
-        mask_b = stats_df.iloc[:, col_num].str.contains(r'\.(?=.*B)', na=False, regex=True)
-        stats_df.loc[mask_b, stats_df.columns[col_num]] = stats_df.loc[mask_b, stats_df.columns[col_num]].str.replace(
-            r'\.', '', regex=True)
-        stats_df.loc[mask_b, stats_df.columns[col_num]] = stats_df.loc[mask_b, stats_df.columns[col_num]].str.replace(
-            'B', '00000000', regex=False)
-        # Handle values with both '.' and '千'
-        mask_sen = stats_df.iloc[:, col_num].str.contains(r'\.(?=.*千)', na=False, regex=True)
-        stats_df.loc[mask_sen, stats_df.columns[col_num]] = stats_df.loc[
-            mask_sen, stats_df.columns[col_num]].str.replace(
-            r'\.', '', regex=True)
-        stats_df.loc[mask_sen, stats_df.columns[col_num]] = stats_df.loc[
-            mask_sen, stats_df.columns[col_num]].str.replace(
-            '千', '00', regex=False)
-        # Handle values with both '.' and '万'
-        mask_man = stats_df.iloc[:, col_num].str.contains(r'\.(?=.*万)', na=False, regex=True)
-        stats_df.loc[mask_man, stats_df.columns[col_num]] = stats_df.loc[mask_man, stats_df.columns[col_num]].str.replace(
-            r'\.', '', regex=True)
-        stats_df.loc[mask_man, stats_df.columns[col_num]] = stats_df.loc[mask_man, stats_df.columns[col_num]].str.replace(
-            '万', '000', regex=False)
-        # Handle values with both '.' and '億'
-        mask_oku = stats_df.iloc[:, col_num].str.contains(r'\.(?=.*億)', na=False, regex=True)
-        stats_df.loc[mask_oku, stats_df.columns[col_num]] = stats_df.loc[
-            mask_oku, stats_df.columns[col_num]].str.replace(
-            r'\.', '', regex=True)
-        stats_df.loc[mask_oku, stats_df.columns[col_num]] = stats_df.loc[
-            mask_oku, stats_df.columns[col_num]].str.replace(
-            '億', '0000000', regex=False)
+        # Process rows containing 'K'
+        mask_k = stats_df.iloc[:, col_num].str.contains('K', na=False)
+        for index in stats_df.index[mask_k]:
+            value = stats_df.at[index, stats_df.columns[col_num]]
+            if ' - ' in value:
+                part1, part2 = value.split(' - ')
 
-        # Handle values with only 'K'
-        mask_only_k = stats_df.iloc[:, col_num].str.contains(r'K', na=False, regex=False) & (~mask_k)
-        stats_df.loc[mask_only_k, stats_df.columns[col_num]] = stats_df.loc[mask_only_k, stats_df.columns[col_num]].str.replace(
-            'K', '000', regex=False)
-        # Handle values with only 'M'
-        mask_only_m = stats_df.iloc[:, col_num].str.contains(r'M', na=False, regex=False) & (~mask_m)
-        stats_df.loc[mask_only_m, stats_df.columns[col_num]] = stats_df.loc[mask_only_m, stats_df.columns[col_num]].str.replace(
-            'M', '000000', regex=False)
-        # Handle values with only 'B'
-        mask_only_b = stats_df.iloc[:, col_num].str.contains(r'B', na=False, regex=False) & (~mask_b)
-        stats_df.loc[mask_only_b, stats_df.columns[col_num]] = stats_df.loc[mask_only_b, stats_df.columns[col_num]].str.replace(
-            'B', '000000000', regex=False)
-        # Handle values with only '千'
-        mask_only_sen = stats_df.iloc[:, col_num].str.contains(r'千', na=False, regex=False) & (~mask_sen)
-        stats_df.loc[mask_only_sen, stats_df.columns[col_num]] = stats_df.loc[
-            mask_only_sen, stats_df.columns[col_num]].str.replace(
-            '千', '000', regex=False)
-        # Handle values with only '万'
-        mask_only_man = stats_df.iloc[:, col_num].str.contains(r'万', na=False, regex=False) & (~mask_man)
-        stats_df.loc[mask_only_man, stats_df.columns[col_num]] = stats_df.loc[
-            mask_only_man, stats_df.columns[col_num]].str.replace(
-            '万', '0000', regex=False)
-        # Handle values with only '億'
-        mask_only_oku = stats_df.iloc[:, col_num].str.contains(r'億', na=False, regex=False) & (~mask_oku)
-        stats_df.loc[mask_only_oku, stats_df.columns[col_num]] = stats_df.loc[
-            mask_only_oku, stats_df.columns[col_num]].str.replace(
-            '億', '00000000', regex=False)
+                def process_part_k(part):
+                    if 'K' in part:
+                        if '.' in part:
+                            integer_part, decimal_part = part.split('.')
+                            num_decimals = len(decimal_part.replace('K', ''))
+                            k_removed = part.replace('K', '')
+                            decimal_removed = k_removed.replace('.', '')
+                            num_zeros = 3 - num_decimals
+                            cleaned_part = decimal_removed + '0' * num_zeros
+                        else:
+                            cleaned_part = part.replace('K', '000')
+                        return cleaned_part
+                    return part
+
+                part1_cleaned = process_part_k(part1)
+                part2_cleaned = process_part_k(part2)
+                stats_df.at[index, stats_df.columns[col_num]] = f"{part1_cleaned} - {part2_cleaned}"
+
+            else:  # Handle single values with 'K'
+                if '.' in value:
+                    integer_part, decimal_part = value.split('.')
+                    num_decimals = len(decimal_part.replace('K', ''))
+                    k_removed = value.replace('K', '')
+                    decimal_removed = k_removed.replace('.', '')
+                    num_zeros = 3 - num_decimals
+                    cleaned_value = decimal_removed + '0' * num_zeros
+                else:
+                    cleaned_value = value.replace('K', '000')
+                stats_df.at[index, stats_df.columns[col_num]] = cleaned_value
+
+        # Process rows containing 'M'
+        mask_m = stats_df.iloc[:, col_num].str.contains('M', na=False)
+        for index in stats_df.index[mask_m]:
+            value = stats_df.at[index, stats_df.columns[col_num]]
+            if ' - ' in value:
+                part1, part2 = value.split(' - ')
+
+                def process_part_m(part):
+                    if 'M' in part:
+                        if '.' in part:
+                            integer_part, decimal_part = part.split('.')
+                            num_decimals = len(decimal_part.replace('M', ''))
+                            m_removed = part.replace('M', '')
+                            decimal_removed = m_removed.replace('.', '')
+                            num_zeros = 6 - num_decimals
+                            cleaned_part = decimal_removed + '0' * num_zeros
+                        else:
+                            cleaned_part = part.replace('M', '000000')
+                        return cleaned_part
+                    return part
+
+                part1_cleaned = process_part_m(part1)
+                part2_cleaned = process_part_m(part2)
+                stats_df.at[index, stats_df.columns[col_num]] = f"{part1_cleaned} - {part2_cleaned}"
+
+            else:  # Handle single values with 'M'
+                if '.' in value:
+                    integer_part, decimal_part = value.split('.')
+                    num_decimals = len(decimal_part.replace('M', ''))
+                    m_removed = value.replace('M', '')
+                    decimal_removed = m_removed.replace('.', '')
+                    num_zeros = 6 - num_decimals
+                    cleaned_value = decimal_removed + '0' * num_zeros
+                else:
+                    cleaned_value = value.replace('M', '000000')
+                stats_df.at[index, stats_df.columns[col_num]] = cleaned_value
+
+        # Process rows containing 'B'
+        mask_b = stats_df.iloc[:, col_num].str.contains('B', na=False)
+        for index in stats_df.index[mask_b]:
+            value = stats_df.at[index, stats_df.columns[col_num]]
+            if ' - ' in value:
+                part1, part2 = value.split(' - ')
+
+                def process_part_b(part):
+                    if 'B' in part:
+                        if '.' in part:
+                            integer_part, decimal_part = part.split('.')
+                            num_decimals = len(decimal_part.replace('B', ''))
+                            b_removed = part.replace('B', '')
+                            decimal_removed = b_removed.replace('.', '')
+                            num_zeros = 9 - num_decimals
+                            cleaned_part = decimal_removed + '0' * num_zeros
+                        else:
+                            cleaned_part = part.replace('B', '000000000')
+                        return cleaned_part
+                    return part
+
+                part1_cleaned = process_part_b(part1)
+                part2_cleaned = process_part_b(part2)
+                stats_df.at[index, stats_df.columns[col_num]] = f"{part1_cleaned} - {part2_cleaned}"
+
+            else:  # Handle single values with 'B'
+                if '.' in value:
+                    integer_part, decimal_part = value.split('.')
+                    num_decimals = len(decimal_part.replace('B', ''))
+                    b_removed = value.replace('B', '')
+                    decimal_removed = b_removed.replace('.', '')
+                    num_zeros = 9 - num_decimals
+                    cleaned_value = decimal_removed + '0' * num_zeros
+                else:
+                    cleaned_value = value.replace('B', '000000000')
+                stats_df.at[index, stats_df.columns[col_num]] = cleaned_value
+
+        # Process rows containing '万'
+        mask_man = stats_df.iloc[:, col_num].str.contains('万', na=False)
+        for index in stats_df.index[mask_man]:
+            value = stats_df.at[index, stats_df.columns[col_num]]
+            if ' - ' in value:
+                part1, part2 = value.split(' - ')
+
+                def process_part_man(part):
+                    if '万' in part:
+                        if '.' in part:
+                            integer_part, decimal_part = part.split('.')
+                            num_decimals = len(decimal_part.replace('万', ''))
+                            man_removed = part.replace('万', '')
+                            decimal_removed = man_removed.replace('.', '')
+                            num_zeros = 4 - num_decimals
+                            cleaned_part = decimal_removed + '0' * num_zeros
+                        else:
+                            cleaned_part = part.replace('万', '0000')
+                        return cleaned_part
+                    return part
+
+                part1_cleaned = process_part_man(part1)
+                part2_cleaned = process_part_man(part2)
+                stats_df.at[index, stats_df.columns[col_num]] = f"{part1_cleaned} - {part2_cleaned}"
+
+            else:  # Handle single values with '万'
+                if '.' in value:
+                    integer_part, decimal_part = value.split('.')
+                    num_decimals = len(decimal_part.replace('万', ''))
+                    man_removed = value.replace('万', '')
+                    decimal_removed = man_removed.replace('.', '')
+                    num_zeros = 4 - num_decimals
+                    cleaned_value = decimal_removed + '0' * num_zeros
+                else:
+                    cleaned_value = value.replace('万', '0000')
+                stats_df.at[index, stats_df.columns[col_num]] = cleaned_value
+
+        # Process rows containing '億'
+        mask_oku = stats_df.iloc[:, col_num].str.contains('億', na=False)
+        for index in stats_df.index[mask_oku]:
+            value = stats_df.at[index, stats_df.columns[col_num]]
+            if ' - ' in value:
+                part1, part2 = value.split(' - ')
+
+                def process_part_oku(part):
+                    if '億' in part:
+                        if '.' in part:
+                            integer_part, decimal_part = part.split('.')
+                            num_decimals = len(decimal_part.replace('億', ''))
+                            oku_removed = part.replace('億', '')
+                            decimal_removed = oku_removed.replace('.', '')
+                            num_zeros = 8 - num_decimals
+                            cleaned_part = decimal_removed + '0' * num_zeros
+                        else:
+                            cleaned_part = part.replace('億', '00000000')
+                        return cleaned_part
+                    return part
+
+                part1_cleaned = process_part_oku(part1)
+                part2_cleaned = process_part_oku(part2)
+                stats_df.at[index, stats_df.columns[col_num]] = f"{part1_cleaned} - {part2_cleaned}"
+
+            else:  # Handle single values with '億'
+                if '.' in value:
+                    integer_part, decimal_part = value.split('.')
+                    num_decimals = len(decimal_part.replace('億', ''))
+                    oku_removed = value.replace('億', '')
+                    decimal_removed = oku_removed.replace('.', '')
+                    num_zeros = 8 - num_decimals
+                    cleaned_value = decimal_removed + '0' * num_zeros
+                else:
+                    cleaned_value = value.replace('億', '00000000')
+                stats_df.at[index, stats_df.columns[col_num]] = cleaned_value
 
         # Remove any remaining '.'
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('.', '')
@@ -274,6 +391,7 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file, language_p
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].apply(str).str.replace('-', '0')
         stats_df.iloc[:, col_num] = pd.to_numeric(stats_df.iloc[:, col_num], errors='coerce')
         stats_df.iloc[:, col_num].astype(float).round(2)
+
     # # Create Distance/90 column (need to rearrange column order before adding this)
     # distance_col = stats_df.iloc[:, 47]
     # minutes_col = stats_df.iloc[:, 119]
