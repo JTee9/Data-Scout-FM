@@ -148,7 +148,7 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file, language_p
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('t', 'K')
         if language_preference == 'Turkish':
             stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('B', 'K')
-        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('χ', 'K')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('χ.', 'K')
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('тыс.', 'K')
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('千', 'K')
 
@@ -160,7 +160,7 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file, language_p
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('mill', 'M')
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('mn', 'M')
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('εκ.', 'M')
-        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('млн', 'M')
+        stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('млн.', 'M')
 
         # values in billions
         stats_df.iloc[:, col_num] = stats_df.iloc[:, col_num].str.replace('mia.', 'B')
@@ -420,7 +420,6 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file, language_p
         stats_df[position_tag] = stats_df.iloc[:, 2].apply(
             lambda pos: check_position_tags(pos, position_filter)
         )
-
     # Configure 'Apps' columns to solve parenthesis issue. Substitute appearances will be counted as 1 full appearance.
     # This number will be used to set a minimum total apps to exclude players with inflated stats in low # of Apps.
 
