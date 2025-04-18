@@ -2167,7 +2167,7 @@ preset_radar_values_by_index = {
     'Custom': []
 }
 
-# Sample charts for quick access to interesting data in the user's FM file
+# Sample charts for quick access to interesting data in the user's FM file (*Media Descriptions would only work in English)
 sample_filters_by_index = {
     'Top Strikers': {
         'Position': 141,

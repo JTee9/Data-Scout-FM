@@ -37,13 +37,13 @@ layout = html.Div([
                                    'and upload them to the app.'),
                         html.Hr(),
                         html.Label("2. Use the Stats tab to generate Scatter, Table, and Radar Charts "
-                                   "to identify top performers, compare your squad members' performance to others, "
-                                   "or find players who fit your system."),
+                                   "to identify top performers, compare your squad members' performance to other "
+                                   "players', or find players who fit your system."),
                         html.Hr(),
                         html.Label('3. Use the Attributes tab to compare players in your shortlist '
                                    'to your current squad members. '
                                    'The app allows you to compare attributes per position as well as '
-                                   'Role Scores based on attributes required for each role.')
+                                   'Role Scores based on attributes required for each role type.')
                     ]
                 ),
                 dbc.ModalFooter(
