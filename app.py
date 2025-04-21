@@ -1,5 +1,6 @@
 # Todo ------------------
 # 1. Add README
+# 2. Celery, long callback, loading bar for file upload
 
 import dash
 from dash import Dash, html, dcc, Output, Input, State

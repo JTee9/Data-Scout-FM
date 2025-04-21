@@ -49,36 +49,34 @@ def build_squad_attributes_dataframe(squad_attributes_file, language_preference)
 
     # Calculate the average of the columns for each category on the 'Overall' charts
     print('Creating overall radar columns for squad attributes.')
+
+    # Speed = 'Acc', 'Pac'
     squad_attributes_df = create_overall_radar_column(squad_attributes_df, overall_radar_columns[0], [5, 20])
+    # Vision = 'Vis', 'Pas', 'Fla'
     squad_attributes_df = create_overall_radar_column(squad_attributes_df, overall_radar_columns[1], [19, 33, 7])
+    # Attacking = 'OtB', 'Fin', 'Cmp'
     squad_attributes_df = create_overall_radar_column(squad_attributes_df, overall_radar_columns[2], [35, 43, 22])
+    # Technical = 'Tec', 'Fir', 'Dri'
     squad_attributes_df = create_overall_radar_column(squad_attributes_df, overall_radar_columns[3], [37, 34, 9])
+    # Aerial = 'Jum', 'Hea'
     squad_attributes_df = create_overall_radar_column(squad_attributes_df, overall_radar_columns[4], [30, 29])
+    # Mental = 'Tea', 'Det', 'Dec', 'Cnt', 'Bra', 'Ant'
     squad_attributes_df = create_overall_radar_column(squad_attributes_df, overall_radar_columns[5],
                                                       [48, 46, 42, 39, 38, 10])
+    # Defending = 'Tck', 'Pos', 'Mar'
     squad_attributes_df = create_overall_radar_column(squad_attributes_df, overall_radar_columns[6], [24, 11, 17])
+    # Physical= 'Str', 'Sta', 'Bal', 'Agi
     squad_attributes_df = create_overall_radar_column(squad_attributes_df, overall_radar_columns[7], [49, 47, 13, 12])
+    # Aerial (GK) = 'Han', 'Aer'
     squad_attributes_df = create_overall_radar_column(squad_attributes_df, overall_radar_columns[8], [51, 31])
+    # Shot Stopping = 'Ref', '1v1'
     squad_attributes_df = create_overall_radar_column(squad_attributes_df, overall_radar_columns[9], [21, 15])
+    # Distribution = 'Thr', 'Kic'
     squad_attributes_df = create_overall_radar_column(squad_attributes_df, overall_radar_columns[10], [28, 8])
+    # Communication = 'Com', 'Cmd'
     squad_attributes_df = create_overall_radar_column(squad_attributes_df, overall_radar_columns[11], [45, 44])
+    # Eccentricity = 'Ecc'
     squad_attributes_df = create_overall_radar_column(squad_attributes_df, overall_radar_columns[12], [36])
-
-    # # Calculate the average of the columns for each category on the 'Overall' charts
-    # print('Creating overall radar columns for squad attributes.')
-    # squad_attributes_df[overall_radar_columns[0]] = squad_attributes_df.iloc[:, [5, 20]].mean(axis=1).round(0)
-    # squad_attributes_df[overall_radar_columns[1]] = squad_attributes_df.iloc[:, [19, 33, 7]].mean(axis=1).round(0)
-    # squad_attributes_df[overall_radar_columns[2]] = squad_attributes_df.iloc[:, [35, 43, 22]].mean(axis=1).round(0)
-    # squad_attributes_df[overall_radar_columns[3]] = squad_attributes_df.iloc[:, [37, 34, 9]].mean(axis=1).round(0)
-    # squad_attributes_df[overall_radar_columns[4]] = squad_attributes_df.iloc[:, [30, 29]].mean(axis=1).round(0)
-    # squad_attributes_df[overall_radar_columns[5]] = squad_attributes_df.iloc[:, [48, 46, 42, 39, 38, 10]].mean(axis=1).round(0)
-    # squad_attributes_df[overall_radar_columns[6]] = squad_attributes_df.iloc[:, [24, 11, 17]].mean(axis=1).round(0)
-    # squad_attributes_df[overall_radar_columns[7]] = squad_attributes_df.iloc[:, [49, 47, 13, 12]].mean(axis=1).round(0)
-    # squad_attributes_df[overall_radar_columns[8]] = squad_attributes_df.iloc[:, [51, 31]].mean(axis=1).round(0)
-    # squad_attributes_df[overall_radar_columns[9]] = squad_attributes_df.iloc[:, [21, 15]].mean(axis=1).round(0)
-    # squad_attributes_df[overall_radar_columns[10]] = squad_attributes_df.iloc[:, [28, 8]].mean(axis=1).round(0)
-    # squad_attributes_df[overall_radar_columns[11]] = squad_attributes_df.iloc[:, [45, 44]].mean(axis=1).round(0)
-    # squad_attributes_df[overall_radar_columns[12]] = squad_attributes_df.iloc[:, 36].round(0)
 
     # Create position tag columns -------------------------------
     # Function to check and tag positions correctly
@@ -692,61 +690,46 @@ def build_shortlist_attributes_dataframe(shortlist_attributes_file, language_pre
             lambda row: mean_floor_if_no_nan(row, column_indices), axis=1).round(0)
         return df
 
+
+    # Speed = 'Acc', 'Pac'
     shortlist_attributes_df = create_overall_radar_column_nan_check(shortlist_attributes_df, overall_radar_columns[0],
                                                                     [5, 20])
+    # Vision = 'Vis', 'Pas', 'Fla'
     shortlist_attributes_df = create_overall_radar_column_nan_check(shortlist_attributes_df, overall_radar_columns[1],
                                                                     [19, 33, 7])
+    # Attacking = 'OtB', 'Fin', 'Cmp'
     shortlist_attributes_df = create_overall_radar_column_nan_check(shortlist_attributes_df, overall_radar_columns[2],
-                                                                    [35, 43, 22])
+                                                                    [22, 35, 43])
+    # Technical = 'Tec', 'Fir', 'Dri'
     shortlist_attributes_df = create_overall_radar_column_nan_check(shortlist_attributes_df, overall_radar_columns[3],
                                                                     [37, 34, 9])
+    # Aerial = 'Jum', 'Hea'
     shortlist_attributes_df = create_overall_radar_column_nan_check(shortlist_attributes_df, overall_radar_columns[4],
-                                                                    [31, 30])
+                                                                    [29, 30])
+    # Mental = 'Tea', 'Det', 'Dec', 'Cnt', 'Bra', 'Ant'
     shortlist_attributes_df = create_overall_radar_column_nan_check(shortlist_attributes_df, overall_radar_columns[5],
-                                                                    [47, 45, 41, 38, 37, 9])
+                                                                    [10, 38, 39, 42, 46, 48])
+    # Defending = 'Tck', 'Pos', 'Mar'
     shortlist_attributes_df = create_overall_radar_column_nan_check(shortlist_attributes_df, overall_radar_columns[6],
-                                                                    [24, 11, 17])
+                                                                    [11, 17, 24])
+    # Physical = 'Str', 'Sta', 'Bal', 'Agi
     shortlist_attributes_df = create_overall_radar_column_nan_check(shortlist_attributes_df, overall_radar_columns[7],
-                                                                    [49, 47, 13, 12])
+                                                                    [12, 13, 47, 49])
+    # Aerial (GK) = 'Han', 'Aer'
     shortlist_attributes_df = create_overall_radar_column_nan_check(shortlist_attributes_df, overall_radar_columns[8],
                                                                     [51, 31])
+    # Shot Stopping = 'Ref', '1v1'
     shortlist_attributes_df = create_overall_radar_column_nan_check(shortlist_attributes_df, overall_radar_columns[9],
                                                                     [21, 15])
+    # Distribution = 'Thr', 'Kic'
     shortlist_attributes_df = create_overall_radar_column_nan_check(shortlist_attributes_df, overall_radar_columns[10],
                                                                     [28, 8])
+    # Communication = 'Com', 'Cmd'
     shortlist_attributes_df = create_overall_radar_column_nan_check(shortlist_attributes_df, overall_radar_columns[11],
                                                                     [45, 44])
+    # Eccentricity = 'Ecc'
     shortlist_attributes_df = create_overall_radar_column_nan_check(shortlist_attributes_df, overall_radar_columns[12],
                                                                     [36])
-
-
-    # # Calculate the average of the columns for each category on the 'Overall' charts
-    # shortlist_attributes_df[overall_radar_columns[0]] = shortlist_attributes_df.apply(
-    #     lambda row: mean_floor_if_no_nan(row, [5, 20]), axis=1).round(0)
-    # shortlist_attributes_df[overall_radar_columns[1]] = shortlist_attributes_df.apply(
-    #     lambda row: mean_floor_if_no_nan(row, [19, 33, 7]), axis=1).round(0)
-    # shortlist_attributes_df[overall_radar_columns[2]] = shortlist_attributes_df.apply(
-    #     lambda row: mean_floor_if_no_nan(row, [35, 43, 22]), axis=1).round(0)
-    # shortlist_attributes_df[overall_radar_columns[3]] = shortlist_attributes_df.apply(
-    #     lambda row: mean_floor_if_no_nan(row, [37, 34, 9]), axis=1).round(0)
-    # shortlist_attributes_df[overall_radar_columns[4]] = shortlist_attributes_df.apply(
-    #     lambda row: mean_floor_if_no_nan(row, [31, 30]), axis=1).round(0)
-    # shortlist_attributes_df[overall_radar_columns[5]] = shortlist_attributes_df.apply(
-    #     lambda row: mean_floor_if_no_nan(row, [47, 45, 41, 38, 37, 9]), axis=1).round(0)
-    # shortlist_attributes_df[overall_radar_columns[6]] = shortlist_attributes_df.apply(
-    #     lambda row: mean_floor_if_no_nan(row, [24, 11, 17]), axis=1).round(0)
-    # shortlist_attributes_df[overall_radar_columns[7]] = shortlist_attributes_df.apply(
-    #     lambda row: mean_floor_if_no_nan(row, [49, 47, 13, 12]), axis=1).round(0)
-    # shortlist_attributes_df[overall_radar_columns[8]] = shortlist_attributes_df.apply(
-    #     lambda row: mean_floor_if_no_nan(row, [51, 31]), axis=1).round(0)
-    # shortlist_attributes_df[overall_radar_columns[9]] = shortlist_attributes_df.apply(
-    #     lambda row: mean_floor_if_no_nan(row, [21, 15]), axis=1).round(0)
-    # shortlist_attributes_df[overall_radar_columns[10]] = shortlist_attributes_df.apply(
-    #     lambda row: mean_floor_if_no_nan(row, [28, 8]), axis=1).round(0)
-    # shortlist_attributes_df[overall_radar_columns[11]] = shortlist_attributes_df.apply(
-    #     lambda row: mean_floor_if_no_nan(row, [45, 44]), axis=1).round(0)
-    # shortlist_attributes_df[overall_radar_columns[12]] = shortlist_attributes_df.apply(
-    #     lambda row: mean_floor_if_no_nan(row, [36]), axis=1).round(0)
 
     # Create position tag columns -------------------------------
     # Function to check and tag positions correctly
