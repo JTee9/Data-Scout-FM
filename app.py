@@ -52,8 +52,8 @@ app.layout = dbc.Container([
                         'margin-top': '5px',
                         'display': 'flex',
                         'margin-left': '-6px'
-                    })]
-                ),
+                    })
+            ]),
 
             html.Div(style={'text-align': 'left', 'font-size': '14px', 'margin-top': '50px', 'margin-left': '10px'}, children=[
                 html.Label('Upload Files from FM'),
@@ -73,7 +73,9 @@ app.layout = dbc.Container([
                     },
                     multiple=True
                 ),
-                html.Div(id='uploaded-files', children='No files uploaded'),
+                dcc.Loading(id='loading-upload', type='graph', children=[
+                    html.Div(id='uploaded-files', children='No files uploaded')
+                ]),
                 dcc.Store(id='stored-uploads', data={}),
             ])
         ], style={
