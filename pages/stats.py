@@ -3,6 +3,7 @@
 # 2. Long names overlap on the radar chart.
 # 3. Fix radar reverse axis for negative stats
 # 4. Fix decimal issue on Table
+# 5. Top10 should be Top 10% of their Division, not overall df. (groups)
 
 import base64
 import io
@@ -245,7 +246,7 @@ layout = html.Div([
     Input('stored-uploads', 'data'),
     Input('sample-filter-dropdown', 'value'),
     State('x-axis-dropdown', 'value'),
-    State('y-axis-dropdown', 'value')
+    State('y-axis-dropdown', 'value'),
 )
 def update_graph_dropdowns(uploaded_dataframes, selected_sample, current_x, current_y):
     stats_df = pd.read_json(io.StringIO(uploaded_dataframes['stats']), orient='split')

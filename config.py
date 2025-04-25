@@ -2286,3 +2286,22 @@ sample_filters_by_index = {
         #'Av Rat'
     },
 }
+
+# Issue Categories
+issue_categories = [
+    {'label': 'Usability Issue', 'value': 'usability'},
+    {'label': 'File Issue', 'value': 'file'},
+    {'label': 'Data Issue', 'value': 'data'},
+    {'label': 'Chart/Table Issue', 'value': 'chart'},
+    {'label': 'App Performance Issue', 'value': 'performance'},
+    {'label': 'Other', 'value': 'other'},
+]
+
+# Feedback Categories
+feedback_categories = [
+    {'label': 'Superb', 'value': 5},
+    {'label': 'Quite Good', 'value': 4},
+    {'label': 'Okay', 'value': 3},
+    {'label': 'Fairly Poor', 'value': 2},
+    {'label': 'Poor', 'value': 1},
+]

@@ -1,23 +1,96 @@
 # Todo ------------------
 # 1. Add README
-# 2. Celery, long callback, loading bar for file upload
 
 import dash
-from dash import Dash, html, dcc, Output, Input, State
+from dash import Dash, html, dcc, Output, Input, State, ctx
 import dash_bootstrap_components as dbc
 import pandas as pd
 from transform_attributes import build_shortlist_attributes_dataframe, build_squad_attributes_dataframe
 from transform_stats import build_stats_dataframe
-from config import language_dict
+from config import language_dict, feedback_categories, issue_categories
 import base64
 import io
 from warnings import simplefilter
+from datetime import datetime
+import os
 
 simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
 
 # Create app
 app = Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.SUPERHERO], title='Data Scout FM')
 server = app.server
+
+FEEDBACK_FILE = 'feedback.csv'
+REPORT_FILE = 'report.csv'
+
+# Feedback modal to allow users to rate their satisfaction with the app and share detailed feedback.
+feedback_modal = (
+    dbc.Modal([
+        dbc.ModalHeader('Share Your Feedback'),
+        dbc.ModalBody([
+            # Optional Input Fields for User Identity
+            html.Div([
+                html.Label('Your Manager Name in FM (optional): '),
+                html.Br(),
+                dcc.Input(id='user-name-input',
+                          placeholder='Enter your name here.', style={'width': '50%'}),
+                html.Br(),
+                html.Label('Your personal accolades in FM (optional): '),
+                html.Br(),
+                dcc.Textarea(id='accolades-text',
+                             placeholder='Please provide a brief summary of your career.',
+                             style={'width': '100%', 'height': '100px'})
+            ]),
+            html.Div([
+                html.Label('What rating would you give this Data Scout FM app?'),
+                dcc.Dropdown(id='feedback-dropdown', options=feedback_categories, value='', clearable=False,
+                             style={'text-align': 'left', 'width': '50%'}),
+                html.Label('Detailed Feedback'),
+                html.Br(),
+                dcc.Textarea(id='feedback-text',
+                             placeholder='Please provide details on what you like about the app '
+                                         'and what you feel could be improved.',
+                             style={'text-align': 'left', 'width': '100%', 'height': '150px'}),
+                html.Br(),
+                dbc.Button('Submit', id='submit-feedback-button',
+                           className='modal_conditions_button', n_clicks=0),
+                html.Br(),
+                html.Div(id="feedback-submission-status", style={'margin-top': '15px'})
+            ])
+        ]),
+        dbc.ModalFooter(
+            dbc.Button('Close', id='close-feedback-button',
+                       className='modal_conditions_button', n_clicks=0)
+        ),
+    ], id='feedback-modal', className='filter-modal', is_open=False)
+)
+
+# Report modal to allow users to report bugs and issues they experience with the app.
+report_modal = (
+    dbc.Modal([
+        dbc.ModalHeader('Report a Problem'),
+        dbc.ModalBody([
+            html.Label('Select the category for the problem you would like to report.'),
+            html.Br(),
+            dcc.Dropdown(id='report-dropdown', options=issue_categories, value='', clearable=False,
+                         style={'width': '65%'}),
+            html.Br(),
+            html.Label('Detailed Feedback'),
+            html.Br(),
+            dcc.Textarea(id='report-text',
+                         placeholder='Please provide details on the problem you experienced.',
+                         style={'width': '100%', 'height': '100px'}),
+            html.Br(),
+            dbc.Button('Submit', id='submit-report-button',
+                       className='modal_conditions_button', n_clicks=0),
+            html.Div(id="report-submission-status", style={'margin-top': '15px'})
+        ]),
+        dbc.ModalFooter(
+            dbc.Button('Close', id='close-report-button',
+                       className='modal_conditions_button', n_clicks=0)
+        ),
+    ], id='report-modal', className='filter-modal', is_open=False)
+)
 
 app.layout = dbc.Container([
     # Left Side
@@ -33,27 +106,26 @@ app.layout = dbc.Container([
                         })
                 ], style={'margin-top': '50px', 'text-align': 'left'}),
 
-            html.Div(style={'text-align': 'left', 'margin-top': '30px', 'margin-left': '10px'}, children=[
+            html.Div([
                 html.Label('FM Custom Views'),
                 html.Div([
-                    dbc.Button('Download', id='download-button', n_clicks=0, className='container-button', style={'margin-top': '10px', 'borderRadius': '10px'}),
+                    dbc.Button('Download', id='download-button', n_clicks=0,
+                               className='container-button', style={'margin-top': '5px'}),
                     dcc.Download(id='download-custom-views')
                 ])
-            ]),
+            ], style={'text-align': 'left', 'margin-top': '30px', 'margin-left': '10px'}),
 
-            html.Div(style={'text-align': 'left', 'margin-top': '50px', 'margin-left': '10px'}, children=[
+            html.Div([
                 html.Label('Select data to analyze'),
                 # Create Two Buttons to toggle between Stats and Attributes pages
-                html.Div(children=[
-                    dcc.Link(dbc.Button('Stats', id='stats-button', n_clicks=0, className='container-button', style={'margin': '5px'}), href='/stats'),
-                    dcc.Link(dbc.Button('Attributes', id='attributes-button', n_clicks=0, className='container-button', style={'margin': '5px'}), href='/attributes')
+                html.Div([
+                    dcc.Link(dbc.Button('Stats', id='stats-button', n_clicks=0,
+                                        className='container-button', style={'margin-right': '5px'}), href='/stats'),
+                    dcc.Link(dbc.Button('Attributes', id='attributes-button', n_clicks=0,
+                                        className='container-button', style={'margin-left': '5px'}), href='/attributes')
                 ],
-                    style={
-                        'margin-top': '5px',
-                        'display': 'flex',
-                        'margin-left': '-6px'
-                    })
-            ]),
+                    style={'display': 'flex', 'margin-top': '5px'})
+            ], style={'text-align': 'left', 'margin-top': '50px', 'margin-left': '10px'},),
 
             html.Div(style={'text-align': 'left', 'font-size': '14px', 'margin-top': '50px', 'margin-left': '10px'}, children=[
                 html.Label('Upload Files from FM'),
@@ -73,29 +145,41 @@ app.layout = dbc.Container([
                     },
                     multiple=True
                 ),
-                dcc.Loading(id='loading-upload', type='graph', children=[
+                dcc.Loading(id='loading-upload', type='dot', children=[
                     html.Div(id='uploaded-files', children='No files uploaded')
                 ]),
                 dcc.Store(id='stored-uploads', data={}),
-            ])
+            ]),
+
+            # Report Issue & Share Feedback Buttons
+            html.Div([
+                html.Label("How's the app?"),
+                html.Div([
+                    dbc.Button('Feedback', id='feedback-button', n_clicks=0, className='container-button',
+                               style={'margin-right': '5px'}),
+                    feedback_modal,
+                    dbc.Button('Report', id='report-button', n_clicks=0, className='container-button',
+                               style={'margin-left': '5px'}),
+                    report_modal,
+                ], style={'display': 'flex', 'margin-top': '5px'})
+            ], style={'text-align': 'left', 'margin-top': '50px', 'margin-left': '10px'})
         ], style={
             'flex': '0 0 10%',
-            'padding': '10px',  # Add some padding
-            'margin': '30px',  # Add some margin
-            # 'border-radius': '10px', # rounded corners
-            'height': 'calc(100vh - 60px)'
+            'padding': '10px',
+            'margin': '30px',
+            'height': 'calc(100vh - 60px)',
         }),
     # Right Side
     html.Div(dash.page_container, className='right-container', style={
             'flex': '0 0 80%',
-            'border': '1px solid #ddd',  # Add a border
-            'padding': '10px',  # Add some padding
-            'margin': '15px',  # Add some margin
-            'border-radius': '20px', # rounded corners
+            'border': '1px solid #ddd',
+            'padding': '10px',
+            'margin': '15px',
+            'border-radius': '20px',
             'height': 'calc(100vh - 30px)'
         })
 ],
-    # Container split horizontally (flex)
+    # Container split horizontally
     style={'display': 'flex'},
     fluid=True,
     className='dashboard-container')
@@ -173,6 +257,113 @@ def download_custom_views(n_clicks):
     return dcc.send_file(
         'assets/fm_custom_views.zip'
     )
+
+
+# Handle Feedback Button
+@app.callback(
+    Output("feedback-modal", "is_open"),
+    [Input("feedback-button", "n_clicks"),
+     Input("close-feedback-button", "n_clicks")],
+    [State("feedback-modal", "is_open")]
+)
+def toggle_modal(open_clicks, close_clicks, is_open):
+    if not ctx.triggered:
+        return is_open
+
+    button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+    if button_id == "feedback-button":
+        return True
+    elif button_id == "close-feedback-button":
+        return False
+
+    return is_open
+
+
+# Handle Report Button
+@app.callback(
+    Output("report-modal", "is_open"),
+    [Input("report-button", "n_clicks"),
+     Input("close-report-button", "n_clicks")],
+    [State("report-modal", "is_open")]
+)
+def toggle_modal(open_clicks, close_clicks, is_open):
+    if not ctx.triggered:
+        return is_open
+
+    button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+    if button_id == "report-button":
+        return True
+    elif button_id == "close-report-button":
+        return False
+
+    return is_open
+
+
+# Handle Submit Feedback Button
+@app.callback(
+    Output("feedback-submission-status", "children"),
+    Input("submit-feedback-button", "n_clicks"),
+    State("user-name-input", "value"),
+    State("accolades-text", "value"),
+    State("feedback-dropdown", "value"),
+    State("feedback-text", "value"),
+    prevent_initial_call=True,
+)
+def process_modal_feedback(n_clicks, user_name, user_bio, selected_rating, feedback_text):
+
+    def save_feedback(name, bio, rating, text):
+        """Saves the feedback to a CSV file."""
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        new_feedback = pd.DataFrame({
+            'Timestamp': [timestamp], 'Name': [name], 'Bio': [bio], 'Rating': [rating], 'Feedback': [text]
+        })
+
+        if os.path.exists(FEEDBACK_FILE):
+            existing_data = pd.read_csv(FEEDBACK_FILE)
+            updated_data = pd.concat([existing_data, new_feedback], ignore_index=True)
+            updated_data.to_csv(FEEDBACK_FILE, index=False)
+        else:
+            new_feedback.to_csv(FEEDBACK_FILE, index=False)
+
+    if n_clicks > 0:
+        if selected_rating and feedback_text:
+            save_feedback(user_name, user_bio, selected_rating, feedback_text)
+            return f"Successfully submitted. Thank you for your feedback!"
+        else:
+            return 'Please make sure to select a Rating and write your feedback in the text area.'
+    return ""
+
+
+# Handle Submit Report Button
+@app.callback(
+    Output("report-submission-status", "children"),
+    Input("submit-report-button", "n_clicks"),
+    State("report-dropdown", "value"),
+    State("report-text", "value"),
+    prevent_initial_call=True,
+)
+def process_modal_feedback(n_clicks, selected_category, report_text):
+    def save_report(category, text):
+        """Saves the feedback to a CSV file."""
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        new_report = pd.DataFrame({'Timestamp': [timestamp], 'Category': [category], 'Feedback': [text]})
+
+        if os.path.exists(REPORT_FILE):
+            existing_data = pd.read_csv(REPORT_FILE)
+            updated_data = pd.concat([existing_data, new_report], ignore_index=True)
+            updated_data.to_csv(REPORT_FILE, index=False)
+        else:
+            new_report.to_csv(REPORT_FILE, index=False)
+
+    if n_clicks > 0:
+        if selected_category and report_text:
+            save_report(selected_category, report_text)
+            return f"Successfully submitted. Thank you for reporting the issue!"
+        else:
+            return 'Please make sure to select a Category and to describe the issue in the text area.'
+    return ""
 
 
 if __name__ == '__main__':
