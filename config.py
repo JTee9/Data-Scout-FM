@@ -2138,7 +2138,7 @@ international_stats_label_dict = {
         'Int Ast': 'International Assists (current season)',
         'Int Conc': 'International Goals Conceded (current season)',
         'Int Av Rat': 'International Average Rating (current season)',
-        'Media Description': 'Media Description', 'Home-Grown Status': 'Home-Grown Status'
+        'Media Description': 'Media Description', 'Home Grown Status': 'Home Grown Status'
     }
 }
 
