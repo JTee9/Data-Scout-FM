@@ -415,11 +415,16 @@ def build_stats_dataframe(squad_stats_file, player_search_stats_file, language_p
         return False
 
     # Loop over each position tag and its corresponding filter
+    new_columns = {}
     for position_tag, position_filter in international_position_filters[language_preference].items():
         # Create a new column in the dataframe for the position tag
-        stats_df[position_tag] = stats_df.iloc[:, 2].apply(
+        new_columns[position_tag] = stats_df.iloc[:, 2].apply(
             lambda pos: check_position_tags(pos, position_filter)
         )
+    new_df = pd.DataFrame(new_columns)
+    stats_df = pd.concat([stats_df, new_df], axis=1)
+
+
     # Configure 'Apps' columns to solve parenthesis issue. Substitute appearances will be counted as 1 full appearance.
     # This number will be used to set a minimum total apps to exclude players with inflated stats in low # of Apps.
 

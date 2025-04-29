@@ -94,11 +94,14 @@ def build_squad_attributes_dataframe(squad_attributes_file, language_preference)
         return False
 
     # Loop over each position tag and its corresponding filter
+    new_columns = {}
     for position_tag, position_filter in international_position_filters[language_preference].items():
         # Create a new column in the dataframe for the position tag
-        squad_attributes_df[position_tag] = squad_attributes_df.iloc[:, 1].apply(
+        new_columns[position_tag] = squad_attributes_df.iloc[:, 2].apply(
             lambda pos: check_position_tags(pos, position_filter)
         )
+    new_df = pd.DataFrame(new_columns)
+    squad_attributes_df = pd.concat([squad_attributes_df, new_df], axis=1)
 
     # Function to create role score columns
     def calculate_role_score(df, key_attributes, pref_attributes, column_title):

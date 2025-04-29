@@ -1,8 +1,6 @@
 # Todo -----------------------------------
 # 1. Expand stats_label_dict to include other languages
 
-# Variables to share across app pages
-
 # Dictionary to check user's language preference with language_key('Wage' in the user's language)
 language_dict = {
     'Wage': 'English',
